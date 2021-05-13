@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<configuration>
+	<appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<encoder>
+      		<pattern>%date %-5level %logger{50} %m%n</pattern>
+    	</encoder>
+    	<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+    		 <fileNamePattern>D:\\HAL\\logs\\logback-%d{yyyy-MM-dd}.%i.log</fileNamePattern>    	
+    		<!-- <fileNamePattern>\\opt\\IBM\\WebSphere\\AppServer\\profiles\\AppSrv01\\logs\\eAssessmentLogs\\logback-%d{yyyy-MM-dd}.%i.log</fileNamePattern> -->
+    		<!-- <fileNamePattern>\\opt\\IBM\\WebSphere\\AppServer\\profiles\\AppSrv02\\logs\\eAssessmentLogs\\logback-%d{yyyy-MM-dd}.%i.log</fileNamePattern> -->
+    		<!-- <fileNamePattern>F:\\IBM\\WebSphere\\AppServer\\profiles\\AppSrv01\\logs\\eAssessmentLogs\\logback-%d{yyyy-MM-dd}.%i.log</fileNamePattern> -->
+    		<maxHistory>10</maxHistory>
+    		<timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+    			<maxFileSize>10MB</maxFileSize>
+    		</timeBasedFileNamingAndTriggeringPolicy>	
+    	</rollingPolicy>
+    </appender>
+	<root level="info">
+		<appender-ref ref="FILE" />
+	</root>
+</configuration> 

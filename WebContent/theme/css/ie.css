@@ -1,0 +1,10 @@
+.ie_btnce
+{
+padding:0px;
+}
+.btn_forAll.btn_ie
+{
+padding-top:7px !important;
+padding-bottom:6px !important;
+margin-left:-10px;
+}

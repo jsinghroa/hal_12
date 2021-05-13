@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:jee="http://www.springframework.org/schema/jee" xmlns:lang="http://www.springframework.org/schema/lang"
+	xmlns:p="http://www.springframework.org/schema/p" xmlns:tx="http://www.springframework.org/schema/tx"
+	xmlns:util="http://www.springframework.org/schema/util" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="
+    	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
+        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+        http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee.xsd
+        http://www.springframework.org/schema/lang http://www.springframework.org/schema/lang/spring-lang.xsd
+        http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+        http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd"
+	default-lazy-init="true">
+
+<mvc:annotation-driven>
+		<mvc:message-converters register-defaults="true">
+			<bean
+				class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
+				<property name="objectMapper" ref="jacksonObjectMapper" />
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven> 
+<mvc:resources mapping="/resources/**" location="/"/>
+<mvc:default-servlet-handler />
+<context:annotation-config />
+<context:component-scan base-package = "com.wipro.iaf.emms" />
+
+   <bean id="jspViewResolver" class = "org.springframework.web.servlet.view.InternalResourceViewResolver">
+   <property name="viewClass"
+			value="org.springframework.web.servlet.view.JstlView" />
+      <property name = "prefix" value = "/WEB-INF/jsp/" />
+      <property name = "suffix" value = ".jsp" />
+   </bean>
+   
+   <bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="classpath:messages" />
+		<property name="defaultEncoding" value="UTF-8" />
+	</bean>
+
+<bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">    
+<property name="driverClassName" value="${jdbc.driverClassName}"></property>    
+<property name="url" value="${jdbc.url}"></property>    
+<property name="username" value="${jdbc.username}"></property>    
+<property name="password" value="${jdbc.password}"></property>    
+</bean>
+<bean id="passwordEncoder" class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder"></bean> 
+
+<context:property-placeholder location="classpath:jdbc.properties"/>
+
+<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">    
+<property name="dataSource" ref="dataSource"></property>    
+</bean> 
+
+  <bean name="jacksonObjectMapper"
+		class="org.springframework.http.converter.json.Jackson2ObjectMapperFactoryBean"></bean>
+<bean id="halService" class="com.wipro.iaf.emms.service.HalService"></bean>
+<bean id="importXMLController" class="com.wipro.iaf.emms.controller.ImportXMLController"></bean>
+
+<bean id="halDAO" class="com.wipro.iaf.emms.dao.HalDao">
+
+<property name="jdbcTemplate" ref="jdbcTemplate"></property> 
+</bean>
+
+<bean id="multipartResolver"
+		class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<property name="maxUploadSize" value="5242880" />
+	</bean>
+</beans>

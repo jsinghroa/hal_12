@@ -1,0 +1,14 @@
+/* 
+ * File Name				: jquery.ui.all.css
+ *
+ * Author					: WIPRO
+ *
+ * Short Description		: 
+ *
+ * Created Date 			: 24-Mar-2014 11:25:13 AM
+ *
+ * Modification History	:	
+ */
+@import "jquery.ui.base.css";
+
+@import "jquery.ui.theme.css";

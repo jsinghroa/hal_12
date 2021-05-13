@@ -411,10 +411,10 @@ public class HalService {
 		return insLcnList;
 	}
 
-	public void insertRegisteredUser(UserRegistrationForm user) {
+	public int insertRegisteredUser(UserRegistrationForm user) {
 		System.out.println(passwordEncoder.encode(user.getPassword()));
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
-		halDAO.insertRegisteredUser(user);
+		return halDAO.insertRegisteredUser(user);
 	}
 
 	public List<ErrorStatusForm> fetchErrors(String recordId) {

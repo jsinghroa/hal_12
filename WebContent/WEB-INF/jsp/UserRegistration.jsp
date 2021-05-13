@@ -32,9 +32,13 @@
 			<spring:message code="label.UserRegistration.header" />
 		</div>
 
-		<div>
-		<c:if test="${param.regStatus != null }">
+		<div height="100%">
+		<%-- <c:if test="${param.regStatus == 'success' }"> --%>
+		<c:if test="${regStatus == 'success' }">
 			<i style="margin-left:42%; color: blue;">Registration Completed Successfully!</i>
+		</c:if>
+		<c:if test="${regStatus == 'failure' }">
+			<i style="margin-left:42%; color: red;">Registration Failed!</i>
 		</c:if>
 		<table align="center" width="30%" height="100%" style="margin-top:10px;overflow-x: auto;">
 		<thead>
@@ -55,10 +59,12 @@
 				</form:label></td>
 				<td width="400"><form:input path="lastName" class="form-control" style="width: 200px;" required="required"/></td></tr>
 				
-			<%-- <tr align="center"><td width="200"><form:label path="label">
-					<spring:message code="label.rank" />
+			<tr align="center"><td width="200"><form:label path="label">
+					<spring:message code="label.role" />
 				</form:label></td>
-				<td width="400"><form:input path="rank" class="form-control" style="width: 200px;"/></td></tr> --%>
+				<td width="400" height="35px">
+					<form:radiobutton class="form-check-input" path = "role" value = "ROLE_ADMIN" label = "Admin" />
+                  	<form:radiobutton class="form-check-input" path = "role" value = "ROLE_EMPLOYEE" label = "Employee" /></td></tr>
 				
 			<tr align="center"><td width="200"><form:label path="label">
 					<spring:message code="label.password" />
@@ -81,7 +87,7 @@
 		</table>
 		</div>	
 		</div>
-		<input type="hidden" name="regStatus" value="success"/>
+		<!-- <input type="hidden" name="regStatus" value="success"/> -->
 	</form:form>
 </body>
 </html>

@@ -464,11 +464,10 @@ public class HalDao {
 	private static final class FLBMeterDetailsMapper implements RowMapper<FlbMeterDetailsForm> {
 		public FlbMeterDetailsForm mapRow(ResultSet rs, int row) throws SQLException {
 			FlbMeterDetailsForm FLBForm = new FlbMeterDetailsForm();
-			
-			
+
 			FLBForm.setLcn(rs.getString("LCN"));
 			FLBForm.setBuilditem(rs.getString("Build_Item"));
-			//FLBForm.setInstalledpn(rs.getString("Existing_Asset_CM_Item"));
+			// FLBForm.setInstalledpn(rs.getString("Existing_Asset_CM_Item"));
 			/*
 			 * FLBForm.setMeterDetails(rs.getString("Meter_name")); //
 			 * FLBForm.setLcn(rs.getString("LCN"));
@@ -686,55 +685,47 @@ public class HalDao {
 
 	public int updateMeter(AssetConfigForm assetConfigForm, int flag) {
 		String installedPn;
-		
-		if(flag==0) {
-			installedPn=assetConfigForm.getInstalledPN();
-				
-		}else
-		{
-			installedPn=assetConfigForm.getInLieuPn();
+
+		if (flag == 0) {
+			installedPn = assetConfigForm.getInstalledPN();
+
+		} else {
+			installedPn = assetConfigForm.getInLieuPn();
 		}
-			System.out.println("FreezeUpdateMeter:"+installedPn+":"+flag);
-		String sql = "update asset_meter_actual,asset_cfg_actual set asset_meter_actual.Install_CM_Item='"
-				+ installedPn + "', asset_meter_actual.Install_Serial_Num='"
-				+ assetConfigForm.getInstalledSN() + "'" + " where asset_meter_actual.Existing_Asset_Num='"
-				+ assetConfigForm.getAssetNum() + "'"
+		System.out.println("FreezeUpdateMeter:" + installedPn + ":" + flag);
+		String sql = "update asset_meter_actual,asset_cfg_actual set asset_meter_actual.Install_CM_Item='" + installedPn
+				+ "', asset_meter_actual.Install_Serial_Num='" + assetConfigForm.getInstalledSN() + "'"
+				+ " where asset_meter_actual.Existing_Asset_Num='" + assetConfigForm.getAssetNum() + "'"
 				+ "OR asset_cfg_actual.build_item=asset_meter_actual.build_item and asset_cfg_actual.lcn=asset_meter_actual.lcn "
 				+ "and asset_meter_actual.CM_Item='" + installedPn + "'";
 
 		System.out.println(sql);
 		return jdbcTemplate.update(sql);
 	}
-	
+
 	public void updateMeter(InstallableAssetForm installableForm, int flag) {
 		String installedPn;
-				
-				if(flag==0) {
-					installedPn=installableForm.getInstallablePN();
-						
-				}else
-				{
-					installedPn=installableForm.getiNlieuPN();
-				}
-					System.out.println("FreezeUpdateMeter:"+installedPn+":"+flag);
-				String sql = "update asset_meter_actual,asset_cfg_actual set asset_meter_actual.Install_CM_Item='"
-						+ installedPn + "', asset_meter_actual.Install_Serial_Num='"
-						+ installableForm.getInstallableSN() + "'" + " where asset_meter_actual.Existing_Asset_Num='"
-						+ installableForm.getAssertnum() + "'"
-						+ "OR asset_cfg_actual.build_item=asset_meter_actual.build_item and asset_cfg_actual.lcn=asset_meter_actual.lcn "
-						+ "and asset_meter_actual.CM_Item='" + installedPn + "'";
 
-				System.out.println(sql);
-				try
-				{
-					jdbcTemplate.update(sql);
-				}catch(Exception e)
-				{
-					System.out.println(e.getMessage());
-				}
-			}
-	
-	
+		if (flag == 0) {
+			installedPn = installableForm.getInstallablePN();
+
+		} else {
+			installedPn = installableForm.getiNlieuPN();
+		}
+		System.out.println("FreezeUpdateMeter:" + installedPn + ":" + flag);
+		String sql = "update asset_meter_actual,asset_cfg_actual set asset_meter_actual.Install_CM_Item='" + installedPn
+				+ "', asset_meter_actual.Install_Serial_Num='" + installableForm.getInstallableSN() + "'"
+				+ " where asset_meter_actual.Existing_Asset_Num='" + installableForm.getAssertnum() + "'"
+				+ "OR asset_cfg_actual.build_item=asset_meter_actual.build_item and asset_cfg_actual.lcn=asset_meter_actual.lcn "
+				+ "and asset_meter_actual.CM_Item='" + installedPn + "'";
+
+		System.out.println(sql);
+		try {
+			jdbcTemplate.update(sql);
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}
+	}
 
 	public int[] importXml(String[] queries) {
 
@@ -860,15 +851,20 @@ public class HalDao {
 	}
 
 	public int insertRegisteredUser(UserRegistrationForm user) {
-		String sql = "insert into users (username, password, enabled, firstName, lastName) values(?, ?, ?, ?, ?)";
-		int status = jdbcTemplate.update(sql, user.getServiceNo(), user.getPassword(), 1, user.getFirstName(),
-				user.getLastName());
-		System.out.println("status: " + status);
-		if (status == 1) {
-			sql = "insert into authorities (username, authority) values(?, ?)";
-			status = jdbcTemplate.update(sql, user.getServiceNo(), "ROLE_EMPLOYEE");
-		}
-		return status;
+		String sql = "select count(*) from users where username = ? ";
+		int userCount = this.jdbcTemplate.queryForObject(sql, Integer.class, user.getServiceNo());
+		if (userCount == 0) {
+			sql = "insert into users (username, password, enabled, firstName, lastName) values(?, ?, ?, ?, ?)";
+			int status = jdbcTemplate.update(sql, user.getServiceNo(), user.getPassword(), 1, user.getFirstName(),
+					user.getLastName());
+			System.out.println("status: " + status);
+			if (status == 1) {
+				sql = "insert into authorities (username, authority) values(?, ?)";
+				status = jdbcTemplate.update(sql, user.getServiceNo(), user.getRole());
+			}
+			return status;
+		} else
+			return 0;
 	}
 
 	public static String getUomValue(String value) {
@@ -971,15 +967,16 @@ public class HalDao {
 
 	// Sorite data update
 	public void updateSortieArData(FlbSortieArForm flbSortieRow) {
-		String query = "UPDATE flb_sortie_accept SET " + "Sortie_Date = ?, "+ "Etd_Date = ?, " + "ETD_IST = ?, " + "Duration = ?, "
-				+ "Flight_Type = ?, " + "Caution_Remarks = ?, " + "Sortie_Status = ?, " + "Reason = ?, " + "Error = ?, "
-				+ "Error_Description = ? " + "WHERE (Record_ID = ?) and (Record_Row_ID = ?);";
+		String query = "UPDATE flb_sortie_accept SET " + "Sortie_Date = ?, " + "Etd_Date = ?, " + "ETD_IST = ?, "
+				+ "Duration = ?, " + "Flight_Type = ?, " + "Caution_Remarks = ?, " + "Sortie_Status = ?, "
+				+ "Reason = ?, " + "Error = ?, " + "Error_Description = ? "
+				+ "WHERE (Record_ID = ?) and (Record_Row_ID = ?);";
 		System.out.println(flbSortieRow.toString());
-		int status = jdbcTemplate.update(query, flbSortieRow.getSortieDate(),flbSortieRow.getEtdDate(), 
-				flbSortieRow.getETD(),
-				flbSortieRow.getDuration(), flbSortieRow.getFlightType(), flbSortieRow.getRemarks(),
-				flbSortieRow.getSortieStatus(), flbSortieRow.getReason(), flbSortieRow.getError(),
-				flbSortieRow.getErrordesc(), flbSortieRow.getRecordId(), flbSortieRow.getRecordRowId());
+		int status = jdbcTemplate.update(query, flbSortieRow.getSortieDate(), flbSortieRow.getEtdDate(),
+				flbSortieRow.getETD(), flbSortieRow.getDuration(), flbSortieRow.getFlightType(),
+				flbSortieRow.getRemarks(), flbSortieRow.getSortieStatus(), flbSortieRow.getReason(),
+				flbSortieRow.getError(), flbSortieRow.getErrordesc(), flbSortieRow.getRecordId(),
+				flbSortieRow.getRecordRowId());
 		if (status == 1) {
 			System.out.println("Data updated in sortie ar table of : " + flbSortieRow.getRecordId());
 		} else {
@@ -989,8 +986,8 @@ public class HalDao {
 
 	public void updatePostFlight(FlbPostFlightDataForm postFlightDataForm) {
 		String query = "UPDATE flb_post_flt_details SET " + "Flight_type = ?, " + "FLT_DATE = ?, "
-				+ "Departure_Time = ?, " + "Arrival_Time = ?, " + "Flt_status = ?, " + "Flt_Hrs = ?," + "error=?, "+ "Sortie_Num=? "
-				+ "WHERE (Record_Row_ID = ?);";
+				+ "Departure_Time = ?, " + "Arrival_Time = ?, " + "Flt_status = ?, " + "Flt_Hrs = ?," + "error=?, "
+				+ "Sortie_Num=? " + "WHERE (Record_Row_ID = ?);";
 
 		if (postFlightDataForm.getFlightDate().isEmpty()) {
 			postFlightDataForm.setFlightDate(null);
@@ -998,7 +995,7 @@ public class HalDao {
 		int status = jdbcTemplate.update(query, postFlightDataForm.getFlightType(), postFlightDataForm.getFlightDate(),
 				postFlightDataForm.getDepartureTime(), postFlightDataForm.getArrivalTime(),
 				postFlightDataForm.getStatus(), postFlightDataForm.getFlightHours(), postFlightDataForm.getError(),
-				postFlightDataForm.getSortieNumber(),postFlightDataForm.getRecordRowId());
+				postFlightDataForm.getSortieNumber(), postFlightDataForm.getRecordRowId());
 		if (status == 1) {
 			System.out.println("Data updated in postFlight table of : " + postFlightDataForm.getRecordRowId());
 		} else {
@@ -1014,31 +1011,29 @@ public class HalDao {
 		return flightTypes;
 
 	}
-	
+
 	public static List<String> getSortieNumbers(String recordId) {
 		String query = "SELECT sortie_num FROM flb_sortie_accept where record_Id='" + recordId + "'";
-		//List<String> sortieNumbers = new ArrayList<>();
+		// List<String> sortieNumbers = new ArrayList<>();
 		List<String> sortieNumbers = jdbcTemplate.query(query, new RowMapper<String>() {
 			public String mapRow(ResultSet rs, int rowNum) throws SQLException {
 				return rs.getString("sortie_num");
 			}
 		});
-		System.out.println("SortieNumbers="+sortieNumbers);
+		System.out.println("SortieNumbers=" + sortieNumbers);
 		return sortieNumbers;
 
 	}
 
 	public void updateSortieStatus(FlbPostFlightDataForm postFlightRow) {
-		String query="update flb_sortie_accept set Sortie_Status='CLOSED' where Sortie_Num='"+postFlightRow.getSortieNumber()+"'";
-		System.out.println("SortieStatusUpdateQuery="+query);
+		String query = "update flb_sortie_accept set Sortie_Status='CLOSED' where Sortie_Num='"
+				+ postFlightRow.getSortieNumber() + "'";
+		System.out.println("SortieStatusUpdateQuery=" + query);
 		try {
-		jdbcTemplate.update(query);
-		}catch(Exception e)
-		{
-			System.out.println("updateSortieStatusExceptioCatch="+e.getMessage());
+			jdbcTemplate.update(query);
+		} catch (Exception e) {
+			System.out.println("updateSortieStatusExceptioCatch=" + e.getMessage());
 		}
-		}
-
-	
+	}
 
 }

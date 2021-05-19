@@ -18,13 +18,38 @@
 	type="text/css" />
 <link href="${path}/resources/theme/css/bootstrap.css" rel="stylesheet"
 	type="text/css" />
+<link href="${path}/resources/theme/css/bootstrap-datetimepicker.css" rel="stylesheet"
+	type="text/css" />
+<link href="${path}/resources/theme/css/bootstrap-datetimepicker.min.css" rel="stylesheet"
+	type="text/css" />
+<link href="${path}/resources/theme/css/jquery.timepicker.css" rel="stylesheet"
+	type="text/css" />
+<link href="${path}/resources/theme/css/jquery.timepicker.min.css" rel="stylesheet"
+	type="text/css" />
+<link href="${path}/resources/theme/css/jquery.datetimepicker.min.css" rel="stylesheet"
+	type="text/css" />
+<link href="${path}/resources/theme/css/jquery.ui.all.css" rel="stylesheet"
+	type="text/css" />
+
 <script type="text/javascript"
-	src="${path}/resources/theme/js/jquery-1.9.1.js"></script>
+	src="${path}/resources/theme/js/jquery.js"></script>
+<%-- <script type="text/javascript"
+	src="${path}/resources/theme/js/jquery-1.9.1.js"></script> --%>
 <script type="text/javascript"
 	src="${path}/resources/theme/js/jquery-1.10.2.min.js"></script>
+<%-- <script type="text/javascript"
+	src="${path}/resources/theme/js/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript"
+	src="${path}/resources/theme/js/bootstrap-datetimepicker.min.js"></script> --%>
 
 <script type="text/javascript"
 	src="${path}/resources/theme/js/jquery.ui.datepicker.js"></script>
+<script type="text/javascript"
+	src="${path}/resources/theme/js/jquery.datetimepicker.full.js"></script>
+<script type="text/javascript"
+	src="${path}/resources/theme/js/jquery.datetimepicker.full.min.js"></script>
+<script type="text/javascript"
+	src="${path}/resources/theme/js/jquery.datetimepicker.min.js"></script>
 
 <script type="text/javascript"
 	src="${path}/resources/theme/js/jquery.dataTables.js"></script>
@@ -135,23 +160,25 @@ function closeConfirm() {
 
 $(function()
 		{
+	var contextPath = "<c:out value='${path}' />";
 	$("#datepicker1").datepicker(
 			
-	{
+	 {
 		maxDate:0,
 		changeMonth:true,
 		changeYear:true,
 		dateFormat:'dd-M-yy',
 		showOn:'button',
 		buttonImageOnly : true,
-		buttonImage:'/HAL_12/theme/images/datepicker.jpg'
-	}
+		buttonImage: contextPath + '/theme/images/datepicker.jpg'
+	} 
 	);
 		});
 
 
 $(function()
 		{
+	var contextPath = "<c:out value="${path}" />";
 	$("#datepicker2").datepicker(
 			{
 				maxDate:0,
@@ -160,11 +187,12 @@ $(function()
 				dateFormat:'dd-M-yy',
 				showOn:'button',
 				buttonImageOnly : true,
-				buttonImage:'/HAL_12/theme/images/datepicker.jpg'
+				buttonImage: contextPath + '/theme/images/datepicker.jpg'
 			});
 		});
 $(function()
 		{
+	var contextPath = "<c:out value='${path}' />";
 	$(".datepicker3").datepicker(
 			{
 				maxDate:0,
@@ -173,22 +201,45 @@ $(function()
 				dateFormat:'dd-M-yy',
 				showOn:'button',
 				buttonImageOnly : true,
-				buttonImage:'/HAL_12/theme/images/datepicker.jpg'
+				buttonImage: contextPath + '/theme/images/datepicker.jpg'
 			});
 		});
+		
 $(function()
 		{
-	$(".datepicker4").datepicker(
-			{
-				maxDate:0,
-				changeMonth:true,
-				changeYear:true,
-				dateFormat:'dd-M-yy',
-				showOn:'button',
-				buttonImageOnly : true,
-				buttonImage:'/HAL_12/theme/images/datepicker.jpg'
+			$(".datepicker4").datetimepicker({
+				format: 'd-M-Y H:i:s',
+				step: 1
 			});
 		});
+
+$(function(){
+	var table = $('#ListOfRecords').dataTable();
+	var tableApi = $('#ListOfRecords').DataTable();
+	var defaultPageLength = tableApi.page.len();
+	var count = table.fnGetData().length;
+	tableApi.page.len(count).draw();
+	console.log(count);
+	var datetimepicker;
+	for(i=0 ; i<count ; i++){
+		datetimepicker = ".datetimepicker"+i;
+		$(datetimepicker).datetimepicker({
+			format: 'd-M-Y H:i:s',
+			step: 1
+		});
+	}
+	tableApi.page.len(defaultPageLength).draw();
+	console.log();
+});
+
+function showDatePicker(index){
+	console.log("DateTimePicker selected: "+index);
+	$(function(){
+		var element = ".datetimepicker"+index;
+		$(element).datetimepicker('show');
+	});
+}
+
 		
 function updateTableLength(size) 
 {
@@ -377,6 +428,7 @@ function updateTableLength(size)
 							code="label.mpmDescription" /></td>
 					<td class="tableheading"><spring:message
 							code="label.meterName" /></td>
+					<td class="tableheading"><spring:message code="label.UOM" /></td>
 					<td class="tableheading"><spring:message
 							code="label.frequencyIteration" /></td>
 					<td class="tableheading"><spring:message
@@ -402,64 +454,72 @@ function updateTableLength(size)
 							path="pmDetailFormList[${status.index}].installedPN"
 							class="form-control" value="${pmForm.installedPN }"
 							style="width:77px; background-color: rgb(216, 216, 216);"
-							readonly="true" /></td>
+							readonly="true" title="${pmForm.installedPN }"/></td>
 					<td><form:input
 							path="pmDetailFormList[${status.index}].installedPartDesc"
 							class="form-control" value="${pmForm.installedPartDesc}"
 							style="width:149px; background-color: rgb(216, 216, 216);"
-							readonly="true" /></td>
+							readonly="true" title="${pmForm.installedPartDesc }"/></td>
 					<td><form:input
 							path="pmDetailFormList[${status.index}].installSerialNum"
 							class="form-control" value="${pmForm.installSerialNum}"
 							style="width:79px; background-color: rgb(216, 216, 216);"
-							readonly="true" /></td>
+							readonly="true" title="${pmForm.installSerialNum }"/></td>
 					<td><form:input
 							path="pmDetailFormList[${status.index}].workType"
 							class="form-control" value="${pmForm.workType}"
 							style="width:70px; background-color: rgb(216, 216, 216);"
-							readonly="true" /></td>
+							readonly="true" title="${pmForm.workType }"/></td>
 					<td><form:input
 							path="pmDetailFormList[${status.index}].mpmNum"
 							class="form-control" value="${pmForm.mpmNum}"
-							style="width:70px; background-color: rgb(216, 216, 216);"
-							readonly="true" /></td>
+							style="width:150px; background-color: rgb(216, 216, 216);"
+							readonly="true" title="${pmForm.mpmNum }"/></td>
 					<td><form:input
 							path="pmDetailFormList[${status.index}].mpmDescription"
 							class="form-control" value="${pmForm.mpmDescription}"
-							style="width:71px; background-color: rgb(216, 216, 216);"
-							readonly="true" /></td>
+							style="width:185px; background-color: rgb(216, 216, 216);"
+							readonly="true" title="${pmForm.mpmDescription }"/></td>
 					<td><form:input
 							path="pmDetailFormList[${status.index}].meterName"
 							class="form-control" value="${pmForm.meterName}"
-							style="width:130px; background-color: rgb(216, 216, 216);"
+							style="width:193px; background-color: rgb(216, 216, 216);"
+							readonly="true" title="${pmForm.meterName }"/></td>
+					<td><form:input path="pmDetailFormList[${status.index}].uom"
+							title="${pmForm.uom}" class="form-control"
+							style="width:100px; background-color: rgb(216, 216, 216);"
 							readonly="true" /></td>
 					<td><form:input
 							path="pmDetailFormList[${status.index}].frequencyIteration"
 							class="form-control" value="${pmForm.frequencyIteration}"
 							style="width:83px; background-color: rgb(216, 216, 216);"
-							readonly="true" /></td>
+							readonly="true" title="${pmForm.frequencyIteration }"/></td>
 					<td><form:input
 							path="pmDetailFormList[${status.index}].frequencyUnit"
 							class="form-control" value="${pmForm.frequencyUnit}"
 							style="width:90px; background-color: rgb(216, 216, 216);"
-							readonly="true" /></td>
+							readonly="true" title="${pmForm.frequencyUnit }"/></td>
 					<td class="datepicker4"><form:input readonly="true"
 							path="pmDetailFormList[${status.index}].lastCompiledDate"
 							class="form-control datepicker3"
 							value="${pmForm.lastCompiledDate}" style="width:104px;"
-							required="required" /></td>
-					<td class="datepicker6"><form:input readonly="true"
+							required="required" title="${pmForm.lastCompiledDate }"/></td>
+					<td class="input-group date"><form:input readonly="true"
 							path="pmDetailFormList[${status.index}].nextDueDate"
-							class="form-control datepicker4" value="${pmForm.nextDueDate}"
-							style="width:101px;" required="required" /></td>
+							class="form-control datetimepicker${status.index}" value="${pmForm.nextDueDate}"
+							style="width:180px;" required="required" title="${pmForm.nextDueDate }"/>
+							<span class="input-group-addon">
+               				<span class="glyphicon glyphicon-calendar" onclick="showDatePicker(${status.index})"/>
+               				</span>
+               				</td>
 					<td><form:input
 							path="pmDetailFormList[${status.index}].lastCompiledValue"
 							readonly="${!emmsDataForm.freeze}" class="form-control"
-							value="${pmForm.lastCompiledValue}" style="width:85px;" /></td>
+							value="${pmForm.lastCompiledValue}" style="width:85px;" title="${pmForm.lastCompiledValue }"/></td>
 					<td><form:input
 							path="pmDetailFormList[${status.index}].nextDueValue"
 							readonly="${!emmsDataForm.freeze}" class="form-control"
-							value="${pmForm.nextDueValue}" style="width:77px;" /></td>
+							value="${pmForm.nextDueValue}" style="width:77px;" title="${pmForm.nextDueValue }"/></td>
 
 					<c:set var="class1" value="defaultstatus"></c:set>
 

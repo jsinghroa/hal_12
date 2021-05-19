@@ -370,6 +370,7 @@ public class HalDao {
 			pmDetailForm.setMpmDescription(rs.getString("mpm_description"));
 			pmDetailForm.setWorkType(rs.getString("work_type"));
 			pmDetailForm.setMeterName(rs.getString("meter_name"));
+			pmDetailForm.setUom(rs.getString("UOM"));
 			pmDetailForm.setFrequencyUnit(rs.getString("frequency_unit"));
 			pmDetailForm.setFrequencyIteration(rs.getInt("iterationcalfrequency"));
 

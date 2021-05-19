@@ -64,7 +64,7 @@
 				</form:label></td>
 				<td width="400" height="35px">
 					<form:radiobutton class="form-check-input" path = "role" value = "ROLE_ADMIN" label = "Admin" />
-                  	<form:radiobutton class="form-check-input" path = "role" value = "ROLE_EMPLOYEE" label = "Employee" /></td></tr>
+                  	<form:radiobutton class="form-check-input" path = "role" value = "ROLE_EMPLOYEE" label = "Employee" checked="checked"/></td></tr>
 				
 			<tr align="center"><td width="200"><form:label path="label">
 					<spring:message code="label.password" />

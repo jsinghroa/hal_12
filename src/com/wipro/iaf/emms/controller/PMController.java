@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import com.wipro.iaf.emms.constants.Constants;
 import com.wipro.iaf.emms.form.EmmsDataForm;
-import com.wipro.iaf.emms.form.MeterDetailsForm;
 import com.wipro.iaf.emms.form.PMDetailForm;
 import com.wipro.iaf.emms.service.HalService;
 import com.wipro.iaf.emms.validator.CommonValidator;
@@ -52,16 +51,14 @@ public class PMController {
 
 	@Autowired
 	InstallableAssetController installAssetController;
-	
+
 	@Autowired
 	PMValidator pmValidator;
 
 	CommonValidator commonValidator = new CommonValidator();
-	
-	
+
 	@RequestMapping(value = { "/savePm" }, method = RequestMethod.GET)
-	public List<PMDetailForm> fetchPMDetails(String recordID,
-			EmmsDataForm emmsDataForm) {
+	public List<PMDetailForm> fetchPMDetails(String recordID, EmmsDataForm emmsDataForm) {
 		this.emmsDataForm = emmsDataForm;
 		emmsDataForm.setRecordId(recordID);
 		emmsDataForm.setSelectedRecordId(recordID);
@@ -70,13 +67,10 @@ public class PMController {
 	}
 
 	@RequestMapping(value = "/savePm", method = RequestMethod.POST)
-	public String submit(
-			@ModelAttribute("emmsDataForm") EmmsDataForm emmsDataForm,
-			BindingResult bindingResult, ModelMap model,
-			@RequestParam String action, @RequestParam String linkSelected) {
+	public String submit(@ModelAttribute("emmsDataForm") EmmsDataForm emmsDataForm, BindingResult bindingResult,
+			ModelMap model, @RequestParam String action, @RequestParam String linkSelected) {
 		if (linkSelected.equals(Constants.LISTVIEW)) {
-			List<EmmsDataForm> emmsDataFormList = halService
-					.getEmmsDataOnView();
+			List<EmmsDataForm> emmsDataFormList = halService.getEmmsDataOnView();
 			model.addAttribute("emmsDataForm", this.emmsDataForm);
 			model.addAttribute("emmsDataFormList", emmsDataFormList);
 			model.addAttribute("pageVar", "/WEB-INF/jsp/ListViewEmmsData.jsp");
@@ -84,54 +78,47 @@ public class PMController {
 
 			if (linkSelected.equals(Constants.ASSETCONFIG)) {
 				emmsDataForm.setSelectedRecordId(emmsDataForm.getRecordId());
-				if (null != emmsDataForm.getSelectedRecordId()
-						&& !emmsDataForm.getSelectedRecordId().isEmpty()) {
-					emmsDataForm = halService.fetchDetails(emmsDataForm
-							.getSelectedRecordId());
-					emmsDataForm.setAssetFormList(assetController
-							.fetchAssetDetails(
-									emmsDataForm.getSelectedRecordId(),
-									emmsDataForm));
+				if (null != emmsDataForm.getSelectedRecordId() && !emmsDataForm.getSelectedRecordId().isEmpty()) {
+					emmsDataForm = halService.fetchDetails(emmsDataForm.getSelectedRecordId());
+					emmsDataForm.setAssetFormList(
+							assetController.fetchAssetDetails(emmsDataForm.getSelectedRecordId(), emmsDataForm));
 				}
 				model.addAttribute("emmsDataForm", emmsDataForm);
 				model.addAttribute("pageVar", "/WEB-INF/jsp/AssetConfig.jsp");
 
 			} else if (linkSelected.equals(Constants.INSTALLABLEASSET)) {
 
-				if (null != emmsDataForm.getSelectedRecordId()
-						&& !emmsDataForm.getSelectedRecordId().isEmpty()) {
-					emmsDataForm = halService.fetchDetails(emmsDataForm
-							.getSelectedRecordId());
-					emmsDataForm.setAssetFormList(assetController
-							.fetchAssetDetails(emmsDataForm
-									.getSelectedRecordId(),emmsDataForm));
-					for(int i=0;i<emmsDataForm.getAssetFormList().size();i++){
-						System.out.println("listviewEmmsdataController------ size"+ emmsDataForm.getAssetFormList().get(i));
-						if(emmsDataForm.getAssetFormList().get(i).getErrorStatus()!=null){
-							System.out.println("error status value"+emmsDataForm.getAssetFormList().get(i).getErrorStatus().toString());
-							System.out.println("indicator value"+emmsDataForm.getAssetFormList().get(i).getIndicator().toString());
-							
-							if (emmsDataForm.getAssetFormList().get(i).getErrorStatus().equals(Constants.VALIDATEDWITHWARNING)
-								&& emmsDataForm.getAssetFormList().get(i).getIndicator().equals("I") ){
+				if (null != emmsDataForm.getSelectedRecordId() && !emmsDataForm.getSelectedRecordId().isEmpty()) {
+					emmsDataForm = halService.fetchDetails(emmsDataForm.getSelectedRecordId());
+					emmsDataForm.setAssetFormList(
+							assetController.fetchAssetDetails(emmsDataForm.getSelectedRecordId(), emmsDataForm));
+					for (int i = 0; i < emmsDataForm.getAssetFormList().size(); i++) {
+						System.out.println(
+								"listviewEmmsdataController------ size" + emmsDataForm.getAssetFormList().get(i));
+						if (emmsDataForm.getAssetFormList().get(i).getErrorStatus() != null) {
+							System.out.println("error status value"
+									+ emmsDataForm.getAssetFormList().get(i).getErrorStatus().toString());
+							System.out.println("indicator value"
+									+ emmsDataForm.getAssetFormList().get(i).getIndicator().toString());
+
+							if (emmsDataForm.getAssetFormList().get(i).getErrorStatus()
+									.equals(Constants.VALIDATEDWITHWARNING)
+									&& emmsDataForm.getAssetFormList().get(i).getIndicator().equals("I")) {
 								emmsDataForm.setInstallableFormList(installAssetController
-								             .fetchInstallableDetails(emmsDataForm
-												.getSelectedRecordId(),emmsDataForm));
+										.fetchInstallableDetails(emmsDataForm.getSelectedRecordId(), emmsDataForm));
 							}
 						}
-				   }
-					
+					}
+
 				}
 				model.addAttribute("emmsDataForm", emmsDataForm);
-				model.addAttribute("pageVar",
-						"/WEB-INF/jsp/InstallableAsset.jsp");
+				model.addAttribute("pageVar", "/WEB-INF/jsp/InstallableAsset.jsp");
 
 			} else if (linkSelected.equals(Constants.PM)) {
-				if (null != emmsDataForm.getSelectedRecordId()
-						&& !emmsDataForm.getSelectedRecordId().isEmpty()) {
-					emmsDataForm = halService.fetchDetails(emmsDataForm
-							.getSelectedRecordId());
-					emmsDataForm.setPmDetailFormList(this.fetchPMDetails(
-							emmsDataForm.getSelectedRecordId(), emmsDataForm));
+				if (null != emmsDataForm.getSelectedRecordId() && !emmsDataForm.getSelectedRecordId().isEmpty()) {
+					emmsDataForm = halService.fetchDetails(emmsDataForm.getSelectedRecordId());
+					emmsDataForm
+							.setPmDetailFormList(this.fetchPMDetails(emmsDataForm.getSelectedRecordId(), emmsDataForm));
 
 				}
 				model.addAttribute("emmsDataForm", emmsDataForm);
@@ -139,15 +126,11 @@ public class PMController {
 			} else if (linkSelected.equals(Constants.METER)) {
 
 				emmsDataForm.setSelectedRecordId(emmsDataForm.getRecordId());
-				if (null != emmsDataForm.getSelectedRecordId()
-						&& !emmsDataForm.getSelectedRecordId().isEmpty()) {
-					emmsDataForm = halService.fetchDetails(emmsDataForm
-							.getSelectedRecordId());
+				if (null != emmsDataForm.getSelectedRecordId() && !emmsDataForm.getSelectedRecordId().isEmpty()) {
+					emmsDataForm = halService.fetchDetails(emmsDataForm.getSelectedRecordId());
 
-					emmsDataForm.setMeterFormList(meterController
-							.fetchMeterDetails(
-									emmsDataForm.getSelectedRecordId(),
-									emmsDataForm));
+					emmsDataForm.setMeterFormList(
+							meterController.fetchMeterDetails(emmsDataForm.getSelectedRecordId(), emmsDataForm));
 				}
 				model.addAttribute("emmsDataForm", emmsDataForm);
 				model.addAttribute("pageVar", "/WEB-INF/jsp/meterDetails.jsp");
@@ -155,20 +138,15 @@ public class PMController {
 			} else if (linkSelected.equals(Constants.FLB)) {
 
 				emmsDataForm.setSelectedRecordId(emmsDataForm.getRecordId());
-				if (null != emmsDataForm.getSelectedRecordId()
-						&& !emmsDataForm.getSelectedRecordId().isEmpty()) {
+				if (null != emmsDataForm.getSelectedRecordId() && !emmsDataForm.getSelectedRecordId().isEmpty()) {
 
-					emmsDataForm = halService.fetchDetails(emmsDataForm
-							.getSelectedRecordId());
-					emmsDataForm.setFlbMeterDetailsFormList(flbController
-							.fetchFLBMeterDetails(emmsDataForm
-									.getSelectedRecordId(),emmsDataForm));
-					emmsDataForm.setFlbPostFlightDataFormList(flbController
-							.fetchFLBPostFlightDetails(emmsDataForm
-									.getSelectedRecordId(),emmsDataForm));
-					emmsDataForm.setFlbSortieArFormList(flbController
-							.fetchFLBSortieArDetails(emmsDataForm
-									.getSelectedRecordId(),emmsDataForm));
+					emmsDataForm = halService.fetchDetails(emmsDataForm.getSelectedRecordId());
+					emmsDataForm.setFlbMeterDetailsFormList(
+							flbController.fetchFLBMeterDetails(emmsDataForm.getSelectedRecordId(), emmsDataForm));
+					emmsDataForm.setFlbPostFlightDataFormList(
+							flbController.fetchFLBPostFlightDetails(emmsDataForm.getSelectedRecordId(), emmsDataForm));
+					emmsDataForm.setFlbSortieArFormList(
+							flbController.fetchFLBSortieArDetails(emmsDataForm.getSelectedRecordId(), emmsDataForm));
 
 				}
 				model.addAttribute("emmsDataForm", emmsDataForm);
@@ -176,27 +154,21 @@ public class PMController {
 
 			} else if (action.equals("Validate")) {
 
-				List<PMDetailForm> pmFormList = emmsDataForm
-						.getPmDetailFormList();
+				List<PMDetailForm> pmFormList = emmsDataForm.getPmDetailFormList();
 
 				DateConvertor convertor = new DateConvertor();
-				
+
 				boolean flag = true;
-				int count = 0;
-				int date = 0;
 				String status = Constants.NOTVALIDATED;
-				String time = new Time(System.currentTimeMillis()).toString();
 				String inductionDate = "";
 				String signalOutDate = "";
 
-				if (0 < emmsDataForm.getSignalOutDate().length()
-						&& 0 < emmsDataForm.getInductionDate().length()) {
-					inductionDate = emmsDataForm.getInductionDate() + " "+ time;
-					signalOutDate = emmsDataForm.getSignalOutDate() + " "+ time;
+				if (0 < emmsDataForm.getSignalOutDate().length() && 0 < emmsDataForm.getInductionDate().length()) {
+					inductionDate = emmsDataForm.getInductionDate();
+					signalOutDate = emmsDataForm.getSignalOutDate();
 					emmsDataForm.setInductionDate(convertor.getDate(inductionDate));
 					emmsDataForm.setSignalOutDate(convertor.getDate(signalOutDate));
 				} else {
-					date = 1;
 					emmsDataForm.setInductionDate("");
 					emmsDataForm.setSignalOutDate("");
 				}
@@ -205,130 +177,94 @@ public class PMController {
 				if (null != pmFormList && pmFormList.size() > 0) {
 					int i = 0;
 					for (PMDetailForm pmForm : pmFormList) {
-						
+
 						pmForm.setRecordRowId(pmDetailFormList.get(i).getRecordRowId());
-						
-						//System.out.println("PMFORM=" + pmForm);
-						/* Code for validation added by Jeevesh on 15-march */
+						String lastCompiledDate = "";
+						String nextDueDate = "";
 
-						// When validated without entering data in any row
-						/*if (pmForm.getLastCompiledDate().length() <= 0
-								&& pmForm.getNextDueDate().length() <= 0
-								&& pmForm.getLastCompiledValue() != null
-								&& pmForm.getNextDueValue() != null) {
-							pmForm.setErrorStatus(Constants.WARNING);
-							emmsDataForm.setAssetPmStatus(Constants.VALIDATIONCOMPLETEDWITHERRORS);
+						if (pmForm.getLastCompiledDate().length() > 0) {
+							lastCompiledDate = pmForm.getLastCompiledDate();
+						}
 
+						if (pmForm.getNextDueDate().length() > 0) {
+							nextDueDate = pmForm.getNextDueDate();
+						}
 
-							if (emmsDataForm.getSignalOutDate().length() > 0
-									&& emmsDataForm.getInductionDate().length() > 0
-									&& pmForm.getLastCompiledDate().length() > 0
-									&& pmForm.getNextDueDate().length() > 0) {
-								halService.update(emmsDataForm, pmForm);
-							} else {
-								pmForm.setErrorDesc(Constants.NOTNULL);
-							}
-						} else{*/
-							/*If there is any data in the row*/
-							String lastCompiledDate = "";
-							String nextDueDate = "";
-							
-							if (pmForm.getLastCompiledDate().length() > 0) {
-								lastCompiledDate = pmForm.getLastCompiledDate() + " " + time;
-							}
-							
-							if (pmForm.getNextDueDate().length() > 0){
-								nextDueDate = pmForm.getNextDueDate() + " " + time;
-							}
-							
-							pmForm.setLastCompiledDate(lastCompiledDate);
-							pmForm.setNextDueDate(nextDueDate);
-							
-							String validate = pmValidator.pmValidate(inductionDate, signalOutDate, 
-																	lastCompiledDate, nextDueDate, 
-																	pmForm.getLastCompiledValue(),
-																	pmForm.getNextDueValue(), pmForm.getFrequencyUnit());
-							System.out.println("PM Validations: "+validate);
-							
-							if (validate == "") {
-								//NO WARNING ALL CORRECT
-								System.out.println("INSIDE VALIDATED");
-								status = Constants.VALIDATED;
-								pmForm.setErrorDesc(validate);
-								pmForm.setErrorStatus(status);
-							} else {
-								//ANY COLUMNS DOES NOT HAVE CORRECT DATA
-								System.out.println("INSIDE NOT VALIDATED");
-								status = Constants.NOTVALIDATED;
-								flag = true;
-								pmForm.setErrorDesc(validate);
-								pmForm.setErrorStatus(status);
-							}
-							
-							if(pmForm.getLastCompiledDate().length() > 0){
-								
-								pmForm.setLastCompiledDate(convertor.getDateTime(pmForm.getLastCompiledDate()));
-							}
-							
-							if (pmForm.getNextDueDate().length() > 0){
-								
-								pmForm.setNextDueDate(convertor.getDateTime(pmForm.getNextDueDate()));
-							}
-							
-							//Code for validation ends here
-							if(pmForm.getLastCompiledDate().length() > 0 && pmForm.getNextDueDate().length() >0){
-								
-								halService.update(emmsDataForm, pmForm);
-							}
-							
-							if(pmForm.getLastCompiledDate().length() > 0){
-								pmForm.setLastCompiledDate(convertor.getDateTime4(lastCompiledDate));
-							}
-							
-							if (pmForm.getNextDueDate().length() > 0){
-								pmForm.setNextDueDate(convertor.getDateTime4(nextDueDate));
-							}
-							
-							pmDetailFormList.get(i).setLastCompiledDate(pmForm.getLastCompiledDate());
-							pmDetailFormList.get(i).setNextDueDate(pmForm.getNextDueDate());
-							i++;
-						//}
-						
+						pmForm.setLastCompiledDate(lastCompiledDate);
+						pmForm.setNextDueDate(nextDueDate);
+
+						String validate = pmValidator.pmValidate(inductionDate, signalOutDate, lastCompiledDate,
+								nextDueDate, pmForm.getLastCompiledValue(), pmForm.getNextDueValue(),
+								pmForm.getFrequencyUnit());
+
+						if (validate == "") {
+							// NO WARNING ALL CORRECT
+							System.out.println("INSIDE VALIDATED");
+							status = Constants.VALIDATED;
+							pmForm.setErrorDesc(validate);
+							pmForm.setErrorStatus(status);
+						} else {
+							// ANY COLUMNS DOES NOT HAVE CORRECT DATA
+							System.out.println("INSIDE NOT VALIDATED");
+							status = Constants.NOTVALIDATED;
+							flag = true;
+							pmForm.setErrorDesc(validate);
+							pmForm.setErrorStatus(status);
+						}
+
+						if (pmForm.getLastCompiledDate().length() > 0) {
+							pmForm.setLastCompiledDate(convertor.getDateTime(pmForm.getLastCompiledDate()));
+						}
+
+						if (pmForm.getNextDueDate().length() > 0) {
+							pmForm.setNextDueDate(convertor.getDateTime(pmForm.getNextDueDate()));
+						}
+
+						// Code for validation ends here
+						if (pmForm.getLastCompiledDate().length() > 0 && pmForm.getNextDueDate().length() > 0) {
+							halService.update(emmsDataForm, pmForm);
+						}
+
+						if (pmForm.getLastCompiledDate().length() > 0) {
+							pmForm.setLastCompiledDate(convertor.getDateTime5(lastCompiledDate));
+						}
+
+						if (pmForm.getNextDueDate().length() > 0) {
+							pmForm.setNextDueDate(convertor.getDateTime5(nextDueDate));
+						}
+
+						pmDetailFormList.get(i).setLastCompiledDate(pmForm.getLastCompiledDate());
+						pmDetailFormList.get(i).setNextDueDate(pmForm.getNextDueDate());
+						i++;
 					}
-					
-					if(flag == true){
-						
+
+					if (flag == true) {
+
 						emmsDataForm.setAssetPmStatus(Constants.VALIDATIONCOMPLETEDWITHERRORS);
-					}else {
-						
+					} else {
+
 						emmsDataForm.setAssetPmStatus(Constants.VALIDATIONCOMPLETED);
 					}
-					System.out.println("Hello"+pmFormList.toString());
-					/*emmsDataForm.setPmDetailFormList(pmFormList);*/
 				}
-				
-				emmsDataForm.setInductionDate(convertor.getDate2(emmsDataForm
-						.getInductionDate()));
-				emmsDataForm.setSignalOutDate(convertor.getDate2(emmsDataForm
-						.getSignalOutDate()));
-				System.out.println(emmsDataForm);
+
+				emmsDataForm.setInductionDate(convertor.getDate2(emmsDataForm.getInductionDate()));
+				emmsDataForm.setSignalOutDate(convertor.getDate2(emmsDataForm.getSignalOutDate()));
 				model.addAttribute("emmsDataForm", emmsDataForm);
 				model.addAttribute("pageVar", "/WEB-INF/jsp/PMScreen.jsp");
 
 			} else if (action.equals("Save")) {
 
 				List<PMDetailForm> pmFormList = emmsDataForm.getPmDetailFormList();
-				
+
 				DateConvertor convertor = new DateConvertor();
-				
+
 				String status = Constants.NOTVALIDATED;
 				String time = new Time(System.currentTimeMillis()).toString();
 				String inductionDate = "";
 				String signalOutDate = "";
-				if (0 < emmsDataForm.getSignalOutDate().length()
-						&& 0 < emmsDataForm.getInductionDate().length()) {
-					inductionDate = emmsDataForm.getInductionDate() + " "+ time;
-					signalOutDate = emmsDataForm.getSignalOutDate() + " "+ time;
+				if (0 < emmsDataForm.getSignalOutDate().length() && 0 < emmsDataForm.getInductionDate().length()) {
+					inductionDate = emmsDataForm.getInductionDate() + " " + time;
+					signalOutDate = emmsDataForm.getSignalOutDate() + " " + time;
 					emmsDataForm.setInductionDate(convertor.getDate(inductionDate));
 					emmsDataForm.setSignalOutDate(convertor.getDate(signalOutDate));
 				} else {
@@ -338,94 +274,72 @@ public class PMController {
 				emmsDataForm.setAssetPmStatus(Constants.VALIDATIONCOMPLETEDWITHERRORS);
 				if (null != pmFormList && pmFormList.size() > 0) {
 
-					int i =0;
+					int i = 0;
 					for (PMDetailForm pmForm : pmFormList) {
-	
+
 						pmForm.setRecordRowId(pmDetailFormList.get(i).getRecordRowId());
 
-						// When validated without entering data in any row
-						/*if (pmForm.getLastCompiledDate() == null
-								&& pmForm.getNextDueDate() == null
-								&& pmForm.getLastCompiledValue() != null
-								&& pmForm.getNextDueValue() != null) {
-							pmForm.setErrorStatus(Constants.WARNING);
-							emmsDataForm.setAssetPmStatus(Constants.VALIDATIONCOMPLETEDWITHERRORS);
+						String lastCompiledDate = "";
+						String nextDueDate = "";
 
-							if (emmsDataForm.getSignalOutDate().length() > 0
-									&& emmsDataForm.getInductionDate().length() > 0
-									&& pmForm.getLastCompiledDate().length() > 0
-									&& pmForm.getNextDueDate().length() > 0) {
-								halService.update(emmsDataForm, pmForm);
-							} else {
-								pmForm.setErrorDesc(Constants.NOTNULL);
-							}
-						} else{*/
-							/*If there is any data in the row*/
-							String lastCompiledDate = "";
-							String nextDueDate = "";
-							
-							if (pmForm.getLastCompiledDate().length() > 0) {
-								lastCompiledDate = pmForm.getLastCompiledDate() + " " + time;
-							}
-							
-							if (pmForm.getNextDueDate().length() > 0){
-								nextDueDate = pmForm.getNextDueDate() + " " + time;
-							}
-							
-							pmForm.setLastCompiledDate(lastCompiledDate);
-							pmForm.setNextDueDate(nextDueDate);
-							
-							pmForm.setErrorStatus("");
-							pmForm.setErrorDesc("");
-							
-							if(pmForm.getLastCompiledDate().length() > 0){
-								
-								pmForm.setLastCompiledDate(convertor.getDateTime(pmForm.getLastCompiledDate()));
-							}
-							
-							if (pmForm.getNextDueDate().length() > 0){
-								
-								pmForm.setNextDueDate(convertor.getDateTime(pmForm.getNextDueDate()));
-							}
-							
-							//Code for validation ends here
-							if(pmForm.getLastCompiledDate().length() > 0 && pmForm.getNextDueDate().length() >0){
-								
-								halService.update(emmsDataForm, pmForm);
-							}
-							
-							if(pmForm.getLastCompiledDate().length() > 0){
-								pmForm.setLastCompiledDate(convertor.getDateTime4(lastCompiledDate));
-							}
-							
-							if (pmForm.getNextDueDate().length() > 0){
-								pmForm.setNextDueDate(convertor.getDateTime4(nextDueDate));
-							}
-							
-							pmDetailFormList.get(i).setLastCompiledDate(pmForm.getLastCompiledDate());
-							pmDetailFormList.get(i).setNextDueDate(pmForm.getNextDueDate());
-							i++;
-						//}
-						
-					
+						if (pmForm.getLastCompiledDate().length() > 0) {
+							lastCompiledDate = pmForm.getLastCompiledDate() + " " + time;
+						}
+
+						if (pmForm.getNextDueDate().length() > 0) {
+							nextDueDate = pmForm.getNextDueDate() + " " + time;
+						}
+
+						pmForm.setLastCompiledDate(lastCompiledDate);
+						pmForm.setNextDueDate(nextDueDate);
+
+						pmForm.setErrorStatus("");
+						pmForm.setErrorDesc("");
+
+						if (pmForm.getLastCompiledDate().length() > 0) {
+
+							pmForm.setLastCompiledDate(convertor.getDateTime(pmForm.getLastCompiledDate()));
+						}
+
+						if (pmForm.getNextDueDate().length() > 0) {
+
+							pmForm.setNextDueDate(convertor.getDateTime(pmForm.getNextDueDate()));
+						}
+
+						// Code for validation ends here
+						if (pmForm.getLastCompiledDate().length() > 0 && pmForm.getNextDueDate().length() > 0) {
+
+							halService.update(emmsDataForm, pmForm);
+						}
+
+						if (pmForm.getLastCompiledDate().length() > 0) {
+							pmForm.setLastCompiledDate(convertor.getDateTime4(lastCompiledDate));
+						}
+
+						if (pmForm.getNextDueDate().length() > 0) {
+							pmForm.setNextDueDate(convertor.getDateTime4(nextDueDate));
+						}
+
+						pmDetailFormList.get(i).setLastCompiledDate(pmForm.getLastCompiledDate());
+						pmDetailFormList.get(i).setNextDueDate(pmForm.getNextDueDate());
+						i++;
+						// }
 
 					}
 				}
-				emmsDataForm.setInductionDate(convertor.getDate2(emmsDataForm
-						.getInductionDate()));
-				emmsDataForm.setSignalOutDate(convertor.getDate2(emmsDataForm
-						.getSignalOutDate()));
-				System.out.println("Length of PMLIST: "+emmsDataForm.getPmDetailFormList().size());
-				System.out.println("Length of PMLIST: "+this.pmDetailFormList.size());
+				emmsDataForm.setInductionDate(convertor.getDate2(emmsDataForm.getInductionDate()));
+				emmsDataForm.setSignalOutDate(convertor.getDate2(emmsDataForm.getSignalOutDate()));
+				System.out.println("Length of PMLIST: " + emmsDataForm.getPmDetailFormList().size());
+				System.out.println("Length of PMLIST: " + this.pmDetailFormList.size());
 				model.addAttribute("emmsDataForm", emmsDataForm);
 				model.addAttribute("pageVar", "/WEB-INF/jsp/PMScreen.jsp");
 
-			}else if (action.equals("Export")) {
+			} else if (action.equals("Export")) {
 
 				System.out.println("INSIDE EXPORT");
-				
+
 				String filename = "C:\\Users\\Public\\Desktop\\PM.xlsx";
-				//String filename = "D:\\PM.xlsx";
+				// String filename = "D:\\PM.xlsx";
 				XSSFWorkbook workbook = new XSSFWorkbook();
 				XSSFSheet sheet = workbook.createSheet("PMExportedData");
 				XSSFRow head = sheet.createRow((short) 0);
@@ -446,59 +360,39 @@ public class PMController {
 				head.createCell(14).setCellValue(Constants.ErrorDescription);
 				XSSFRow row = null;
 				int rowIndex = 1;
-				List<PMDetailForm> pmForms = emmsDataForm
-						.getPmDetailFormList();
+				List<PMDetailForm> pmForms = emmsDataForm.getPmDetailFormList();
 				if (null != pmForms && pmForms.size() > 0) {
 
 					for (PMDetailForm pmExportForm : pmForms) {
 						System.out.println("count=" + rowIndex);
 						row = sheet.createRow((short) rowIndex);
-						row.createCell(0).setCellValue(
-								pmExportForm.getInstalledPN());
-						row.createCell(1).setCellValue(
-								pmExportForm.getInstalledPartDesc());
-						row.createCell(2).setCellValue(
-								pmExportForm.getInstallSerialNum());
-						row.createCell(3)
-								.setCellValue(pmExportForm.getWorkType());
-						row.createCell(4).setCellValue(
-								pmExportForm.getMpmNum());
-						row.createCell(5).setCellValue(
-								pmExportForm.getMpmDescription());
-						row.createCell(6).setCellValue(
-								pmExportForm.getMeterName());
-						row.createCell(7).setCellValue(
-								pmExportForm.getFrequencyIteration());
-						row.createCell(8).setCellValue(
-								pmExportForm.getFrequencyUnit());
-						row.createCell(9).setCellValue(
-								pmExportForm.getLastCompiledDate());
-						row.createCell(10).setCellValue(
-								pmExportForm.getNextDueDate());
-						if(null!=pmExportForm.getLastCompiledValue())
-						{
-							row.createCell(11).setCellValue(
-									pmExportForm.getLastCompiledValue().toPlainString());
-							
-						}else
-						{
+						row.createCell(0).setCellValue(pmExportForm.getInstalledPN());
+						row.createCell(1).setCellValue(pmExportForm.getInstalledPartDesc());
+						row.createCell(2).setCellValue(pmExportForm.getInstallSerialNum());
+						row.createCell(3).setCellValue(pmExportForm.getWorkType());
+						row.createCell(4).setCellValue(pmExportForm.getMpmNum());
+						row.createCell(5).setCellValue(pmExportForm.getMpmDescription());
+						row.createCell(6).setCellValue(pmExportForm.getMeterName());
+						row.createCell(7).setCellValue(pmExportForm.getFrequencyIteration());
+						row.createCell(8).setCellValue(pmExportForm.getFrequencyUnit());
+						row.createCell(9).setCellValue(pmExportForm.getLastCompiledDate());
+						row.createCell(10).setCellValue(pmExportForm.getNextDueDate());
+						if (null != pmExportForm.getLastCompiledValue()) {
+							row.createCell(11).setCellValue(pmExportForm.getLastCompiledValue().toPlainString());
+
+						} else {
 							row.createCell(11).setCellValue("");
 						}
-						if(null!=pmExportForm.getNextDueValue())
-						{
+						if (null != pmExportForm.getNextDueValue()) {
 							System.out.println(pmExportForm.getNextDueValue().toPlainString());
-							row.createCell(12).setCellValue(
-									pmExportForm.getNextDueValue().toPlainString());
-							
-						}else
-						{
+							row.createCell(12).setCellValue(pmExportForm.getNextDueValue().toPlainString());
+
+						} else {
 							row.createCell(12).setCellValue("");
 						}
-						
-						row.createCell(13).setCellValue(
-								pmExportForm.getErrorStatus());
-						row.createCell(14).setCellValue(
-								pmExportForm.getErrorDesc());
+
+						row.createCell(13).setCellValue(pmExportForm.getErrorStatus());
+						row.createCell(14).setCellValue(pmExportForm.getErrorDesc());
 						rowIndex++;
 					}
 
@@ -519,26 +413,21 @@ public class PMController {
 
 			} else if (action.equals("Import")) {
 
-				String s = emmsDataForm.getPmExcelfile()
-						.getOriginalFilename();
+				String s = emmsDataForm.getPmExcelfile().getOriginalFilename();
 
-				List<PMDetailForm> oldPmList = emmsDataForm
-						.getPmDetailFormList();
+				List<PMDetailForm> oldPmList = emmsDataForm.getPmDetailFormList();
 				List<PMDetailForm> excelPmList = new ArrayList<PMDetailForm>();
 
 				XSSFWorkbook workbook = null;
 				try {
-					workbook = new XSSFWorkbook(emmsDataForm
-							.getPmExcelfile().getInputStream());
+					workbook = new XSSFWorkbook(emmsDataForm.getPmExcelfile().getInputStream());
 				} catch (IOException e) {
 
 				}
 
 				XSSFSheet worksheet = workbook.getSheetAt(0);
-				boolean headerStatus = pmValidator.validateHeader(worksheet
-						.getRow(0));
-				boolean countRows = oldPmList.size() == worksheet
-						.getLastRowNum();
+				boolean headerStatus = pmValidator.validateHeader(worksheet.getRow(0));
+				boolean countRows = oldPmList.size() == worksheet.getLastRowNum();
 				System.out.println(headerStatus + ":" + countRows);
 
 				if (headerStatus && countRows) {
@@ -549,82 +438,63 @@ public class PMController {
 
 						commonValidator.checkCellType2003(row.getCell(0));
 
-						excelPmForm.setInstalledPN(((oldPmList.get(i)
-								.getInstalledPN())));
-						excelPmForm.setInstalledPartDesc((oldPmList.get(i)
-								.getInstalledPartDesc()));
+						excelPmForm.setInstalledPN(((oldPmList.get(i).getInstalledPN())));
+						excelPmForm.setInstalledPartDesc((oldPmList.get(i).getInstalledPartDesc()));
 						excelPmForm.setInstallSerialNum(oldPmList.get(i).getInstallSerialNum());
 						excelPmForm.setWorkType(oldPmList.get(i).getWorkType());
-						excelPmForm.setMpmNum(oldPmList.get(i)
-								.getMpmNum());
+						excelPmForm.setMpmNum(oldPmList.get(i).getMpmNum());
 						excelPmForm.setMpmDescription(oldPmList.get(i).getMpmDescription());
 						excelPmForm.setMeterName(oldPmList.get(i).getMeterName());
-						excelPmForm.setFrequencyIteration(oldPmList.get(i)
-								.getFrequencyIteration());
-						excelPmForm.setFrequencyUnit(oldPmList.get(i)
-								.getFrequencyUnit());
+						excelPmForm.setFrequencyIteration(oldPmList.get(i).getFrequencyIteration());
+						excelPmForm.setFrequencyUnit(oldPmList.get(i).getFrequencyUnit());
 						excelPmForm.setRecordRowId(pmDetailFormList.get(i).getRecordRowId());
-						
+
 						if (row.getCell(9) != null) {
-						String lastCompliedDate=commonValidator
-								.checkCellType2003(row.getCell(9));
-						if (commonValidator.timeStampValidate1(
-								lastCompliedDate).equals(
-								Constants.NOERROR)) {
-						excelPmForm.setLastCompiledDate(lastCompliedDate);
-						}
+							String lastCompliedDate = commonValidator.checkCellType2003(row.getCell(9));
+							if (commonValidator.timeStampValidate1(lastCompliedDate).equals(Constants.NOERROR)) {
+								excelPmForm.setLastCompiledDate(lastCompliedDate);
+							}
 						}
 						if (row.getCell(10) != null) {
-							String nextDueDate=commonValidator
-									.checkCellType2003(row.getCell(10));
-							if (commonValidator.timeStampValidate1(
-									nextDueDate).equals(
-									Constants.NOERROR)) {
-							
+							String nextDueDate = commonValidator.checkCellType2003(row.getCell(10));
+							if (commonValidator.timeStampValidate1(nextDueDate).equals(Constants.NOERROR)) {
+
 								excelPmForm.setNextDueDate(nextDueDate);
-						}
+							}
 						}
 						if (row.getCell(11) != null) {
-							System.out.println("LCV:"+row.getCell(11)+":"+commonValidator
-									.checkCellType2003(row.getCell(11)));
-							if(commonValidator
-									.checkCellType2003(row.getCell(11)).isEmpty()){
-								
-							}else
-							{
+							System.out.println("LCV:" + row.getCell(11) + ":"
+									+ commonValidator.checkCellType2003(row.getCell(11)));
+							if (commonValidator.checkCellType2003(row.getCell(11)).isEmpty()) {
+
+							} else {
 								System.out.println("inside else pm");
-							excelPmForm
-								.setLastCompiledValue(new BigDecimal(commonValidator
-											.checkCellType2003(row.getCell(11))));
+								excelPmForm.setLastCompiledValue(
+										new BigDecimal(commonValidator.checkCellType2003(row.getCell(11))));
 							}
-							}
+						}
 						if (row.getCell(12) != null) {
-							System.out.println("LCV:"+row.getCell(12)+":"+commonValidator
-									.checkCellType2003(row.getCell(12)));
-							if(commonValidator
-									.checkCellType2003(row.getCell(12)).isEmpty()){
-								
-							}else
-							{
+							System.out.println("LCV:" + row.getCell(12) + ":"
+									+ commonValidator.checkCellType2003(row.getCell(12)));
+							if (commonValidator.checkCellType2003(row.getCell(12)).isEmpty()) {
+
+							} else {
 								System.out.println("inside else pm");
-							
-							excelPmForm
-									.setNextDueValue(new BigDecimal(commonValidator
-											.checkCellType2003(row.getCell(12))));
+
+								excelPmForm.setNextDueValue(
+										new BigDecimal(commonValidator.checkCellType2003(row.getCell(12))));
 							}
-							}
-						excelPmForm.setErrorStatus(oldPmList.get(i)
-								.getErrorStatus());
-						excelPmForm.setErrorDesc(oldPmList.get(i)
-								.getErrorDesc());
-						
+						}
+						excelPmForm.setErrorStatus(oldPmList.get(i).getErrorStatus());
+						excelPmForm.setErrorDesc(oldPmList.get(i).getErrorDesc());
+
 						excelPmList.add(excelPmForm);
 						System.out.println(excelPmForm.toString());
 
 					}
 					emmsDataForm.setPmDetailFormList(excelPmList);
 
-				}else
+				} else
 
 				{
 					emmsDataForm.setBulkImportStatus("Error");
@@ -633,11 +503,8 @@ public class PMController {
 				model.addAttribute("emmsDataForm", emmsDataForm);
 				model.addAttribute("pageVar", "/WEB-INF/jsp/PMScreen.jsp");
 
-			} 
-			
-			
-			
-			
+			}
+
 		}
 		return "basic";
 	}

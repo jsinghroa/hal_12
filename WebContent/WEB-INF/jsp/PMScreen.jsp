@@ -207,7 +207,12 @@ $(function()
 		
 $(function()
 		{
-			$(".datepicker4").datetimepicker({
+			$(".datetimepickeri").datetimepicker({
+				format: 'd-M-Y H:i:s',
+				step: 1
+			});
+			
+			$(".datetimepickers").datetimepicker({
 				format: 'd-M-Y H:i:s',
 				step: 1
 			});
@@ -220,10 +225,17 @@ $(function(){
 	var count = table.fnGetData().length;
 	tableApi.page.len(count).draw();
 	console.log(count);
-	var datetimepicker;
+	var datetimepickerl;
+	var datetimepickern;
 	for(i=0 ; i<count ; i++){
-		datetimepicker = ".datetimepicker"+i;
-		$(datetimepicker).datetimepicker({
+		datetimepickerl	= ".datetimepickerl"+i;
+		datetimepickern = ".datetimepickern"+i;
+		$(datetimepickern).datetimepicker({
+			format: 'd-M-Y H:i:s',
+			step: 1
+		});
+		
+		$(datetimepickerl).datetimepicker({
 			format: 'd-M-Y H:i:s',
 			step: 1
 		});
@@ -232,14 +244,33 @@ $(function(){
 	console.log();
 });
 
-function showDatePicker(index){
+function showDatePickerInductionDate(){
+	$(function(){
+		$('.datetimepickeri').datetimepicker('show');
+	});
+}
+
+function showDatePickerSignalOutDate(){
+	$(function(){
+		$('.datetimepickers').datetimepicker('show');
+	});
+}
+
+function showDatePickerLastCompliedDate(index){
 	console.log("DateTimePicker selected: "+index);
 	$(function(){
-		var element = ".datetimepicker"+index;
+		var element = ".datetimepickerl"+index;
 		$(element).datetimepicker('show');
 	});
 }
 
+function showDatePickerNextDueDate(index){
+	console.log("DateTimePicker selected: "+index);
+	$(function(){
+		var element = ".datetimepickern"+index;
+		$(element).datetimepicker('show');
+	});
+}
 		
 function updateTableLength(size) 
 {
@@ -367,10 +398,13 @@ function updateTableLength(size)
 					<td><form:label path="inductionDate">
 							<spring:message code="label.inductionDate" />
 						</form:label><span style="color: red; font-weight: bold; margin-left: -46px;"></span></td>
-					<td class="datepicker2"><form:input type="text"
-							id="datepicker1" path="inductionDate" class="form-control"
+					<td class="form-group date"><div class="input-group date"><form:input type="text"
+							path="inductionDate" class="form-control datetimepickeri"
 							value="${emmsDataForm.inductionDate}"
-							style="background-color: rgb(216, 216, 216); width: 70%;" /></td>
+							style="background-color: #eeeeee; width: 180px;" />
+							<span class="input-group-addon">
+               				<span class="glyphicon glyphicon-calendar" onclick="showDatePickerInductionDate()"/>
+               				</span></div></td>
 
 					<td><form:label path="mainAssetPart">
 							<spring:message code="label.mainAssetPart" />
@@ -389,10 +423,12 @@ function updateTableLength(size)
 					<td><form:label path="signalOutDate">
 							<spring:message code="label.signalOutDate" />
 						</form:label><span style="color: red; font-weight: bold; margin-left: -46px;"></span></td>
-					<td class="datepicker3"><form:input path="signalOutDate"
-							id="datepicker2" value="${emmsDataForm.signalOutDate}"
-							class="form-control"
-							style="background-color: rgb(216, 216, 216); width: 70%;" /></td>
+					<td class="form-group date"><div class="input-group date"><form:input path="signalOutDate"
+							value="${emmsDataForm.signalOutDate}"
+							class="form-control datetimepickers"
+							style="background-color: #eeeeee; width: 180px;" /><span class="input-group-addon">
+               				<span class="glyphicon glyphicon-calendar" onclick="showDatePickerSignalOutDate()"/>
+               				</span></div></td>
 
 
 					<td><form:label path="mainAssetSerial">
@@ -499,18 +535,23 @@ function updateTableLength(size)
 							class="form-control" value="${pmForm.frequencyUnit}"
 							style="width:90px; background-color: rgb(216, 216, 216);"
 							readonly="true" title="${pmForm.frequencyUnit }"/></td>
-					<td class="datepicker4"><form:input readonly="true"
+					<td class="form-group date">
+						<div class="input-group date"><form:input readonly="true"
 							path="pmDetailFormList[${status.index}].lastCompiledDate"
-							class="form-control datepicker3"
-							value="${pmForm.lastCompiledDate}" style="width:104px;"
-							required="required" title="${pmForm.lastCompiledDate }"/></td>
-					<td class="input-group date"><form:input readonly="true"
+							class="form-control datetimepickerl${status.index}"
+							value="${pmForm.lastCompiledDate}" style="width:180px;"
+							required="required" title="${pmForm.lastCompiledDate }"/>
+							<span class="input-group-addon">
+               				<span class="glyphicon glyphicon-calendar" onclick="showDatePickerLastCompliedDate(${status.index})"></span>
+               				</span></div></td>
+					<td class="form-group date">
+						<div class="input-group date"><form:input readonly="true"
 							path="pmDetailFormList[${status.index}].nextDueDate"
-							class="form-control datetimepicker${status.index}" value="${pmForm.nextDueDate}"
+							class="form-control datetimepickern${status.index}" value="${pmForm.nextDueDate}"
 							style="width:180px;" required="required" title="${pmForm.nextDueDate }"/>
 							<span class="input-group-addon">
-               				<span class="glyphicon glyphicon-calendar" onclick="showDatePicker(${status.index})"/>
-               				</span>
+               				<span class="glyphicon glyphicon-calendar" onclick="showDatePickerNextDueDate(${status.index})"></span>
+               				</span></div>
                				</td>
 					<td><form:input
 							path="pmDetailFormList[${status.index}].lastCompiledValue"

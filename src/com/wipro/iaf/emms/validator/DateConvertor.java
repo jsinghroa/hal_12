@@ -38,7 +38,7 @@ public class DateConvertor {
 		} else {
 			try {
 				Date iDate = new SimpleDateFormat("yyyy-MM-dd").parse(date);
-				String correctDate = new SimpleDateFormat("dd-MMM-yyyy")
+				String correctDate = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss")
 						.format(iDate);
 				return correctDate;
 			} catch (ParseException e) {
@@ -125,6 +125,26 @@ public class DateConvertor {
 				String correctDate = new SimpleDateFormat("dd-MMM-yyyy")
 						.format(iDate);
 				System.out.println("4:" + correctDate);
+				return correctDate;
+			} catch (ParseException e) {
+				e.printStackTrace();
+				return "";
+			}
+		}
+	}
+	
+	public String getDateTime5(String date) {
+
+		if (null == date) {
+			return "";
+		}  else if (date.isEmpty()) {
+			return "";
+		}else {
+			try {
+				Date iDate = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss")
+						.parse(date);
+				String correctDate = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss")
+						.format(iDate);
 				return correctDate;
 			} catch (ParseException e) {
 				e.printStackTrace();

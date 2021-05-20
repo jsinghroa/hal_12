@@ -1,7 +1,6 @@
 package com.wipro.iaf.emms.form;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -18,6 +17,7 @@ public class PMDetailForm {
 	private String mpmNum;
 	private String mpmDescription;
 	private String meterName;
+	private String uom;
 	private int frequencyIteration;
 	private String frequencyUnit;
 	private String errorStatus;
@@ -95,6 +95,14 @@ public class PMDetailForm {
 		this.meterName = meterName;
 	}
 
+	public String getUom() {
+		return uom;
+	}
+
+	public void setUom(String uom) {
+		this.uom = uom;
+	}
+
 	public int getFrequencyIteration() {
 		return frequencyIteration;
 	}
@@ -161,18 +169,13 @@ public class PMDetailForm {
 
 	@Override
 	public String toString() {
-		return "PMDetailForm [installedPN=" + installedPN
-				+ ", installedPartDesc=" + installedPartDesc
-				+ ", installSerialNum=" + installSerialNum + ", workType="
-				+ workType + ", mpmNum=" + mpmNum + ", mpmDescription="
-				+ mpmDescription + ", meterName=" + meterName
-				+ ", frequencyIteration=" + frequencyIteration
-				+ ", frequencyUnit=" + frequencyUnit + ", errorStatus="
-				+ errorStatus + ", errorDesc=" + errorDesc
-				+ ", lastCompiledDate=" + lastCompiledDate + ", nextDueDate="
-				+ nextDueDate + ", lastCompiledValue=" + lastCompiledValue
-				+ ", nextDueValue=" + nextDueValue + ", recordRowId="
-				+ recordRowId + "]";
+		return "PMDetailForm [installedPN=" + installedPN + ", installedPartDesc=" + installedPartDesc
+				+ ", installSerialNum=" + installSerialNum + ", workType=" + workType + ", mpmNum=" + mpmNum
+				+ ", mpmDescription=" + mpmDescription + ", meterName=" + meterName + ", uom=" + uom
+				+ ", frequencyIteration=" + frequencyIteration + ", frequencyUnit=" + frequencyUnit + ", errorStatus="
+				+ errorStatus + ", errorDesc=" + errorDesc + ", lastCompiledDate=" + lastCompiledDate + ", nextDueDate="
+				+ nextDueDate + ", lastCompiledValue=" + lastCompiledValue + ", nextDueValue=" + nextDueValue
+				+ ", recordRowId=" + recordRowId + "]";
 	}
 
 }

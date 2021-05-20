@@ -154,7 +154,7 @@ public class PMValidator {
 		}
 
 		// last complied value validations
-		if(frequencyUnit == "") {
+		if(frequencyUnit.equals("")) {
 			if (!(lastCompliedValue != null)) {
 				if (pmErrorMsg.length() > 0) {
 					pmErrorMsg += " || " + Constants.LASTCOMPLIEDVALUEMANDATORYERROR;
@@ -180,7 +180,7 @@ public class PMValidator {
 		}
 
 		// next due value validations		
-		if(frequencyUnit == "") {
+		if(frequencyUnit.equals("")) {
 			if (!(nextDueValue != null)) {
 				if (pmErrorMsg.length() > 0) {
 					pmErrorMsg += " || " + Constants.NEXTDUEVALUEMANDATORYERROR;

@@ -7,6 +7,7 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.log4j.Logger;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -56,6 +57,7 @@ public class PMController {
 	PMValidator pmValidator;
 
 	CommonValidator commonValidator = new CommonValidator();
+	Logger logger = Logger.getLogger(PMController.class);
 
 	@RequestMapping(value = { "/savePm" }, method = RequestMethod.GET)
 	public List<PMDetailForm> fetchPMDetails(String recordID, EmmsDataForm emmsDataForm) {
@@ -153,7 +155,7 @@ public class PMController {
 				model.addAttribute("pageVar", "/WEB-INF/jsp/FLBScreen.jsp");
 
 			} else if (action.equals("Validate")) {
-
+				logger.info("Inside PMController Validate");
 				List<PMDetailForm> pmFormList = emmsDataForm.getPmDetailFormList();
 
 				DateConvertor convertor = new DateConvertor();

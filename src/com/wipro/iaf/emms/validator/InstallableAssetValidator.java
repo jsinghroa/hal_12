@@ -25,315 +25,200 @@ import com.wipro.iaf.emms.form.AssetConfigForm;
 import com.wipro.iaf.emms.form.InstallableAssetForm;
 
 @Component
-@Scope(value="session", proxyMode=ScopedProxyMode.TARGET_CLASS)
+@Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
 
 public class InstallableAssetValidator {
-	
+
 	public String installableAssetErrorMsg = Constants.NOERROR;
 	CommonValidator commonValidator = new CommonValidator();
-	
+
 	String formatValidation;
-	
-	public String installableAssetValidate(String inductionDate, String signalOutDate,
-			String installedPN, String inLieuPN, String installedSN, String conditionCode,
-			String manufactorDate, String receiptDate,List<String> pnsncombination,List<String> pninlieucombination,List<String> sninlieucombination,
-			Map<String,InstallableAssetForm> lcnForm,String parent) {
-		installableAssetErrorMsg=Constants.NOERROR;
 
+	public String installableAssetValidate(String inductionDate, String signalOutDate, String installedPN,
+			String inLieuPN, String installedSN, String conditionCode, String manufactorDate, String receiptDate,
+			List<String> pnsncombination, List<String> pninlieucombination, List<String> sninlieucombination,
+			Map<String, InstallableAssetForm> lcnForm, String parent) {
+		installableAssetErrorMsg = Constants.NOERROR;
 
-		String pnsn=installedPN+":"+installedSN;
-		String pninlieu=installedPN+":"+inLieuPN;
-		String sninlieu=installedSN+":"+inLieuPN;
+		String pnsn = installedPN + ":" + installedSN;
+		String pninlieu = installedPN + ":" + inLieuPN;
+		String sninlieu = installedSN + ":" + inLieuPN;
+
+		installableAssetErrorMsg = Constants.NOERROR;
 		
-		
-		installableAssetErrorMsg=Constants.NOERROR;
-		
-		if(installedSN.length()>=50||inLieuPN.length()>=80)
-		{
+
+		if (installedSN.length() >= 50 || inLieuPN.length() >= 80) {
 			if (installableAssetErrorMsg.length() > 0) {
-				installableAssetErrorMsg += " || "
-						+ Constants.INLIEULENGTHERROR+"||"+Constants.SNLENGTHERROR;
+				installableAssetErrorMsg += " || " + Constants.INLIEULENGTHERROR + "||" + Constants.SNLENGTHERROR;
 			} else
-				installableAssetErrorMsg += Constants.INLIEULENGTHERROR+"||"+Constants.SNLENGTHERROR;
+				installableAssetErrorMsg += Constants.INLIEULENGTHERROR + "||" + Constants.SNLENGTHERROR;
 		}
-		
-		
-		
-		
-		if(inductionDate.isEmpty()) {
-			if(installableAssetErrorMsg.length() > 0) {
+
+		if (inductionDate.isEmpty()) {
+			if (installableAssetErrorMsg.length() > 0) {
 				installableAssetErrorMsg += " || " + Constants.INDUCTIONMANDATORYERROR;
-	    	}
-	    	else
-	    		installableAssetErrorMsg += Constants.INDUCTIONMANDATORYERROR;
+			} else
+				installableAssetErrorMsg += Constants.INDUCTIONMANDATORYERROR;
 		}
-		
-		
-		formatValidation = commonValidator.timeStampValidate(inductionDate);
-		if(!formatValidation.isEmpty()) {
-			if(installableAssetErrorMsg.length() > 0) {
-				installableAssetErrorMsg += " || " + formatValidation;
-	    	}
-	    	else
-	    		installableAssetErrorMsg += formatValidation;
-		}
-		
-		if(signalOutDate.isEmpty()) {
-			if(installableAssetErrorMsg.length() > 0) {
+
+		if (signalOutDate.isEmpty()) {
+			if (installableAssetErrorMsg.length() > 0) {
 				installableAssetErrorMsg += " || " + Constants.SIGNALOUTMANDATORYERROR;
-	    	}
-	    	else
-	    		installableAssetErrorMsg += Constants.SIGNALOUTMANDATORYERROR;
+			} else
+				installableAssetErrorMsg += Constants.SIGNALOUTMANDATORYERROR;
 		}
-		
-		formatValidation = commonValidator.timeStampValidate(signalOutDate);
-		if(!formatValidation.isEmpty()) {
-			if(installableAssetErrorMsg.length() > 0) {
-				installableAssetErrorMsg += " || " + formatValidation;
-	    	}
-	    	else
-	    		installableAssetErrorMsg += formatValidation;
-		}
-		
-		//if(Timestamp.valueOf(signalOutDate).compareTo(Timestamp.valueOf(inductionDate))<=0) {
-			
+
 		try {
-			if(new SimpleDateFormat("dd-MMM-yy hh:mm:ss").parse(signalOutDate)
-					.compareTo(new SimpleDateFormat("dd-MMM-yy hh:mm:ss").parse(inductionDate))<=0) {
-				if(installableAssetErrorMsg.length() > 0) {
+			if (new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss").parse(signalOutDate)
+					.compareTo(new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss").parse(inductionDate)) <= 0) {
+				if (installableAssetErrorMsg.length() > 0) {
 					installableAssetErrorMsg += " || " + Constants.SIGNALOUTGREATERTOINDUCTIONERROR;
-				}
-				else
+				} else
 					installableAssetErrorMsg += Constants.SIGNALOUTGREATERTOINDUCTIONERROR;
 			}
 		} catch (ParseException e) {
-			if(installableAssetErrorMsg.length() > 0) {
+			/*if (installableAssetErrorMsg.length() > 0) {
 				installableAssetErrorMsg += " || " + Constants.TIMESTAMPFORMATERROR;
-			}
-			else
-				installableAssetErrorMsg += Constants.TIMESTAMPFORMATERROR;
+			} else
+				installableAssetErrorMsg += Constants.TIMESTAMPFORMATERROR;*/
+			System.out.println(e.getMessage());
 		}
-		
-		
-		//CHANGES
-		if(installedPN.isEmpty() && !(inLieuPN.isEmpty())) {
-			if(installableAssetErrorMsg.length() > 0) {
+
+		// CHANGES
+		if (installedPN.isEmpty() && !(inLieuPN.isEmpty())) {
+			if (installableAssetErrorMsg.length() > 0) {
 				installableAssetErrorMsg += " || " + Constants.INSTALLEDPNMANDATORY;
-	    	}
-	    	else
-	    		installableAssetErrorMsg += Constants.INSTALLEDPNMANDATORY;
+			} else
+				installableAssetErrorMsg += Constants.INSTALLEDPNMANDATORY;
 		}
-		
-	if(!(installedPN.isEmpty()) && !(installedSN.isEmpty())) {
-			if(null!=lcnForm.get(parent))
-				{
-				System.out.println("vALIDATOR:INSIDE IF");
-			String pn=lcnForm.get(parent).getInstallablePN();
-			String sn=lcnForm.get(parent).getInstallableSN();
-			
-			System.out.println("PN="+pn);
-			System.out.println("SN="+sn);
-			
-			if(pn.isEmpty()||sn.isEmpty())
-			{
-			if(installableAssetErrorMsg.length() > 0) {
-				installableAssetErrorMsg += " || " + Constants.PARENTCHILDERROR;
-	    	}
-	    	else
-	    		installableAssetErrorMsg += Constants.PARENTCHILDERROR;
-		
-			}
-			}
-			else
-			{
-				System.out.println("vALIDATOR:INSIDE ELSE");
-				if(installableAssetErrorMsg.length() > 0) {
+
+		if (!(installedPN.isEmpty()) && !(installedSN.isEmpty())) {
+			if (null != lcnForm.get(parent)) {
+
+				String pn = lcnForm.get(parent).getInstallablePN();
+				String sn = lcnForm.get(parent).getInstallableSN();
+
+				if (pn.isEmpty() || sn.isEmpty()) {
+					if (installableAssetErrorMsg.length() > 0) {
+						installableAssetErrorMsg += " || " + Constants.PARENTCHILDERROR;
+					} else
+						installableAssetErrorMsg += Constants.PARENTCHILDERROR;
+
+				}
+			} else {
+
+				if (installableAssetErrorMsg.length() > 0) {
 					installableAssetErrorMsg += " || " + Constants.PARENT;
-		    	}
-		    	else
-		    		installableAssetErrorMsg += Constants.PARENT;
-				
+				} else
+					installableAssetErrorMsg += Constants.PARENT;
+
 			}
-			
-			
-			
+
 		}
-	
-		if(installedPN.isEmpty() && inLieuPN.isEmpty()) {
-			if(installableAssetErrorMsg.length() > 0) {
+
+		if (installedPN.isEmpty() && inLieuPN.isEmpty()) {
+			if (installableAssetErrorMsg.length() > 0) {
 				installableAssetErrorMsg += " || " + Constants.INSTALLEDINLIEUPNMANDATORYERROR;
-	    	}
-	    	else
-	    		installableAssetErrorMsg += Constants.INSTALLEDINLIEUPNMANDATORYERROR;
+			} else
+				installableAssetErrorMsg += Constants.INSTALLEDINLIEUPNMANDATORYERROR;
 		}
-		
-		
+
 		formatValidation = commonValidator.textValidate(inLieuPN);
-		if(!formatValidation.isEmpty()) {
-			if(installableAssetErrorMsg.length() > 0) {
+		if (!formatValidation.isEmpty()) {
+			if (installableAssetErrorMsg.length() > 0) {
 				installableAssetErrorMsg += " || " + formatValidation;
-	    	}
-	    	else
-	    		installableAssetErrorMsg += formatValidation;
+			} else
+				installableAssetErrorMsg += formatValidation;
 		}
-		
-		if(installedSN.isEmpty()) {
-			if(installableAssetErrorMsg.length() > 0) {
+
+		if (installedSN.isEmpty()) {
+			if (installableAssetErrorMsg.length() > 0) {
 				installableAssetErrorMsg += " || " + Constants.INSTALLEDSNMANDATORYERROR;
-	    	}
-	    	else
-	    		installableAssetErrorMsg += Constants.INSTALLEDSNMANDATORYERROR;
+			} else
+				installableAssetErrorMsg += Constants.INSTALLEDSNMANDATORYERROR;
 		}
-		
+
 		formatValidation = commonValidator.textValidate(installedSN);
-		if(!formatValidation.isEmpty()) {
-			if(installableAssetErrorMsg.length() > 0) {
+		if (!formatValidation.isEmpty()) {
+			if (installableAssetErrorMsg.length() > 0) {
 				installableAssetErrorMsg += " || " + formatValidation;
-	    	}
-	    	else
-	    		installableAssetErrorMsg += formatValidation;
+			} else
+				installableAssetErrorMsg += formatValidation;
 		}
-		
-		if((!installedPN.isEmpty())&& (!installedSN.isEmpty())&&conditionCode.isEmpty()) {
-			if(installableAssetErrorMsg.length() > 0) {
+
+		if ((!installedPN.isEmpty()) && (!installedSN.isEmpty()) && conditionCode.isEmpty()) {
+			if (installableAssetErrorMsg.length() > 0) {
 				installableAssetErrorMsg += " || " + Constants.CONDITIONCODEMANDATORYERROR;
-	    	}
-	    	else
-	    		installableAssetErrorMsg += Constants.CONDITIONCODEMANDATORYERROR;
+			} else
+				installableAssetErrorMsg += Constants.CONDITIONCODEMANDATORYERROR;
 		}
-		
-		if(!(conditionCode.equals(Constants.CONDITIONCODEA) || conditionCode.equals(Constants.CONDITIONCODEB))) {
-			if(installableAssetErrorMsg.length() > 0) {
+
+		if (!(conditionCode.equals(Constants.CONDITIONCODEA) || conditionCode.equals(Constants.CONDITIONCODEB))) {
+			if (installableAssetErrorMsg.length() > 0) {
 				installableAssetErrorMsg += " || " + Constants.CONDITIONCODEVALUEERROR;
-	    	}
-	    	else
-	    		installableAssetErrorMsg += Constants.CONDITIONCODEVALUEERROR;
+			} else
+				installableAssetErrorMsg += Constants.CONDITIONCODEVALUEERROR;
 		}
-		
-		if(manufactorDate.isEmpty()) {
-			if(installableAssetErrorMsg.length() > 0) {
+
+		if (manufactorDate.isEmpty()) {
+			if (installableAssetErrorMsg.length() > 0) {
 				installableAssetErrorMsg += " || " + Constants.DATEOFMANUFACTUREMANDATORYERROR;
-	    	}
-	    	else
-	    		installableAssetErrorMsg += Constants.DATEOFMANUFACTUREMANDATORYERROR;
+			} else
+				installableAssetErrorMsg += Constants.DATEOFMANUFACTUREMANDATORYERROR;
 		}
-		
-		formatValidation = commonValidator.timeStampValidate(manufactorDate);
-		if(!formatValidation.isEmpty()) {
-			if(installableAssetErrorMsg.length() > 0) {
-				installableAssetErrorMsg += " || " + formatValidation;
-	    	}
-	    	else
-	    		installableAssetErrorMsg += formatValidation;
-		}
-		
-		/*if(Timestamp.valueOf(manufactorDate).compareTo(Timestamp.valueOf(signalOutDate))>=0) {
-			if(installableAssetErrorMsg.length() > 0) {
-				installableAssetErrorMsg += " || " + Constants.SIGNALOUTGREATERTOMANUFACTORRECEIPTERROR;
-	    	}
-	    	else
-	    		installableAssetErrorMsg += Constants.SIGNALOUTGREATERTOMANUFACTORRECEIPTERROR;
-		}*/
-		
+
 		try {
-			if(new SimpleDateFormat("dd-MMM-yy hh:mm:ss").parse(manufactorDate)
-					.compareTo(new SimpleDateFormat("dd-MMM-yy hh:mm:ss").parse(signalOutDate))>=0) {
-				if(installableAssetErrorMsg.length() > 0) {
+			if (new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss").parse(manufactorDate)
+					.compareTo(new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss").parse(signalOutDate)) >= 0) {
+				if (installableAssetErrorMsg.length() > 0) {
 					installableAssetErrorMsg += " || " + Constants.SIGNALOUTGREATERTOMANUFACTORRECEIPTERROR;
-				}
-				else
+				} else
 					installableAssetErrorMsg += Constants.SIGNALOUTGREATERTOMANUFACTORRECEIPTERROR;
 			}
 		} catch (ParseException e) {
-			if(installableAssetErrorMsg.length() > 0) {
-				installableAssetErrorMsg += " || " + Constants.TIMESTAMPFORMATERROR;
-			}
-			else
-				installableAssetErrorMsg += Constants.TIMESTAMPFORMATERROR;
+			System.out.println(e.getMessage());
 		}
-		
-		
-		if(receiptDate.length()>0){
-			System.out.println("insideFormat");
-		formatValidation = commonValidator.timeStampValidate(receiptDate);
-		if(!formatValidation.isEmpty()) {
-			if(installableAssetErrorMsg.length() > 0) {
-				installableAssetErrorMsg += " || " + formatValidation;
-	    	}
-	    	else
-	    		installableAssetErrorMsg += formatValidation;
-		}
-		}
-	
-		
+
 		try {
-			System.out.println(installableAssetErrorMsg);
-			System.out.println(receiptDate.length());
-			if(receiptDate.length()>0){
-				System.out.println("inside");
-			if(new SimpleDateFormat("dd-MMM-yy hh:mm:ss").parse(receiptDate)
-					.compareTo(new SimpleDateFormat("dd-MMM-yy hh:mm:ss").parse(signalOutDate))>=0) {
-				if(installableAssetErrorMsg.length() > 0) {
-					installableAssetErrorMsg += " || " + Constants.SIGNALOUTGREATERTOMANUFACTORRECEIPTERROR;
+			if (receiptDate.length() > 0) {
+
+				if (new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss").parse(receiptDate)
+						.compareTo(new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss").parse(signalOutDate)) >= 0) {
+					if (installableAssetErrorMsg.length() > 0) {
+						installableAssetErrorMsg += " || " + Constants.SIGNALOUTGREATERTOMANUFACTORRECEIPTERROR;
+					} else
+						installableAssetErrorMsg += Constants.SIGNALOUTGREATERTOMANUFACTORRECEIPTERROR;
 				}
-				else
-					installableAssetErrorMsg += Constants.SIGNALOUTGREATERTOMANUFACTORRECEIPTERROR;
-			}
-			
-			
+
 			}
 		} catch (ParseException e) {
-			if(installableAssetErrorMsg.length() > 0) {
-				installableAssetErrorMsg += " || " + Constants.TIMESTAMPFORMATERROR;
+			System.out.println(e.getMessage());
 			}
-			else
-				installableAssetErrorMsg += Constants.TIMESTAMPFORMATERROR;
+
+		if (pnsncombination.contains(pnsn)) {
+			if (installableAssetErrorMsg.length() > 0) {
+				installableAssetErrorMsg += "||" + Constants.SAMEPNSNCOMBINATIONERROR;
+			} else
+				installableAssetErrorMsg += Constants.SAMEPNSNCOMBINATIONERROR;
 		}
-		
-		if(pnsncombination.contains(pnsn))
-		{
-			if(installableAssetErrorMsg.length() > 0) {
-			installableAssetErrorMsg+="||"+Constants.SAMEPNSNCOMBINATIONERROR;
-			}else
-				installableAssetErrorMsg+=Constants.SAMEPNSNCOMBINATIONERROR;
+
+		if (pninlieucombination.contains(pninlieu)) {
+			if (installableAssetErrorMsg.length() > 0) {
+				installableAssetErrorMsg += "||" + Constants.SAMEPNLIEUCOMBINATIONERROR;
+			} else
+				installableAssetErrorMsg += Constants.SAMEPNLIEUCOMBINATIONERROR;
 		}
-		
-		if(pninlieucombination.contains(pninlieu))
-		{
-			if(installableAssetErrorMsg.length() > 0) {
-			installableAssetErrorMsg+="||"+Constants.SAMEPNLIEUCOMBINATIONERROR;
-			}
-			else
-				installableAssetErrorMsg+=Constants.SAMEPNLIEUCOMBINATIONERROR;
+
+		if (sninlieucombination.contains(sninlieu)) {
+			if (installableAssetErrorMsg.length() > 0) {
+				installableAssetErrorMsg += "||" + Constants.SAMESNLIEUCOMBINATIONERROR;
+			} else
+				installableAssetErrorMsg += Constants.SAMESNLIEUCOMBINATIONERROR;
 		}
-		
-		if(sninlieucombination.contains(sninlieu))
-		{
-			if(installableAssetErrorMsg.length() > 0) {
-			installableAssetErrorMsg+="||"+Constants.SAMESNLIEUCOMBINATIONERROR;
-			}
-			else
-				installableAssetErrorMsg+=Constants.SAMESNLIEUCOMBINATIONERROR;
-		}
-		
-		
-		
-		
-		
-		
-		
+
 		System.out.println(installableAssetErrorMsg);
 		return installableAssetErrorMsg;
 	}
-	
-	
-	public String receiptDateValidate(String manufactorDate, String receiptDate) {
-		
-		if(receiptDate.isEmpty())
-			return Constants.NOERROR;
-		else return Constants.BLANKRECEIPTDATEMESSAGE;
-	}
-
 
 	public boolean validateHeader(XSSFRow xssfRow) {
 		System.out.println("Checking number of columns");
@@ -341,9 +226,9 @@ public class InstallableAssetValidator {
 			System.out.println("inside");
 			return false;
 		}
-		String endItemPn=xssfRow.getCell(0).getStringCellValue();
-		String endItemSn=xssfRow.getCell(1).getStringCellValue();
-		String installableModel=xssfRow.getCell(2).getStringCellValue();
+		String endItemPn = xssfRow.getCell(0).getStringCellValue();
+		String endItemSn = xssfRow.getCell(1).getStringCellValue();
+		String installableModel = xssfRow.getCell(2).getStringCellValue();
 		String indicator = xssfRow.getCell(3).getStringCellValue();
 		String lcn = xssfRow.getCell(4).getStringCellValue();
 		String position = xssfRow.getCell(5).getStringCellValue();
@@ -361,25 +246,17 @@ public class InstallableAssetValidator {
 		String errorStatus = xssfRow.getCell(17).getStringCellValue();
 		String errorDesc = xssfRow.getCell(18).getStringCellValue();
 		List<String> errorList = new ArrayList<String>();
-		System.out
-				.println("Number of columns are correct now checking name i.e header values");
-		if (Constants.ENDITEMPN.equalsIgnoreCase(endItemPn)&&
-				Constants.ENDITEMSN.equalsIgnoreCase(endItemSn)
-				&&Constants.INSTALLABLEMODEL.equalsIgnoreCase(installableModel)&&
-				Constants.INDICATOR.equalsIgnoreCase(indicator)
-				&& Constants.LCN.equalsIgnoreCase(lcn)
-				&& Constants.Position.equalsIgnoreCase(position)
-				&& Constants.BuildItem.equalsIgnoreCase(buildItem)
-				&& Constants.AssetNum.equalsIgnoreCase(assetNum)
-				&& Constants.PN.equalsIgnoreCase(partNum)
+		System.out.println("Number of columns are correct now checking name i.e header values");
+		if (Constants.ENDITEMPN.equalsIgnoreCase(endItemPn) && Constants.ENDITEMSN.equalsIgnoreCase(endItemSn)
+				&& Constants.INSTALLABLEMODEL.equalsIgnoreCase(installableModel)
+				&& Constants.INDICATOR.equalsIgnoreCase(indicator) && Constants.LCN.equalsIgnoreCase(lcn)
+				&& Constants.Position.equalsIgnoreCase(position) && Constants.BuildItem.equalsIgnoreCase(buildItem)
+				&& Constants.AssetNum.equalsIgnoreCase(assetNum) && Constants.PN.equalsIgnoreCase(partNum)
 				&& Constants.PartDescription.equalsIgnoreCase(partDescription)
-				&& Constants.SN.equalsIgnoreCase(serialNum)
-				&& Constants.InstalledPN.equalsIgnoreCase(installedPN)
-				&& Constants.InLieuPN.equalsIgnoreCase(inLieuPn)
-				&& Constants.InstalledSN.equalsIgnoreCase(installedSN)
+				&& Constants.SN.equalsIgnoreCase(serialNum) && Constants.InstalledPN.equalsIgnoreCase(installedPN)
+				&& Constants.InLieuPN.equalsIgnoreCase(inLieuPn) && Constants.InstalledSN.equalsIgnoreCase(installedSN)
 				&& Constants.ConditionCode.equalsIgnoreCase(conditionCode)
-				&& Constants.DateofManufacturing
-						.equalsIgnoreCase(dateOfManfacturing)
+				&& Constants.DateofManufacturing.equalsIgnoreCase(dateOfManfacturing)
 				&& Constants.DateofReceipt.equalsIgnoreCase(dateOfReciept)
 				&& Constants.ErrorStatus.equalsIgnoreCase(errorStatus)
 				&& Constants.ErrorDescription.equalsIgnoreCase(errorDesc)) {
@@ -388,5 +265,5 @@ public class InstallableAssetValidator {
 			return false;
 		}
 	}
-	
+
 }

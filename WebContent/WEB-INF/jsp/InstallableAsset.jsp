@@ -28,6 +28,19 @@
 	src="${path}/resources/theme/js/jquery.ui.datepicker.js"></script>
 <script type="text/javascript"
 	src="${path}/resources/theme/js/jquery.dataTables.js"></script>
+
+<link href="${path}/resources/theme/css/jquery.datetimepicker.min.css"
+	rel="stylesheet" type="text/css" />
+<link href="${path}/resources/theme/css/jquery.ui.all.css"
+	rel="stylesheet" type="text/css" />
+<script type="text/javascript"
+	src="${path}/resources/theme/js/jquery.datetimepicker.full.js"></script>
+<script type="text/javascript"
+	src="${path}/resources/theme/js/jquery.datetimepicker.full.min.js"></script>
+<script type="text/javascript"
+	src="${path}/resources/theme/js/jquery.datetimepicker.min.js"></script>
+
+
 <script type="text/javascript">
 	$('document').ready(function() {
 
@@ -116,58 +129,7 @@
 	function disableIndicatorRows(){
 		document.getElementById('disableIndicator').setAttribute("value","1");
 	}
-
-	$(function() {
-		$("#datepicker1").datepicker({
-			maxDate : 0,
-			changeMonth : true,
-			changeYear : true,
-			dateFormat : 'dd-M-yy',
-			showOn:'button',
-			buttonImageOnly : true,
-			buttonImage:'/HAL_12/theme/images/datepicker.jpg',
-			disabled: document.getElementById("freezeFlag").value === "true" ? true : false
-		});
-	});
-
-	$(function() {
-		$("#datepicker2").datepicker({
-			maxDate : 0,
-			changeMonth : true,
-			changeYear : true,
-			dateFormat : 'dd-M-yy',
-			showOn:'button',
-			buttonImageOnly : true,
-			buttonImage:'/HAL_12/theme/images/datepicker.jpg',
-			disabled: document.getElementById("freezeFlag").value === "true" ? true : false
-		});
-	});
-	$(function() {
-		$(".datepicker3").datepicker({
-			maxDate : 0,
-			changeMonth : true,
-			changeYear : true,
-			dateFormat : 'dd-M-yy',
-			showOn:'button',
-			buttonImageOnly : true,
-			buttonImage:'/HAL_12/theme/images/datepicker.jpg',
-			disabled: document.getElementById("freezeFlag").value === "true" ? true : false
-		});
-	});
-	$(function() {
-		$(".datepicker4").datepicker({
-			maxDate : 0,
-			changeMonth : true,
-			changeYear : true,
-			dateFormat : 'dd-M-yy',
-			showOn:'button',
-			buttonImageOnly : true,
-			buttonImage:'/HAL_12/theme/images/datepicker.jpg',
-			disabled: document.getElementById("freezeFlag").value === "true" ? true : false
-		});
-	});
-	
-
+		
 	function updateTableLength(size) 
 	{
 	console.log('Size='+size);
@@ -176,14 +138,104 @@
 	table.page.len(size+1).draw();
 
 	};
+	$(function()
+			{
+				$(".inductionDateTimePicker").datetimepicker({
+					format: 'd-M-Y H:i:s',
+					step: 1,
+					maxDate:0
+				});
+				
+				$(".signalOutDateTimePicker").datetimepicker({
+					format: 'd-M-Y H:i:s',
+					step: 1,
+					maxDate:0
+				});
+			});
+	$(function(){
+		var table = $('#ListOfRecords').dataTable();
+		var tableApi = $('#ListOfRecords').DataTable();
+		var defaultPageLength = tableApi.page.len();
+		var count = table.fnGetData().length;
+		tableApi.page.len(count).draw();
+		console.log(count);
+		var datetimepickerm;
+		var datetimepickerr;
+		for(i=0 ; i<count ; i++){
+			datetimepickerm	= ".manufacturingDateTimePicker"+i;
+			datetimepickerr = ".receiptDateTimePicker"+i;
+			$(datetimepickerr).datetimepicker({
+				format: 'd-M-Y H:i:s',
+				step: 1,
+				maxDate:0
+			});
+			
+			$(datetimepickerm).datetimepicker({
+				format: 'd-M-Y H:i:s',
+				step: 1,
+				maxDate:0
+			});
+		}
+		tableApi.page.len(defaultPageLength).draw();
+		console.log();
+	});
+	function showDatePickerInductionDate(){
+		var freezeFlag = document.getElementById("freezeFlag").value;
+		if (freezeFlag == "true") 
+			{}
+		else{
+			$(function(){
+			$('.inductionDateTimePicker').datetimepicker('show');
+		});
+		}
+	}
+	function showDatePickerSignalOutDate(){
+	
+		var freezeFlag = document.getElementById("freezeFlag").value;
+		
+		if (freezeFlag == "true") 
+			{}else
+				{
+				$(function(){
+					$('.signalOutDateTimePicker').datetimepicker('show');
+				});
+				}
+	}
+	function showDatePickerManufactureDate(index){
+		var freezeFlag = document.getElementById("freezeFlag").value;
+		console.log("DateTimePicker selected: "+index);
+		if (freezeFlag == "true") 
+			{}
+			else
+			{
+				$(function(){
+			var element = ".manufacturingDateTimePicker"+index;
+			$(element).datetimepicker('show');
+		});}
+	}
+	function showDatePickerReceiptDate(index){
+		var freezeFlag = document.getElementById("freezeFlag").value;
+		console.log("DateTimePicker selected: "+index);
+		if (freezeFlag == "true") 
+			{}else{
+		$(function(){
+			var element = ".receiptDateTimePicker"+index;
+			$(element).datetimepicker('show');
+		});}
+	}
 
+
+
+	
+	
 	
 </script>
 </head>
 
 <body>
 
-	<form:form method="POST" action="${path}/Installable/saveInstall?${_csrf.parameterName }=${_csrf.token }"
+	<form:form method="POST"
+		action="${path}/Installable/saveInstall?${_csrf.parameterName }=${_csrf.token }"
 		commandName="emmsDataForm"
 		style="overflow-y: auto; overflow-x: hidden; height: 91%;"
 		enctype="multipart/form-data">
@@ -283,10 +335,10 @@
 					<td><form:input type="hidden" path="freeze" id="freezeFlag"
 							class="form-control" value="${emmsDataForm.freeze}"
 							readonly="true" /></td>
-							<td><form:input type="hidden" path="bulkImportStatus"
+					<td><form:input type="hidden" path="bulkImportStatus"
 							id="bulkImportStatus" class="form-control"
 							value="${emmsDataForm.bulkImportStatus}" readonly="true" /></td>
-							
+
 
 				</tr>
 
@@ -294,11 +346,18 @@
 					<td><form:label path="inductionDate">
 							<spring:message code="label.inductionDate" />
 						</form:label><span style="color: red; font-weight: bold; margin-left: -46px;"></span></td>
-					<td class="datepicker2"><form:input type="text"
-							id="datepicker1" path="inductionDate" class="form-control"
-							value="${emmsDataForm.inductionDate}"
-							style="background-color: rgb(216, 216, 216); width: 70%;" /></td>
-
+					<td class="form-group date"><div class="input-group date">
+							<form:input type="text" readonly="true"
+							disabled="${emmsDataForm.freeze}"
+							 path="inductionDate"
+								class="form-control inductionDateTimePicker"
+								value="${emmsDataForm.inductionDate}"
+								style="background-color: #eeeeee; width: 180px;" />
+							<span class="input-group-addon"> <span
+								class="glyphicon glyphicon-calendar"
+								onclick="showDatePickerInductionDate()"></span>
+							</span>
+						</div></td>
 					<td><form:label path="mainAssetPart">
 							<spring:message code="label.mainAssetPart" />
 						</form:label><span style="color: red; font-weight: bold; margin-left: -46px;"></span></td>
@@ -316,11 +375,18 @@
 					<td><form:label path="signalOutDate">
 							<spring:message code="label.signalOutDate" />
 						</form:label><span style="color: red; font-weight: bold; margin-left: -46px;"></span></td>
-					<td class="datepicker3"><form:input path="signalOutDate"
-							id="datepicker2" class="form-control"
-							value="${emmsDataForm.signalOutDate}"
-							style="background-color: rgb(216, 216, 216); width: 70%;" /></td>
-
+					<td class="form-group date"><div class="input-group date">
+							<form:input readonly="true" 
+							disabled="${emmsDataForm.freeze}"
+							path="signalOutDate"
+								value="${emmsDataForm.signalOutDate}"
+								class="form-control signalOutDateTimePicker"
+								style="background-color: #eeeeee; width: 180px;" />
+							<span class="input-group-addon"> <span
+								class="glyphicon glyphicon-calendar"
+								onclick="showDatePickerSignalOutDate()"></span>
+							</span>
+						</div></td>
 
 					<td><form:label path="mainAssetSerial">
 							<spring:message code="label.mainAssetSerial" />
@@ -432,13 +498,12 @@
 							style="width:70px; background-color: rgb(216, 216, 216);"
 							readonly="true" /></td>
 					<td><form:select
-							path="installableFormList[${status.index}].installablePN" onchange="disableIndicatorRows()"
-							class="form-control" style="width:130px;" id="installledPN">
-							<%-- path="installableFormList[${status.index}].installablePN"
-							onchange="" class="form-control" style="width:130px;"
-							id="installledPN"> --%>
-
-
+							path="installableFormList[${status.index}].installablePN"
+							onchange="disableIndicatorRows()"
+							disabled="${emmsDataForm.freeze}"
+							 class="form-control"
+							style="width:130px;" id="installledPN">
+						
 							<form:option value="" label="- - -Select- - -"></form:option>
 							<form:options items="${installableForm.installedPNList}" />
 
@@ -456,7 +521,8 @@
 							onchange="disableIndicatorRows()" /></td>
 					<td><form:select
 							path="installableFormList[${status.index}].conditionCode"
-							readonly="${emmsDataForm.freeze}" class="form-control"
+							disabled="${emmsDataForm.freeze}" class="form-control"
+							
 							style="width:130px;" id="conditionCode"
 							title="${installableForm.conditionCode}">
 
@@ -465,19 +531,29 @@
 							<form:options items="${installableForm.conditionCodes}" />
 
 						</form:select></td>
-					<td class="datepicker8"><form:input
+					<td class="form-group date">
+						<div class="input-group date"><form:input
 							path="installableFormList[${status.index}].dateofManufacturing"
-							readonly="${emmsDataForm.freeze}"
-							class="form-control datepicker3"
+							readonly="true"
+							disabled="${emmsDataForm.freeze}"
+							class="form-control manufacturingDateTimePicker${status.index}"
 							title="${installableForm.dateofManufacturing}"
-							style="width:110px;background-color: rgb(255, 255, 255);" /></td>
-					<td class="datepicker8"><form:input
+							style="width:110px;background-color: rgb(255, 255, 255);" />
+							<span class="input-group-addon">
+               				<span class="glyphicon glyphicon-calendar" onclick="showDatePickerManufactureDate(${status.index})"></span>
+               				</span></div></td>
+					<td class="form-group date">
+						<div class="input-group date"><form:input
 							path="installableFormList[${status.index}].dateofReceipt"
-							readonly="${emmsDataForm.freeze}"
-							class="form-control datepicker4"
+							readonly="true"
+							disabled="${emmsDataForm.freeze}"
+							class="form-control receiptDateTimePicker${status.index}"
 							title="${installableForm.dateofReceipt}"
 							style="width:110px;background-color: rgb(255, 255, 255);"
-							onchange="disableIndicatorRows()" /></td>
+							onchange="disableIndicatorRows()" />
+							<span class="input-group-addon">
+							<span class="glyphicon glyphicon-calendar" onclick="showDatePickerReceiptDate(${status.index})"></span>
+               				</span></div></td>
 
 
 					<c:set var="class1" value="defaultstatus"></c:set>

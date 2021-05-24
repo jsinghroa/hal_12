@@ -32,16 +32,16 @@ public class MeterDetailsValidator {
 
 	String formatValidation;
 
-	public String meterDetailsValidate(String initialCount, String initialDate, String currentCount,
-			String ExAssetCurrentCount, String exInstalledPn, String exInstalledSn, String installedPn,
-			String installedSn, String lastCompiledValue, String lastCompiledDate, String uom) {
-		System.out.println(initialCount + ":" + currentCount + ":" + initialDate);
+	public String meterDetailsValidate(String existingCount, String currentCount, String ExAssetCurrentCount,
+			String exInstalledPn, String exInstalledSn, String installedPn, String installedSn,
+			String lastCompiledValue, String lastCompiledDate, String uom) {
+		System.out.println(existingCount + ":" + currentCount);
 
 		System.out.println(ExAssetCurrentCount + ":" + exInstalledPn + ":" + exInstalledSn + ":" + installedPn + ":"
 				+ installedSn + ":" + lastCompiledValue + ":" + lastCompiledDate + ":" + uom);
 		meterDetailsErrorMsg = Constants.NOERROR;
-		System.out.println(initialCount.length() + ":" + currentCount.length());
-		if (initialCount.length() >= 15 || currentCount.length() >= 15) {
+		System.out.println(existingCount.length() + ":" + currentCount.length());
+		if (existingCount.length() >= 15 || currentCount.length() >= 15) {
 			System.out.println("inside length Check");
 			if (meterDetailsErrorMsg.length() > 0) {
 				meterDetailsErrorMsg += "\n" + Constants.COUNTLENGTHERROR;
@@ -51,7 +51,7 @@ public class MeterDetailsValidator {
 
 		if (uom.equalsIgnoreCase("hh:mm:ss")) {
 
-			if (!initialCount.isEmpty() && !commonValidator.uomValidate(initialCount)) {
+			if (!existingCount.isEmpty() && !commonValidator.uomValidate(existingCount)) {
 				if (meterDetailsErrorMsg.length() > 0) {
 					meterDetailsErrorMsg += "\n" + Constants.UOMERROR;
 				} else
@@ -68,54 +68,36 @@ public class MeterDetailsValidator {
 			else {
 				System.out.println("UOM IS CORRECT");
 
-				initialCount = getDecimalValue(initialCount);
+				existingCount = getDecimalValue(existingCount);
 				currentCount = getDecimalValue(currentCount);
 
-				System.out.println("initial=" + initialCount + ":" + currentCount + ":" + ExAssetCurrentCount);
-				// 1.Initial Date should not be blank if Initial Count contains
-				// value.
-				if (!initialCount.isEmpty() && initialDate.isEmpty()) {
-					if (meterDetailsErrorMsg.length() > 0) {
-						meterDetailsErrorMsg += "\n" + Constants.INITIALDATEMANDATORYERROR;
-					} else
-						meterDetailsErrorMsg += Constants.INITIALDATEMANDATORYERROR;
-				} else {
-					if (!initialDate.isEmpty())
-						formatValidation = commonValidator.timeStampValidate(initialDate);
-					if (!formatValidation.isEmpty()) {
-						if (meterDetailsErrorMsg.length() > 0) {
-							meterDetailsErrorMsg += "\n" + formatValidation;
-						} else
-							meterDetailsErrorMsg += formatValidation;
-					}
-				}
+				System.out.println("existing=" + existingCount + ":" + currentCount + ":" + ExAssetCurrentCount);
 
 				// time stamp format validate
-
-				// 2.Current Count must be equal or greater than the Initial
-				// Count.
+				// 2.Current Count must be equal or greater than the Existing Count.
 				// Validation logic for UOM data type pending
-				System.out.println("start");
+				try {
 				if (!currentCount.isEmpty()
-						&& new BigInteger(currentCount).doubleValue() < new BigInteger(initialCount).doubleValue()) {
+						&& new BigInteger(currentCount).doubleValue() < new BigInteger(existingCount).doubleValue()) {
 					System.out.println("after start");
 					if (meterDetailsErrorMsg.length() > 0) {
-						meterDetailsErrorMsg += "\n" + Constants.INITIALCOUNTGREATERTOCURRENTCOUNTERROR;
+						meterDetailsErrorMsg += "\n" + Constants.EXISTINGCOUNTGREATERTOCURRENTCOUNTERROR;
 					} else
-						meterDetailsErrorMsg += Constants.INITIALCOUNTGREATERTOCURRENTCOUNTERROR;
+						meterDetailsErrorMsg += Constants.EXISTINGCOUNTGREATERTOCURRENTCOUNTERROR;
 				}
-				System.out.println("end");
+				}catch(Exception e) {System.out.println(e.getMessage());}
+				
 				// 3.In case of existing assets that have been re-installed,
 				// Current Count must be greater than the existing count* of the
 				// asset.
-				System.out.println("start1");
+
 				if (installedPn.equals(exInstalledPn) && installedSn.equals(exInstalledSn)) {
-					System.out.println("start1inide");
+					try {
 					if (!ExAssetCurrentCount.isEmpty()) {
-						System.out.println("start1inide1");
+
 						if (new BigInteger(currentCount).doubleValue() < new BigInteger(ExAssetCurrentCount)
 								.doubleValue()) {
-							System.out.println("start1000000");
+
 							if (meterDetailsErrorMsg.length() > 0) {
 								meterDetailsErrorMsg += "\n" + Constants.EXISTINGCURRENTCOUNTERROR;
 							} else
@@ -123,13 +105,13 @@ public class MeterDetailsValidator {
 
 						}
 					}
+					}catch(Exception e) {System.out.println(e.getMessage());}
 
 				}
-				System.out.println("end1");
+			
 				// 4.Current Count should be mandatory if Initial Value and
 				// Initial Date is having value.
-				System.out.println("start2");
-				if (!initialCount.isEmpty() && !initialDate.isEmpty()) {
+				if (!existingCount.isEmpty()) {
 
 					if (currentCount.isEmpty()) {
 						if (meterDetailsErrorMsg.length() > 0) {
@@ -138,7 +120,6 @@ public class MeterDetailsValidator {
 							meterDetailsErrorMsg += Constants.CURRENTCOUNTMANDATORYERROR;
 					}
 				}
-				System.out.println("end2");
 				// 5.If Last Complied Date and Last Complied Value are filled up
 				// against the MPM for a meter,
 				// then the corresponding meter should have Installed Count,
@@ -146,9 +127,9 @@ public class MeterDetailsValidator {
 				// for the respective Installed P/N-Installed S/N combination.
 
 				if (null != lastCompiledDate && null != lastCompiledValue) {
-					System.out.println("bahvjabsdjbajsd");
+					
 					if (lastCompiledDate.length() > 0 && lastCompiledValue.length() > 0) {
-						if (initialCount.isEmpty() || currentCount.isEmpty() || initialDate.isEmpty()) {
+						if (existingCount.isEmpty() || currentCount.isEmpty()) {
 							if (meterDetailsErrorMsg.length() > 0) {
 								meterDetailsErrorMsg += "\n" + Constants.PMERROR;
 							} else
@@ -163,7 +144,7 @@ public class MeterDetailsValidator {
 			System.out.println("main if end");
 		} else {
 
-			if (!initialCount.isEmpty() && !commonValidator.decimalValidate(initialCount)) {
+			if (!existingCount.isEmpty() && !commonValidator.decimalValidate(existingCount)) {
 				if (meterDetailsErrorMsg.length() > 0) {
 					meterDetailsErrorMsg += "\n" + Constants.DECIMAL;
 				} else
@@ -179,45 +160,25 @@ public class MeterDetailsValidator {
 
 			{
 
-				// 1.Initial Date should not be blank if Initial Count contains
-				// value.
-				if (!initialCount.isEmpty() && initialDate.isEmpty()) {
-					if (meterDetailsErrorMsg.length() > 0) {
-						meterDetailsErrorMsg += "\n" + Constants.INITIALDATEMANDATORYERROR;
-					} else
-						meterDetailsErrorMsg += Constants.INITIALDATEMANDATORYERROR;
-				} else {
-					if (!initialDate.isEmpty())
-						formatValidation = commonValidator.timeStampValidate(initialDate);
-					if (!formatValidation.isEmpty()) {
-						if (meterDetailsErrorMsg.length() > 0) {
-							meterDetailsErrorMsg += "\n" + formatValidation;
-						} else
-							meterDetailsErrorMsg += formatValidation;
-					}
-				}
-
 				// time stamp format validate
-
-				// 2.Current Count must be equal or greater than the Initial
-				// Count.
+				// 2.Current Count must be equal or greater than the Existing Count.
 				// Validation logic for UOM data type pending
-				System.out.println("start");
+				try {
 				if (!currentCount.isEmpty()
-						&& new BigInteger(currentCount).doubleValue() < new BigInteger(initialCount).doubleValue()) {
+						&& new BigInteger(currentCount).doubleValue() < new BigInteger(existingCount).doubleValue()) {
 					System.out.println("after start");
 					if (meterDetailsErrorMsg.length() > 0) {
-						meterDetailsErrorMsg += "\n" + Constants.INITIALCOUNTGREATERTOCURRENTCOUNTERROR;
+						meterDetailsErrorMsg += "\n" + Constants.EXISTINGCOUNTGREATERTOCURRENTCOUNTERROR;
 					} else
-						meterDetailsErrorMsg += Constants.INITIALCOUNTGREATERTOCURRENTCOUNTERROR;
+						meterDetailsErrorMsg += Constants.EXISTINGCOUNTGREATERTOCURRENTCOUNTERROR;
 				}
-				System.out.println("end");
-
+				}catch(Exception e) {System.out.println(e.getMessage());}
+				
 				// 3.In case of existing assets that have been re-installed,
 				// Current Count must be greater than the existing count* of the
 				// asset.
-
 				if (installedPn.equals(exInstalledPn) && installedSn.equals(exInstalledSn)) {
+					try {
 					if (!ExAssetCurrentCount.isEmpty()) {
 						if (new BigInteger(currentCount).doubleValue() < new BigInteger(ExAssetCurrentCount)
 								.doubleValue()) {
@@ -228,12 +189,13 @@ public class MeterDetailsValidator {
 
 						}
 					}
+					}catch(Exception e) {System.out.println(e.getMessage());}
 
 				}
 
 				// 4.Current Count should be mandatory if Initial Value and
 				// Initial Date is having value.
-				if (!initialCount.isEmpty() && !initialDate.isEmpty()) {
+				if (!existingCount.isEmpty()) {
 
 					if (currentCount.isEmpty()) {
 						if (meterDetailsErrorMsg.length() > 0) {
@@ -250,9 +212,9 @@ public class MeterDetailsValidator {
 				// for the respective Installed P/N-Installed S/N combination.
 
 				if (null != lastCompiledDate && null != lastCompiledValue) {
-					System.out.println("bahvjabsdjbajsd");
+					
 					if (lastCompiledDate.length() > 0 && lastCompiledValue.length() > 0) {
-						if (initialCount.isEmpty() || currentCount.isEmpty() || initialDate.isEmpty()) {
+						if (existingCount.isEmpty() || currentCount.isEmpty()) {
 							if (meterDetailsErrorMsg.length() > 0) {
 								meterDetailsErrorMsg += "\n" + Constants.PMERROR;
 							} else
@@ -270,7 +232,7 @@ public class MeterDetailsValidator {
 						meterDetailsErrorMsg += formatValidation;
 				}
 
-				formatValidation = commonValidator.meterValidate(initialCount);
+				formatValidation = commonValidator.meterValidate(existingCount);
 				if (!formatValidation.isEmpty()) {
 					if (meterDetailsErrorMsg.length() > 0) {
 						meterDetailsErrorMsg += "\n" + formatValidation;
@@ -342,7 +304,7 @@ public class MeterDetailsValidator {
 
 	public boolean validateHeader(XSSFRow xssfRow) {
 		System.out.println("Checking number of columns");
-		if (xssfRow.getLastCellNum()!=10) {
+		if (xssfRow.getLastCellNum() != 9) {
 			System.out.println("inside");
 			return false;
 		}
@@ -352,19 +314,17 @@ public class MeterDetailsValidator {
 		String installedSN = xssfRow.getCell(2).getStringCellValue();
 		String meterName = xssfRow.getCell(3).getStringCellValue();
 		String uom = xssfRow.getCell(4).getStringCellValue();
-		String initialCount = xssfRow.getCell(5).getStringCellValue();
-		String installationDate = xssfRow.getCell(6).getStringCellValue();
-		String currentCount = xssfRow.getCell(7).getStringCellValue();
-		String errorStatus = xssfRow.getCell(8).getStringCellValue();
-		String errorDesc = xssfRow.getCell(9).getStringCellValue();
+		String existingCount = xssfRow.getCell(5).getStringCellValue();
+		String currentCount = xssfRow.getCell(6).getStringCellValue();
+		String errorStatus = xssfRow.getCell(7).getStringCellValue();
+		String errorDesc = xssfRow.getCell(8).getStringCellValue();
 		List<String> errorList = new ArrayList<String>();
 		System.out.println("Number of columns are correct now checking name i.e header values");
 		if (Constants.INSTALLEDPARTDESCRIPTION.equalsIgnoreCase(installedPartDescription)
 				&& Constants.InstalledPN.equalsIgnoreCase(installedPN)
 				&& Constants.InstalledSN.equalsIgnoreCase(installedSN)
 				&& Constants.METERNAME.equalsIgnoreCase(meterName) && Constants.UOM.equalsIgnoreCase(uom)
-				&& Constants.INITIALCOUNT.equalsIgnoreCase(initialCount)
-				&& Constants.INSTALLATIONDATE.equalsIgnoreCase(installationDate)
+				&& Constants.EXISTINGCOUNT.equalsIgnoreCase(existingCount)
 				&& Constants.CURRENTCOUNT.equalsIgnoreCase(currentCount)
 				&& Constants.ErrorStatus.equalsIgnoreCase(errorStatus)
 				&& Constants.ErrorDescription.equalsIgnoreCase(errorDesc)) {
@@ -373,21 +333,23 @@ public class MeterDetailsValidator {
 			return false;
 		}
 	}
-	public String checkCellType2003(XSSFCell cell,String uom) {
+
+	public String checkCellType2003(XSSFCell cell, String uom) {
 
 		String strCellValue = Constants.EMPTY_STRING;
-		
+
 		switch (cell.getCellType()) {
 		case Cell.CELL_TYPE_NUMERIC:
-			System.out.println("hello="+cell.getNumericCellValue()+cell.getRawValue()+cell.getDateCellValue().getHours());
-			if(uom.equalsIgnoreCase("hh:mm:ss"))
-			{   Date date=cell.getDateCellValue();
-				strCellValue = date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
-			}else {
-				strCellValue = cell.getNumericCellValue()+"";
+			System.out.println(
+					"hello=" + cell.getNumericCellValue() + cell.getRawValue() + cell.getDateCellValue().getHours());
+			if (uom.equalsIgnoreCase("hh:mm:ss")) {
+				Date date = cell.getDateCellValue();
+				strCellValue = date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds();
+			} else {
+				strCellValue = cell.getNumericCellValue() + "";
 			}
 			System.out.println(strCellValue);
-			
+
 			break;
 
 		case Cell.CELL_TYPE_BOOLEAN:
@@ -398,7 +360,7 @@ public class MeterDetailsValidator {
 		default:
 			strCellValue = cell.getStringCellValue();
 		}
-		
+
 		return strCellValue;
 	}
 

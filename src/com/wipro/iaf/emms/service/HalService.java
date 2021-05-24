@@ -485,4 +485,9 @@ public class HalService {
 		
 		
 	}
+
+	public String getEtdDate(String sortieNo) {
+	
+		return halDAO.getEtdDate(sortieNo);
+	}
 }

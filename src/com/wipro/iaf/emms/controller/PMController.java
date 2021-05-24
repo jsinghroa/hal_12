@@ -7,6 +7,8 @@ import java.sql.Time;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -73,7 +75,7 @@ public class PMController {
 	public String submit(
 			@ModelAttribute("emmsDataForm") EmmsDataForm emmsDataForm,
 			BindingResult bindingResult, ModelMap model,
-			@RequestParam String action, @RequestParam String linkSelected) {
+			@RequestParam String action, @RequestParam String linkSelected,HttpServletResponse response) {
 		if (linkSelected.equals(Constants.LISTVIEW)) {
 			List<EmmsDataForm> emmsDataFormList = halService
 					.getEmmsDataOnView();
@@ -424,7 +426,7 @@ public class PMController {
 
 				System.out.println("INSIDE EXPORT");
 				
-				String filename = "C:\\Users\\Public\\Desktop\\PM.xlsx";
+				String filename = "PM.xlsx";
 				//String filename = "D:\\PM.xlsx";
 				XSSFWorkbook workbook = new XSSFWorkbook();
 				XSSFSheet sheet = workbook.createSheet("PMExportedData");
@@ -503,11 +505,10 @@ public class PMController {
 					}
 
 				}
-				FileOutputStream fout;
+				
 				try {
-					fout = new FileOutputStream(filename);
-					workbook.write(fout);
-					fout.close();
+					response.setHeader("Content-disposition", "attachment; filename=\""+filename+"\"");
+					workbook.write(response.getOutputStream());
 
 				} catch (Exception e) {
 

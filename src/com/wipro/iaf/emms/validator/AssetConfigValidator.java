@@ -44,19 +44,19 @@ public class AssetConfigValidator {
 			List<String> pninlieucombination, List<String> sninlieucombination,
 			Map<String, AssetConfigForm> lcnForm, String parent) {
 
-		/*
-		 * System.out.println("inductionDate="+inductionDate);
-		 * System.out.println("signalOutDate="+signalOutDate);
-		 * System.out.println("manufactureDate="+manufactorDate);
-		 * System.out.println("receiptDate="+receiptDate);
-		 * System.out.println("length="+receiptDate.length());
-		 */
+			System.out.println("Validator Class");
+		  System.out.println("inductionDate="+inductionDate);
+		  System.out.println("signalOutDate="+signalOutDate);
+		  System.out.println("manufactureDate="+manufactorDate);
+		  System.out.println("receiptDate="+receiptDate);
+		  System.out.println("length="+receiptDate.length());
+		 
 		String pnsn = installedPN + ":" + installedSN;
 		String pninlieu = installedPN + ":" + inLieuPN;
 		String sninlieu = installedSN + ":" + inLieuPN;
 
 		assetConfigErrorMsg = Constants.NOERROR;
-		
+		try {
 		if(installedSN.length()>=50||inLieuPN.length()>=80)
 		{
 			if (assetConfigErrorMsg.length() > 0) {
@@ -75,13 +75,7 @@ public class AssetConfigValidator {
 				assetConfigErrorMsg += Constants.INDUCTIONMANDATORYERROR;
 		}
 
-		formatValidation = commonValidator.timeStampValidate(inductionDate);
-		if (!formatValidation.isEmpty()) {
-			if (assetConfigErrorMsg.length() > 0) {
-				assetConfigErrorMsg += " || " + formatValidation;
-			} else
-				assetConfigErrorMsg += formatValidation;
-		}
+		
 
 		if (signalOutDate.isEmpty()) {
 			if (assetConfigErrorMsg.length() > 0) {
@@ -91,21 +85,11 @@ public class AssetConfigValidator {
 				assetConfigErrorMsg += Constants.SIGNALOUTMANDATORYERROR;
 		}
 
-		formatValidation = commonValidator.timeStampValidate(signalOutDate);
-		if (!formatValidation.isEmpty()) {
-			if (assetConfigErrorMsg.length() > 0) {
-				assetConfigErrorMsg += " || " + formatValidation;
-			} else
-				assetConfigErrorMsg += formatValidation;
-		}
-
-		// if(Timestamp.valueOf(signalOutDate).compareTo(Timestamp.valueOf(inductionDate))<=0)
-		// {
-
+		
 		try {
-			if (new SimpleDateFormat("dd-MMM-yy hh:mm:ss").parse(signalOutDate)
+			if (new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss").parse(signalOutDate)
 					.compareTo(
-							new SimpleDateFormat("dd-MMM-yy hh:mm:ss")
+							new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss")
 									.parse(inductionDate)) <= 0) {
 				if (assetConfigErrorMsg.length() > 0) {
 					assetConfigErrorMsg += " || "
@@ -114,10 +98,7 @@ public class AssetConfigValidator {
 					assetConfigErrorMsg += Constants.SIGNALOUTGREATERTOINDUCTIONERROR;
 			}
 		} catch (ParseException e) {
-			if (assetConfigErrorMsg.length() > 0) {
-				assetConfigErrorMsg += " || " + Constants.TIMESTAMPFORMATERROR;
-			} else
-				assetConfigErrorMsg += Constants.TIMESTAMPFORMATERROR;
+			System.out.println(e.getMessage());
 		}
 
 		// CHANGES
@@ -216,27 +197,10 @@ public class AssetConfigValidator {
 				assetConfigErrorMsg += Constants.DATEOFMANUFACTUREMANDATORYERROR;
 		}
 
-		formatValidation = commonValidator.timeStampValidate(manufactorDate);
-		if (!formatValidation.isEmpty()) {
-			if (assetConfigErrorMsg.length() > 0) {
-				assetConfigErrorMsg += " || " + formatValidation;
-			} else
-				assetConfigErrorMsg += formatValidation;
-		}
-
-		/*
-		 * if(Timestamp.valueOf(manufactorDate).compareTo(Timestamp.valueOf(
-		 * signalOutDate))>=0) { if(assetConfigErrorMsg.length() > 0) {
-		 * assetConfigErrorMsg += " || " +
-		 * Constants.SIGNALOUTGREATERTOMANUFACTORRECEIPTERROR; } else
-		 * assetConfigErrorMsg +=
-		 * Constants.SIGNALOUTGREATERTOMANUFACTORRECEIPTERROR; }
-		 */
-
 		try {
-			if (new SimpleDateFormat("dd-MMM-yy hh:mm:ss")
+			if (new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss")
 					.parse(manufactorDate).compareTo(
-							new SimpleDateFormat("dd-MMM-yy hh:mm:ss")
+							new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss")
 									.parse(signalOutDate)) >= 0) {
 				if (assetConfigErrorMsg.length() > 0) {
 					assetConfigErrorMsg += " || "
@@ -245,31 +209,16 @@ public class AssetConfigValidator {
 					assetConfigErrorMsg += Constants.SIGNALOUTGREATERTOMANUFACTORRECEIPTERROR;
 			}
 		} catch (ParseException e) {
-			if (assetConfigErrorMsg.length() > 0) {
-				assetConfigErrorMsg += " || " + Constants.TIMESTAMPFORMATERROR;
-			} else
-				assetConfigErrorMsg += Constants.TIMESTAMPFORMATERROR;
-		}
-
-		if (receiptDate.length() > 0) {
-			System.out.println("insideFormat");
-			formatValidation = commonValidator.timeStampValidate(receiptDate);
-			if (!formatValidation.isEmpty()) {
-				if (assetConfigErrorMsg.length() > 0) {
-					assetConfigErrorMsg += " || " + formatValidation;
-				} else
-					assetConfigErrorMsg += formatValidation;
-			}
+			System.out.println(e.getMessage());
 		}
 
 		try {
-			System.out.println(assetConfigErrorMsg);
-			System.out.println(receiptDate.length());
+			
 			if (receiptDate.length() > 0) {
-				System.out.println("inside");
-				if (new SimpleDateFormat("dd-MMM-yy hh:mm:ss").parse(
+				
+				if (new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss").parse(
 						receiptDate).compareTo(
-						new SimpleDateFormat("dd-MMM-yy hh:mm:ss")
+						new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss")
 								.parse(signalOutDate)) >= 0) {
 					if (assetConfigErrorMsg.length() > 0) {
 						assetConfigErrorMsg += " || "
@@ -280,10 +229,11 @@ public class AssetConfigValidator {
 
 			}
 		} catch (ParseException e) {
-			if (assetConfigErrorMsg.length() > 0) {
+			/*if (assetConfigErrorMsg.length() > 0) {
 				assetConfigErrorMsg += " || " + Constants.TIMESTAMPFORMATERROR;
 			} else
-				assetConfigErrorMsg += Constants.TIMESTAMPFORMATERROR;
+				assetConfigErrorMsg += Constants.TIMESTAMPFORMATERROR;*/
+			System.out.println(e.getMessage());
 		}
 
 		if (pnsncombination.contains(pnsn)) {
@@ -309,19 +259,15 @@ public class AssetConfigValidator {
 			} else
 				assetConfigErrorMsg += Constants.SAMESNLIEUCOMBINATIONERROR;
 		}
-
-		System.out.println(assetConfigErrorMsg);
+		}catch(Exception e) {
+			System.out.println("Inside Exception");
+			System.out.println(e.getMessage());
+		}
+		
 		return assetConfigErrorMsg;
 	}
 
-	public String receiptDateValidate(String manufactorDate, String receiptDate) {
-
-		if (receiptDate.isEmpty())
-			return Constants.NOERROR;
-		else
-			return Constants.BLANKRECEIPTDATEMESSAGE;
-	}
-
+	
 	public boolean validateHeader(XSSFRow xssfRow) {
 
 		System.out.println("Checking number of columns");

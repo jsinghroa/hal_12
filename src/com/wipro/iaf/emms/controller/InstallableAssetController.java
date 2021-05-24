@@ -72,34 +72,28 @@ public class InstallableAssetController {
 	private List<String> lcnList;
 	private Map<String, String> insLcnList;
 	CommonValidator commonValidator = new CommonValidator();
-	
+
 	@RequestMapping(value = { "/saveInstall" }, method = RequestMethod.GET)
-	public List<InstallableAssetForm> fetchInstallableDetails(String recordID,
-			EmmsDataForm emmsDataForm) {
+	public List<InstallableAssetForm> fetchInstallableDetails(String recordID, EmmsDataForm emmsDataForm) {
 		this.emmsDataForm = emmsDataForm;
 		emmsDataForm.setRecordId(recordID);
 		emmsDataForm.setSelectedRecordId(recordID);
-		System.out.println(this.emmsDataForm.getAssetConfigStatus() + ":"
-				+ this.emmsDataForm.getInstallableStatus());
+		System.out.println(this.emmsDataForm.getAssetConfigStatus() + ":" + this.emmsDataForm.getInstallableStatus());
 		parentChild = halService.setParentChild(emmsDataForm.getRecordId());
 		lcnList = halService.setLcnList();
 
-		installableFormList = halService.fetchInstallableDetails(recordID,
-				lcnList, parentChild);
+		installableFormList = halService.fetchInstallableDetails(recordID, lcnList, parentChild);
 
 		return installableFormList;
 	}
 
 	@RequestMapping(value = "/saveInstall", method = RequestMethod.POST)
-	public String submit(
-			@ModelAttribute("emmsDataForm") EmmsDataForm emmsDataForm,
-			BindingResult bindingResult, ModelMap model,
-			@RequestParam String action, @RequestParam String linkSelected,
+	public String submit(@ModelAttribute("emmsDataForm") EmmsDataForm emmsDataForm, BindingResult bindingResult,
+			ModelMap model, @RequestParam String action, @RequestParam String linkSelected,
 			@RequestParam String disableIndicator) {
-		
+
 		if (linkSelected.equals(Constants.LISTVIEW)) {
-			List<EmmsDataForm> emmsDataFormList = halService
-					.getEmmsDataOnView();
+			List<EmmsDataForm> emmsDataFormList = halService.getEmmsDataOnView();
 			model.addAttribute("emmsDataForm", this.emmsDataForm);
 			model.addAttribute("emmsDataFormList", emmsDataFormList);
 			model.addAttribute("pageVar", "/WEB-INF/jsp/ListViewEmmsData.jsp");
@@ -107,14 +101,10 @@ public class InstallableAssetController {
 
 			if (linkSelected.equals(Constants.ASSETCONFIG)) {
 				emmsDataForm.setSelectedRecordId(emmsDataForm.getRecordId());
-				if (null != emmsDataForm.getSelectedRecordId()
-						&& !emmsDataForm.getSelectedRecordId().isEmpty()) {
-					emmsDataForm = halService.fetchDetails(emmsDataForm
-							.getSelectedRecordId());
-					emmsDataForm.setAssetFormList(assetController
-							.fetchAssetDetails(
-									emmsDataForm.getSelectedRecordId(),
-									emmsDataForm));
+				if (null != emmsDataForm.getSelectedRecordId() && !emmsDataForm.getSelectedRecordId().isEmpty()) {
+					emmsDataForm = halService.fetchDetails(emmsDataForm.getSelectedRecordId());
+					emmsDataForm.setAssetFormList(
+							assetController.fetchAssetDetails(emmsDataForm.getSelectedRecordId(), emmsDataForm));
 
 				}
 				model.addAttribute("emmsDataForm", emmsDataForm);
@@ -122,70 +112,49 @@ public class InstallableAssetController {
 
 			} else if (linkSelected.equals(Constants.INSTALLABLEASSET)) {
 
-				if (null != emmsDataForm.getSelectedRecordId()
-						&& !emmsDataForm.getSelectedRecordId().isEmpty()) {
-					emmsDataForm = halService.fetchDetails(emmsDataForm
-							.getSelectedRecordId());
-					emmsDataForm.setAssetFormList(assetController
-							.fetchAssetDetails(
-									emmsDataForm.getSelectedRecordId(),
-									emmsDataForm));
+				if (null != emmsDataForm.getSelectedRecordId() && !emmsDataForm.getSelectedRecordId().isEmpty()) {
+					emmsDataForm = halService.fetchDetails(emmsDataForm.getSelectedRecordId());
+					emmsDataForm.setAssetFormList(
+							assetController.fetchAssetDetails(emmsDataForm.getSelectedRecordId(), emmsDataForm));
 					for (int i = 0; i < emmsDataForm.getAssetFormList().size(); i++) {
-						System.out
-								.println("listviewEmmsdataController------ size"
-										+ emmsDataForm.getAssetFormList()
-												.get(i));
-						if (emmsDataForm.getAssetFormList().get(i)
-								.getErrorStatus() != null) {
+						System.out.println(
+								"listviewEmmsdataController------ size" + emmsDataForm.getAssetFormList().get(i));
+						if (emmsDataForm.getAssetFormList().get(i).getErrorStatus() != null) {
 							System.out.println("error status value"
-									+ emmsDataForm.getAssetFormList().get(i)
-											.getErrorStatus().toString());
+									+ emmsDataForm.getAssetFormList().get(i).getErrorStatus().toString());
 							System.out.println("indicator value"
-									+ emmsDataForm.getAssetFormList().get(i)
-											.getIndicator().toString());
+									+ emmsDataForm.getAssetFormList().get(i).getIndicator().toString());
 
-							if (emmsDataForm.getAssetFormList().get(i)
-									.getErrorStatus()
+							if (emmsDataForm.getAssetFormList().get(i).getErrorStatus()
 									.equals(Constants.VALIDATEDWITHWARNING)
-									&& emmsDataForm.getAssetFormList().get(i)
-											.getIndicator().equals("I")) {
-								emmsDataForm.setInstallableFormList(this
-										.fetchInstallableDetails(emmsDataForm
-												.getSelectedRecordId(),
-												emmsDataForm));
+									&& emmsDataForm.getAssetFormList().get(i).getIndicator().equals("I")) {
+								emmsDataForm.setInstallableFormList(
+										this.fetchInstallableDetails(emmsDataForm.getSelectedRecordId(), emmsDataForm));
 							}
 						}
 					}
 
 				}
 				model.addAttribute("emmsDataForm", emmsDataForm);
-				model.addAttribute("pageVar",
-						"/WEB-INF/jsp/InstallableAsset.jsp");
+				model.addAttribute("pageVar", "/WEB-INF/jsp/InstallableAsset.jsp");
 
 			} else if (linkSelected.equals(Constants.PM)) {
 				emmsDataForm.setSelectedRecordId(emmsDataForm.getRecordId());
-				if (null != emmsDataForm.getSelectedRecordId()
-						&& !emmsDataForm.getSelectedRecordId().isEmpty()) {
-					emmsDataForm = halService.fetchDetails(emmsDataForm
-							.getSelectedRecordId());
-					emmsDataForm.setPmDetailFormList(pmController
-							.fetchPMDetails(emmsDataForm.getSelectedRecordId(),
-									emmsDataForm));
+				if (null != emmsDataForm.getSelectedRecordId() && !emmsDataForm.getSelectedRecordId().isEmpty()) {
+					emmsDataForm = halService.fetchDetails(emmsDataForm.getSelectedRecordId());
+					emmsDataForm.setPmDetailFormList(
+							pmController.fetchPMDetails(emmsDataForm.getSelectedRecordId(), emmsDataForm));
 
 				}
 				model.addAttribute("emmsDataForm", emmsDataForm);
 				model.addAttribute("pageVar", "/WEB-INF/jsp/PMScreen.jsp");
 			} else if (linkSelected.equals(Constants.METER)) {
 				emmsDataForm.setSelectedRecordId(emmsDataForm.getRecordId());
-				if (null != emmsDataForm.getSelectedRecordId()
-						&& !emmsDataForm.getSelectedRecordId().isEmpty()) {
-					emmsDataForm = halService.fetchDetails(emmsDataForm
-							.getSelectedRecordId());
+				if (null != emmsDataForm.getSelectedRecordId() && !emmsDataForm.getSelectedRecordId().isEmpty()) {
+					emmsDataForm = halService.fetchDetails(emmsDataForm.getSelectedRecordId());
 
-					emmsDataForm.setMeterFormList(meterController
-							.fetchMeterDetails(
-									emmsDataForm.getSelectedRecordId(),
-									emmsDataForm));
+					emmsDataForm.setMeterFormList(
+							meterController.fetchMeterDetails(emmsDataForm.getSelectedRecordId(), emmsDataForm));
 				}
 				model.addAttribute("emmsDataForm", emmsDataForm);
 				model.addAttribute("pageVar", "/WEB-INF/jsp/meterDetails.jsp");
@@ -193,20 +162,15 @@ public class InstallableAssetController {
 			} else if (linkSelected.equals(Constants.FLB)) {
 
 				emmsDataForm.setSelectedRecordId(emmsDataForm.getRecordId());
-				if (null != emmsDataForm.getSelectedRecordId()
-						&& !emmsDataForm.getSelectedRecordId().isEmpty()) {
+				if (null != emmsDataForm.getSelectedRecordId() && !emmsDataForm.getSelectedRecordId().isEmpty()) {
 
-					emmsDataForm = halService.fetchDetails(emmsDataForm
-							.getSelectedRecordId());
-					emmsDataForm.setFlbMeterDetailsFormList(flbController
-							.fetchFLBMeterDetails(emmsDataForm
-									.getSelectedRecordId(),emmsDataForm));
-					emmsDataForm.setFlbPostFlightDataFormList(flbController
-							.fetchFLBPostFlightDetails(emmsDataForm
-									.getSelectedRecordId(),emmsDataForm));
-					emmsDataForm.setFlbSortieArFormList(flbController
-							.fetchFLBSortieArDetails(emmsDataForm
-									.getSelectedRecordId(),emmsDataForm));
+					emmsDataForm = halService.fetchDetails(emmsDataForm.getSelectedRecordId());
+					emmsDataForm.setFlbMeterDetailsFormList(
+							flbController.fetchFLBMeterDetails(emmsDataForm.getSelectedRecordId(), emmsDataForm));
+					emmsDataForm.setFlbPostFlightDataFormList(
+							flbController.fetchFLBPostFlightDetails(emmsDataForm.getSelectedRecordId(), emmsDataForm));
+					emmsDataForm.setFlbSortieArFormList(
+							flbController.fetchFLBSortieArDetails(emmsDataForm.getSelectedRecordId(), emmsDataForm));
 
 				}
 				model.addAttribute("emmsDataForm", emmsDataForm);
@@ -222,34 +186,20 @@ public class InstallableAssetController {
 				int count = 0;
 				int warning = 0;
 				String status = Constants.NOTVALIDATED;
-				String time = new Time(System.currentTimeMillis()).toString();
-
-				String inductionDate = "";
-				String signalOutDate = "";
-				if (emmsDataForm.getSignalOutDate().length() > 0
-						&& emmsDataForm.getInductionDate().length() > 0) {
-					inductionDate = emmsDataForm.getInductionDate() + " "
-							+ time;
-					signalOutDate = emmsDataForm.getSignalOutDate() + " "
-							+ time;
-					emmsDataForm.setInductionDate(convertor
-							.getDate(inductionDate));
-					emmsDataForm.setSignalOutDate(convertor
-							.getDate(signalOutDate));
-				} else {
+				if (null==emmsDataForm.getSignalOutDate()||emmsDataForm.getSignalOutDate().length()<=0) {
+					emmsDataForm.setSignalOutDate("");
+				}
+				if (null==emmsDataForm.getInductionDate()||emmsDataForm.getInductionDate().length()<=0) {
 
 					emmsDataForm.setInductionDate("");
-					emmsDataForm.setSignalOutDate("");
-					// assetConfigForm.setErrorDesc(Constants.NOTNULL);
+
 				}
 
-				emmsDataForm.setAssetConfigStatus(this.emmsDataForm
-						.getAssetConfigStatus());
+				emmsDataForm.setAssetConfigStatus(this.emmsDataForm.getAssetConfigStatus());
 				List<String> pnsncombination = new ArrayList<String>();
 				List<String> pninlieucombination = new ArrayList<String>();
 				List<String> sninlieucombination = new ArrayList<String>();
-				List<InstallableAssetForm> installableList = emmsDataForm
-						.getInstallableFormList();
+				List<InstallableAssetForm> installableList = emmsDataForm.getInstallableFormList();
 				Map<String, InstallableAssetForm> lcnForm = new HashMap<String, InstallableAssetForm>();
 				parentChild = halService.getParentChild();
 				// Map<String, String> editchild=halService.getLcnEdit();
@@ -260,15 +210,11 @@ public class InstallableAssetController {
 					// emmsDataForm.setInstallableStatus("");
 					for (InstallableAssetForm installableForm : installableList) {
 
-						System.out.println("Status:"
-								+ emmsDataForm.getAssetConfigStatus());
+						System.out.println("Status:" + emmsDataForm.getAssetConfigStatus());
 						installableForm.setErrorDescription("");
-						installableForm.setInstalledPNList(installableFormList
-								.get(i).getInstalledPNList());
-						installableForm.setConditionCodes(installableFormList
-								.get(i).getConditionCodes());
-						installableForm.setRecordRowId(installableFormList.get(
-								i).getRecordRowId());
+						installableForm.setInstalledPNList(installableFormList.get(i).getInstalledPNList());
+						installableForm.setConditionCodes(installableFormList.get(i).getConditionCodes());
+						installableForm.setRecordRowId(installableFormList.get(i).getRecordRowId());
 						String lcn = installableForm.getLcn();
 
 						String parent = parentChild.get(lcn);
@@ -277,97 +223,69 @@ public class InstallableAssetController {
 
 						if (installableForm.getInstallablePN().length() <= 0
 								&& installableForm.getConditionCode().length() <= 0
-								&& installableForm.getDateofManufacturing()
-										.length() <= 0
+								&& installableForm.getDateofManufacturing().length() <= 0
 								&& installableForm.getDateofReceipt().length() <= 0
 								&& installableForm.getInstallableSN().length() <= 0
 								&& installableForm.getiNlieuPN().length() <= 0) {
 							installableForm.setErrorStatus(Constants.WARNING);
 
-							emmsDataForm
-									.setInstallableStatus(Constants.VALIDATIONCOMPLETEDWITHERRORS);
-							if (Constants.VALIDATIONCOMPLETED
-									.equals(this.emmsDataForm
-											.getAssetConfigStatus())
-									&& emmsDataForm
-											.getInstallableStatus()
-											.equals(Constants.VALIDATIONCOMPLETED)) {
+							emmsDataForm.setInstallableStatus(Constants.VALIDATIONCOMPLETEDWITHERRORS);
+							if (Constants.VALIDATIONCOMPLETED.equals(this.emmsDataForm.getAssetConfigStatus())
+									&& emmsDataForm.getInstallableStatus().equals(Constants.VALIDATIONCOMPLETED)) {
 
-								System.out.println("inside record status:");
-								emmsDataForm
-										.setRecordStatus(Constants.VALIDATIONCOMPLETED);
+								emmsDataForm.setRecordStatus(Constants.VALIDATIONCOMPLETED);
 							} else {
-								emmsDataForm
-										.setRecordStatus(Constants.VALIDATIONCOMPLETEDWITHERRORS);
+								emmsDataForm.setRecordStatus(Constants.VALIDATIONCOMPLETEDWITHERRORS);
 							}
 
 							warning = 1;
 
 							if (emmsDataForm.getSignalOutDate().length() > 0
 									&& emmsDataForm.getInductionDate().length() > 0) {
-								
+
 								halService.updateHeader(emmsDataForm);
 							} else {
-								assetConfigForm
-										.setErrorDesc(Constants.NOTNULL1);
+								assetConfigForm.setErrorDesc(Constants.NOTNULL1);
 							}
 
 						} else {
 
 							i++;
 							String receiptDate = "";
-							String manufacturingDate = installableForm
-									.getDateofManufacturing() + " " + time;
+							String manufacturingDate = "";
 
-							if (installableForm.getDateofReceipt().length() > 0) {
-								receiptDate = installableForm
-										.getDateofReceipt() + " " + time;
+							if (installableForm.getDateofManufacturing().length() > 0) {
+								manufacturingDate = installableForm.getDateofManufacturing();
 							}
-
-							installableForm
-									.setDateofManufacturing(manufacturingDate);
+							if (installableForm.getDateofReceipt().length() > 0) {
+								receiptDate = installableForm.getDateofReceipt();
+							}
+							installableForm.setDateofManufacturing(manufacturingDate);
 							installableForm.setDateofReceipt(receiptDate);
 
-							String validate = installableValidator
-									.installableAssetValidate(inductionDate,
-											signalOutDate,
-											installableForm.getInstallablePN(),
-											installableForm.getiNlieuPN(),
-											installableForm.getInstallableSN(),
-											installableForm.getConditionCode(),
-											manufacturingDate, receiptDate,
-											pnsncombination,
-											pninlieucombination,
-											sninlieucombination, lcnForm,
-											parent);
+							String validate = installableValidator.installableAssetValidate(
+									emmsDataForm.getInductionDate(), emmsDataForm.getSignalOutDate(),
+									installableForm.getInstallablePN(), installableForm.getiNlieuPN(),
+									installableForm.getInstallableSN(), installableForm.getConditionCode(),
+									manufacturingDate, receiptDate, pnsncombination, pninlieucombination,
+									sninlieucombination, lcnForm, parent);
 
-							String pnsn = installableForm.getInstallablePN()
-									+ ":" + installableForm.getInstallableSN();
-							String pninlieu = installableForm
-									.getInstallablePN()
-									+ ":"
-									+ installableForm.getiNlieuPN();
-							String sninlieu = installableForm
-									.getInstallableSN()
-									+ ":"
-									+ installableForm.getiNlieuPN();
+							String pnsn = installableForm.getInstallablePN() + ":" + installableForm.getInstallableSN();
+							String pninlieu = installableForm.getInstallablePN() + ":" + installableForm.getiNlieuPN();
+							String sninlieu = installableForm.getInstallableSN() + ":" + installableForm.getiNlieuPN();
 							pnsncombination.add(pnsn);
 							pninlieucombination.add(pninlieu);
 							sninlieucombination.add(sninlieu);
 
 							if (validate == "") {
-								System.out.println("List:"
-										+ installableForm.getInstalledPNList()
-										+ " inlieu="
+								System.out.println("List:" + installableForm.getInstalledPNList() + " inlieu="
 										+ installableForm.getiNlieuPN());
 								if (!(installableForm.getInstalledPNList()
-										.containsValue(installableForm
-												.getiNlieuPN()))) {
+										.containsValue(installableForm.getiNlieuPN()))) {
 									System.out.println("INSIDE WARNING");
 									status = Constants.VALIDATEDWITHWARNING;
 									installableForm.setErrorStatus(status);
-									installableForm
-											.setErrorDescription(Constants.WARNINGMESSAGE);
+									installableForm.setErrorDescription(Constants.WARNINGMESSAGE);
 								}
 
 								else {
@@ -375,9 +293,7 @@ public class InstallableAssetController {
 									status = Constants.VALIDATED;
 									installableForm.setErrorStatus(status);
 								}
-								System.out.println(getClass()
-										+ ":Error Status:"
-										+ installableForm.getErrorStatus());
+								System.out.println(getClass() + ":Error Status:" + installableForm.getErrorStatus());
 
 							} else {
 								System.out.println("INSIDE NOT VALIDATED");
@@ -389,8 +305,7 @@ public class InstallableAssetController {
 
 							if (flag == 1) {
 								System.out.println("Flag=1;Errors");
-								emmsDataForm
-										.setInstallableStatus(Constants.VALIDATIONCOMPLETEDWITHERRORS);
+								emmsDataForm.setInstallableStatus(Constants.VALIDATIONCOMPLETEDWITHERRORS);
 								flag = 0;
 								count = count + 1;
 
@@ -398,153 +313,123 @@ public class InstallableAssetController {
 
 								if (count <= 0 && warning <= 0) {
 									System.out.println("NOERROR");
-									emmsDataForm
-											.setInstallableStatus(Constants.VALIDATIONCOMPLETED);
+									emmsDataForm.setInstallableStatus(Constants.VALIDATIONCOMPLETED);
 								}
 
 							}
 
-							System.out.println(this.emmsDataForm
-									.getAssetConfigStatus()
-									+ ":"
-									+ emmsDataForm.getInstallableStatus()
-									+ ":"
-									+ emmsDataForm.getAssetConfigStatus());
-							if (Constants.VALIDATIONCOMPLETED
-									.equals(this.emmsDataForm
-											.getAssetConfigStatus())
-									&& emmsDataForm
-											.getInstallableStatus()
-											.equals(Constants.VALIDATIONCOMPLETED)) {
+							System.out.println(this.emmsDataForm.getAssetConfigStatus() + ":"
+									+ emmsDataForm.getInstallableStatus() + ":" + emmsDataForm.getAssetConfigStatus());
+							if (Constants.VALIDATIONCOMPLETED.equals(this.emmsDataForm.getAssetConfigStatus())
+									&& emmsDataForm.getInstallableStatus().equals(Constants.VALIDATIONCOMPLETED)) {
 
 								System.out.println("inside record status:");
-								emmsDataForm
-										.setRecordStatus(Constants.VALIDATIONCOMPLETED);
+								emmsDataForm.setRecordStatus(Constants.VALIDATIONCOMPLETED);
 							} else {
-								emmsDataForm
-										.setRecordStatus(Constants.VALIDATIONCOMPLETEDWITHERRORS);
+								emmsDataForm.setRecordStatus(Constants.VALIDATIONCOMPLETEDWITHERRORS);
 							}
-							installableForm.setDateofManufacturing(convertor
-									.getDateTime(installableForm
-											.getDateofManufacturing()));
-							installableForm.setDateofReceipt(convertor
-									.getDateTime(installableForm
-											.getDateofReceipt()));
+
+							installableForm.setDateofManufacturing(
+									convertor.getDateTime(installableForm.getDateofManufacturing()));
+							installableForm.setDateofReceipt(convertor.getDateTime(installableForm.getDateofReceipt()));
+							emmsDataForm.setInductionDate(convertor.getDateTime(emmsDataForm.getInductionDate()));
+							emmsDataForm.setSignalOutDate(convertor.getDateTime(emmsDataForm.getSignalOutDate()));
 
 							if (!validate.contains(Constants.INLIEULENGTHERROR)
-									&& !validate
-											.contains(Constants.SNLENGTHERROR)) {
-								halService
-										.update(emmsDataForm, installableForm);
+									&& !validate.contains(Constants.SNLENGTHERROR)) {
+								halService.update(emmsDataForm, installableForm);
 
 							} else {
 								System.out.println("LENGTH GREATER");
 								assetConfigForm
-										.setErrorDesc(Constants.INLIEULENGTHERROR
-												+ "||"
-												+ Constants.SNLENGTHERROR);
+										.setErrorDesc(Constants.INLIEULENGTHERROR + "||" + Constants.SNLENGTHERROR);
 							}
-
-							installableForm.setDateofManufacturing(convertor
-									.getDateTime4(manufacturingDate));
-							installableForm.setDateofReceipt(convertor
-									.getDateTime4(receiptDate));
 						}
+						installableForm.setDateofManufacturing(
+								convertor.getDateTime1(installableForm.getDateofManufacturing()));
+						installableForm.setDateofReceipt(convertor.getDateTime1(installableForm.getDateofReceipt()));
+						emmsDataForm.setInductionDate(convertor.getDateTime1(emmsDataForm.getInductionDate()));
+						emmsDataForm.setSignalOutDate(convertor.getDateTime1(emmsDataForm.getSignalOutDate()));
+
 					}
 				} else {
 					System.out.println("inside else");
-					emmsDataForm
-							.setInstallableStatus(Constants.VALIDATIONCOMPLETED);
+					emmsDataForm.setInstallableStatus(Constants.VALIDATIONCOMPLETED);
 					System.out.println(emmsDataForm.toString());
-					if (Constants.VALIDATIONCOMPLETED.equals(this.emmsDataForm
-							.getAssetConfigStatus())
-							&& emmsDataForm.getInstallableStatus().equals(
-									Constants.VALIDATIONCOMPLETED)) {
+					if (Constants.VALIDATIONCOMPLETED.equals(this.emmsDataForm.getAssetConfigStatus())
+							&& emmsDataForm.getInstallableStatus().equals(Constants.VALIDATIONCOMPLETED)) {
 
 						System.out.println("inside else record status:");
-						emmsDataForm
-								.setRecordStatus(Constants.VALIDATIONCOMPLETED);
+						emmsDataForm.setRecordStatus(Constants.VALIDATIONCOMPLETED);
 					} else {
-						emmsDataForm
-								.setRecordStatus(Constants.VALIDATIONCOMPLETEDWITHERRORS);
+						emmsDataForm.setRecordStatus(Constants.VALIDATIONCOMPLETEDWITHERRORS);
 					}
-					halService.updateStatus(Constants.VALIDATIONCOMPLETED,
-							emmsDataForm.getRecordStatus(),
+					halService.updateStatus(Constants.VALIDATIONCOMPLETED, emmsDataForm.getRecordStatus(),
 							emmsDataForm.getRecordId());
 				}
-				emmsDataForm.setInductionDate(convertor.getDate2(emmsDataForm
-						.getInductionDate()));
-				emmsDataForm.setSignalOutDate(convertor.getDate2(emmsDataForm
-						.getSignalOutDate()));
+
 				model.addAttribute("emmsDataForm", emmsDataForm);
-				model.addAttribute("pageVar",
-						"/WEB-INF/jsp/InstallableAsset.jsp");
+				model.addAttribute("pageVar", "/WEB-INF/jsp/InstallableAsset.jsp");
 			} else if (action.equals("Save")) {
 				DateConvertor convertor = new DateConvertor();
-				String inductionDate = "";
-				String signalOutDate = "";
-				if (emmsDataForm.getSignalOutDate().length() > 0
-						&& emmsDataForm.getInductionDate().length() > 0) {
-					inductionDate = emmsDataForm.getInductionDate();
-					signalOutDate = emmsDataForm.getSignalOutDate();
-					emmsDataForm.setInductionDate(convertor
-							.getDate(inductionDate));
-					emmsDataForm.setSignalOutDate(convertor
-							.getDate(signalOutDate));
-				}
 
-				else {
+				if (null==emmsDataForm.getSignalOutDate()||emmsDataForm.getSignalOutDate().length()<=0) {
+					emmsDataForm.setSignalOutDate("");
+				}
+				if (null==emmsDataForm.getInductionDate()||emmsDataForm.getInductionDate().length()<=0) {
 
 					emmsDataForm.setInductionDate("");
-					emmsDataForm.setSignalOutDate("");
-					// assetConfigForm.setErrorDesc(Constants.NOTNULL);
-				}
 
-				List<InstallableAssetForm> installableList = emmsDataForm
-						.getInstallableFormList();
+				}
+				emmsDataForm.setSignalOutDate(convertor.getDateTime(emmsDataForm.getSignalOutDate()));
+emmsDataForm.setInductionDate(convertor.getDateTime(emmsDataForm.getInductionDate()));
+				
+				List<InstallableAssetForm> installableList = emmsDataForm.getInstallableFormList();
 				if (null != installableList && installableList.size() > 0) {
 					System.out.println(installableList);
 					int i = 0;
 					emmsDataForm.setInstallableStatus("");
 					emmsDataForm.setRecordStatus("");
 					for (InstallableAssetForm installableForm : installableList) {
-						installableForm.setInstalledPNList(installableFormList
-								.get(i).getInstalledPNList());
-						installableForm.setConditionCodes(installableFormList
-								.get(i).getConditionCodes());
-						installableForm.setRecordRowId(installableFormList.get(
-								i).getRecordRowId());
+						installableForm.setInstalledPNList(installableFormList.get(i).getInstalledPNList());
+						installableForm.setConditionCodes(installableFormList.get(i).getConditionCodes());
+						installableForm.setRecordRowId(installableFormList.get(i).getRecordRowId());
 						i++;
-						String mfgDate = installableForm
-								.getDateofManufacturing();
-						String receiptDate = installableForm.getDateofReceipt();
+						String receiptDate = "";
+						String manufacturingDate = "";
 
-						installableForm.setDateofManufacturing(convertor
-								.getDateTime3(mfgDate));
-						installableForm.setDateofReceipt(convertor
-								.getDateTime3(receiptDate));
-
-						System.out.println(halService.update(emmsDataForm,
-								installableForm));
-
-						installableForm.setDateofManufacturing(mfgDate);
+						if (installableForm.getDateofManufacturing().length() > 0) {
+							manufacturingDate = installableForm.getDateofManufacturing();
+						}
+						if (installableForm.getDateofReceipt().length() > 0) {
+							receiptDate = installableForm.getDateofReceipt();
+						}
+						installableForm.setDateofManufacturing(manufacturingDate);
 						installableForm.setDateofReceipt(receiptDate);
+						installableForm.setDateofManufacturing(
+								convertor.getDateTime(installableForm.getDateofManufacturing()));
+						installableForm.setDateofReceipt(convertor.getDateTime(installableForm.getDateofReceipt()));
+
+						System.out.println(halService.update(emmsDataForm, installableForm));
+
+						installableForm.setDateofManufacturing(
+								convertor.getDateTime1(installableForm.getDateofManufacturing()));
+						installableForm.setDateofReceipt(convertor.getDateTime1(installableForm.getDateofReceipt()));
 
 					}
 				}
 
-				emmsDataForm.setInductionDate(inductionDate);
-				emmsDataForm.setSignalOutDate(signalOutDate);
+				emmsDataForm.setInductionDate(convertor.getDateTime1(emmsDataForm.getInductionDate()));
+				emmsDataForm.setSignalOutDate(convertor.getDateTime1(emmsDataForm.getSignalOutDate()));
 
 				model.addAttribute("emmsDataForm", emmsDataForm);
-				model.addAttribute("pageVar",
-						"/WEB-INF/jsp/InstallableAsset.jsp");
-			}else if (action.equals("Export")) {
+				model.addAttribute("pageVar", "/WEB-INF/jsp/InstallableAsset.jsp");
+			} else if (action.equals("Export")) {
 
 				System.out.println("INSIDE EXPORT");
 
 				String filename = "C:\\Users\\Public\\Desktop\\Installable.xlsx";
-				//String filename = "D:\\Installable.xlsx";
+				// String filename = "D:\\Installable.xlsx";
 				XSSFWorkbook workbook = new XSSFWorkbook();
 				XSSFSheet sheet = workbook.createSheet("InstallableExportedData");
 				XSSFRow head = sheet.createRow((short) 0);
@@ -571,57 +456,35 @@ public class InstallableAssetController {
 
 				int rowIndex = 1;
 
-				List<InstallableAssetForm> installableForms = emmsDataForm
-						.getInstallableFormList();
+				List<InstallableAssetForm> installableForms = emmsDataForm.getInstallableFormList();
 				if (null != installableForms && installableForms.size() > 0) {
-					int i=0;
+					int i = 0;
 					for (InstallableAssetForm installConfigForm : installableForms) {
-						installConfigForm.setInstalledPNList(installableFormList
-								.get(i).getInstalledPNList());
-						installConfigForm.setConditionCodes(installableFormList
-								.get(i).getConditionCodes());
-						installConfigForm.setRecordRowId(installableFormList.get(
-								i).getRecordRowId());
+						installConfigForm.setInstalledPNList(installableFormList.get(i).getInstalledPNList());
+						installConfigForm.setConditionCodes(installableFormList.get(i).getConditionCodes());
+						installConfigForm.setRecordRowId(installableFormList.get(i).getRecordRowId());
 						i++;
 						System.out.println("count=" + rowIndex);
 						row = sheet.createRow((short) rowIndex);
 
-						row.createCell(0).setCellValue(
-								installConfigForm.getEnditemPN());
-						row.createCell(1).setCellValue(
-								installConfigForm.getEnditemsn());
-						row.createCell(2).setCellValue(
-								installConfigForm.getInstallableModel());
-						row.createCell(3)
-								.setCellValue(installConfigForm.getLcn());
-						row.createCell(4).setCellValue(
-								installConfigForm.getPosition());
-						row.createCell(5).setCellValue(
-								installConfigForm.getBuilditem());
-						row.createCell(6).setCellValue(
-								installConfigForm.getAssertnum());
-						row.createCell(7).setCellValue(
-								installConfigForm.getPartnum());
-						row.createCell(8).setCellValue(
-								installConfigForm.getPartDesc());
-						row.createCell(9).setCellValue(
-								installConfigForm.getSerialnum());
-						row.createCell(10).setCellValue(
-								installConfigForm.getInstallablePN());
-						row.createCell(11).setCellValue(
-								installConfigForm.getiNlieuPN());
-						row.createCell(12).setCellValue(
-								installConfigForm.getInstallableSN());
-						row.createCell(13).setCellValue(
-								installConfigForm.getConditionCode());
-						row.createCell(14).setCellValue(
-								installConfigForm.getDateofManufacturing());
-						row.createCell(15).setCellValue(
-								installConfigForm.getDateofReceipt());
-						row.createCell(16).setCellValue(
-								installConfigForm.getErrorStatus());
-						row.createCell(17).setCellValue(
-								installConfigForm.getErrorDescription());
+						row.createCell(0).setCellValue(installConfigForm.getEnditemPN());
+						row.createCell(1).setCellValue(installConfigForm.getEnditemsn());
+						row.createCell(2).setCellValue(installConfigForm.getInstallableModel());
+						row.createCell(3).setCellValue(installConfigForm.getLcn());
+						row.createCell(4).setCellValue(installConfigForm.getPosition());
+						row.createCell(5).setCellValue(installConfigForm.getBuilditem());
+						row.createCell(6).setCellValue(installConfigForm.getAssertnum());
+						row.createCell(7).setCellValue(installConfigForm.getPartnum());
+						row.createCell(8).setCellValue(installConfigForm.getPartDesc());
+						row.createCell(9).setCellValue(installConfigForm.getSerialnum());
+						row.createCell(10).setCellValue(installConfigForm.getInstallablePN());
+						row.createCell(11).setCellValue(installConfigForm.getiNlieuPN());
+						row.createCell(12).setCellValue(installConfigForm.getInstallableSN());
+						row.createCell(13).setCellValue(installConfigForm.getConditionCode());
+						row.createCell(14).setCellValue(installConfigForm.getDateofManufacturing());
+						row.createCell(15).setCellValue(installConfigForm.getDateofReceipt());
+						row.createCell(16).setCellValue(installConfigForm.getErrorStatus());
+						row.createCell(17).setCellValue(installConfigForm.getErrorDescription());
 
 						rowIndex++;
 					}
@@ -643,26 +506,21 @@ public class InstallableAssetController {
 
 			} else if (action.equals("Import")) {
 
-				String s = emmsDataForm.getInstallableExcelfile()
-						.getOriginalFilename();
+				String s = emmsDataForm.getInstallableExcelfile().getOriginalFilename();
 
-				List<InstallableAssetForm> oldInstallableList = emmsDataForm
-						.getInstallableFormList();
+				List<InstallableAssetForm> oldInstallableList = emmsDataForm.getInstallableFormList();
 				List<InstallableAssetForm> installableList = new ArrayList<InstallableAssetForm>();
 
 				XSSFWorkbook workbook = null;
 				try {
-					workbook = new XSSFWorkbook(emmsDataForm
-							.getInstallableExcelfile().getInputStream());
+					workbook = new XSSFWorkbook(emmsDataForm.getInstallableExcelfile().getInputStream());
 				} catch (IOException e) {
 
 				}
 
 				XSSFSheet worksheet = workbook.getSheetAt(0);
-				boolean headerStatus = installableValidator.validateHeader(worksheet
-						.getRow(0));
-				boolean countRows = oldInstallableList.size() == worksheet
-						.getLastRowNum();
+				boolean headerStatus = installableValidator.validateHeader(worksheet.getRow(0));
+				boolean countRows = oldInstallableList.size() == worksheet.getLastRowNum();
 				System.out.println(headerStatus + ":" + countRows);
 
 				if (headerStatus && countRows) {
@@ -673,70 +531,49 @@ public class InstallableAssetController {
 
 						assetValidator.checkCellType2003(row.getCell(0));
 
-						installableForm.setEnditemPN((oldInstallableList.get(i)
-								.getEnditemPN()));
-						installableForm.setEnditemsn((oldInstallableList.get(i)
-								.getEnditemsn()));
+						installableForm.setEnditemPN((oldInstallableList.get(i).getEnditemPN()));
+						installableForm.setEnditemsn((oldInstallableList.get(i).getEnditemsn()));
 						installableForm.setInstallableModel(oldInstallableList.get(i).getInstallableModel());
 						installableForm.setLcn(oldInstallableList.get(i).getLcn());
-						installableForm.setPosition(oldInstallableList.get(i)
-								.getPosition());
-						installableForm.setBuilditem(oldInstallableList.get(i)
-								.getBuilditem());
-						installableForm.setAssertnum(oldInstallableList.get(i)
-								.getAssertnum());
-						installableForm
-								.setPartnum(oldInstallableList.get(i).getPartnum());
-						installableForm.setPartDesc(oldInstallableList.get(i)
-								.getPartDesc());
-						installableForm.setSerialnum(oldInstallableList.get(i)
-								.getSerialnum());
-						installableForm.setInstalledPNList(installableFormList.get(i)
-								.getInstalledPNList());
-						installableForm.setConditionCodes(installableFormList.get(i)
-								.getConditionCodes());
-						installableForm.setRecordRowId(installableFormList.get(
-								i).getRecordRowId());
+						installableForm.setPosition(oldInstallableList.get(i).getPosition());
+						installableForm.setBuilditem(oldInstallableList.get(i).getBuilditem());
+						installableForm.setAssertnum(oldInstallableList.get(i).getAssertnum());
+						installableForm.setPartnum(oldInstallableList.get(i).getPartnum());
+						installableForm.setPartDesc(oldInstallableList.get(i).getPartDesc());
+						installableForm.setSerialnum(oldInstallableList.get(i).getSerialnum());
+						installableForm.setInstalledPNList(installableFormList.get(i).getInstalledPNList());
+						installableForm.setConditionCodes(installableFormList.get(i).getConditionCodes());
+						installableForm.setRecordRowId(installableFormList.get(i).getRecordRowId());
 						if (row.getCell(8) != null) {
-							String installedPN = commonValidator
-									.checkCellType2003(row.getCell(8));
+							String installedPN = commonValidator.checkCellType2003(row.getCell(8));
 							System.out.println(installedPN);
 							installableForm.setInstallablePN(installedPN);
 
 						}
 						if (row.getCell(9) != null) {
-							String inLieuPn = commonValidator
-									.checkCellType2003(row.getCell(9));
+							String inLieuPn = commonValidator.checkCellType2003(row.getCell(9));
 							installableForm.setiNlieuPN(inLieuPn);
 						}
 						if (row.getCell(10) != null) {
-							String installedSN = commonValidator
-									.checkCellType2003(row.getCell(10));
+							String installedSN = commonValidator.checkCellType2003(row.getCell(10));
 							installableForm.setInstallableSN(installedSN);
 						}
 						if (row.getCell(11) != null) {
-							String conditionCode = commonValidator
-									.checkCellType2003(row.getCell(11));
+							String conditionCode = commonValidator.checkCellType2003(row.getCell(11));
 							installableForm.setConditionCode(conditionCode);
 						}
 						if (row.getCell(12) != null) {
-							String dateOfManfacturing = commonValidator
-									.checkCellType2003(row.getCell(12));
+							String dateOfManfacturing = commonValidator.checkCellType2003(row.getCell(12));
 							System.out.println(dateOfManfacturing);
-							if (commonValidator.timeStampValidate1(
-									dateOfManfacturing).equals(
-									Constants.NOERROR)) {
+							if (commonValidator.timeStampValidate1(dateOfManfacturing).equals(Constants.NOERROR)) {
 								System.out.println("insdie manu");
-								installableForm
-										.setDateofManufacturing(dateOfManfacturing);
+								installableForm.setDateofManufacturing(dateOfManfacturing);
 							}
 						}
 						if (row.getCell(13) != null) {
-							String dateOfReciept = commonValidator
-									.checkCellType2003(row.getCell(13));
+							String dateOfReciept = commonValidator.checkCellType2003(row.getCell(13));
 
-							if (commonValidator.timeStampValidate1(
-									dateOfReciept).equals(Constants.NOERROR)) {
+							if (commonValidator.timeStampValidate1(dateOfReciept).equals(Constants.NOERROR)) {
 								System.out.println("inside");
 								installableForm.setDateofReceipt(dateOfReciept);
 							}
@@ -759,10 +596,12 @@ public class InstallableAssetController {
 
 			}
 		}
-		
-		if(disableIndicator.equals("1")){
+
+		if (disableIndicator.equals("1"))
+
+		{
 			model.addAttribute("disableIndicator", disableIndicator);
-			System.out.println("Disable indicator in Installabel Controller: "+disableIndicator);
+			System.out.println("Disable indicator in Installabel Controller: " + disableIndicator);
 		}
 
 		return "basic";

@@ -26,6 +26,18 @@
 	src="${path}/resources/theme/js/jquery.ui.datepicker.js"></script>
 <script type="text/javascript"
 	src="${path}/resources/theme/js/jquery.dataTables.js"></script>
+	
+<link href="${path}/resources/theme/css/jquery.datetimepicker.min.css"
+	rel="stylesheet" type="text/css" />
+<link href="${path}/resources/theme/css/jquery.ui.all.css"
+	rel="stylesheet" type="text/css" />
+<script type="text/javascript"
+	src="${path}/resources/theme/js/jquery.datetimepicker.full.js"></script>
+<script type="text/javascript"
+	src="${path}/resources/theme/js/jquery.datetimepicker.full.min.js"></script>
+<script type="text/javascript"
+	src="${path}/resources/theme/js/jquery.datetimepicker.min.js"></script>
+	
 <script type="text/javascript">
 	$('document').ready(function() {
 
@@ -47,7 +59,7 @@
 		if (freezeFlag == "false") {
 			console.log('freezetrue=' + freezeFlag);
 			document.getElementById("validate").disabled = true;
-			document.getElementById("save").disabled = true;
+			
 			document.getElementById("export").disabled = true;
 			document.getElementById("import").disabled = true;
 			/* document.getElementById("datepicker1").disabled=true;   */
@@ -71,7 +83,7 @@ if (bulkImportStatus == "Error") {
 		$('#spinner').show();
 		var table=$('#ListOfRecords').DataTable();
 		table.page.len(size+1).draw();
-		alert('File saved on Desktop');
+		
 	}
 	function checkExtension() {
 
@@ -110,67 +122,46 @@ if (bulkImportStatus == "Error") {
 
 	}
 	
-	$(function() {
-		$("#datepicker1")
-				.datepicker(
-						{
-							maxDate : 0,
-							changeMonth : true,
-							changeYear : true,
-							dateFormat : 'dd-M-yy',
-							showOn : 'button',
-							buttonImageOnly : true,
-							buttonImage : '/HAL_12/theme/images/datepicker.jpg',
-							disabled : document.getElementById("freezeFlag").value === "true" ? false
-									: true
-						});
-	});
+	$(function()
+			{
+		var freezeFlag = document.getElementById("freezeFlag").value;
+		
+				$(".inductionDateTimePicker").datetimepicker({
+					format: 'd-M-Y H:i:s',
+					step: 1,
+					maxDate:0
+					
+				});
+				
+				$(".signalOutDateTimePicker").datetimepicker({
+					format: 'd-M-Y H:i:s',
+					step: 1,
+					maxDate:0
+				});
 
-	$(function() {
-		$("#datepicker2")
-				.datepicker(
-						{
-							maxDate : 0,
-							changeMonth : true,
-							changeYear : true,
-							dateFormat : 'dd-M-yy',
-							showOn : 'button',
-							buttonImageOnly : true,
-							buttonImage : '/HAL_12/theme/images/datepicker.jpg',
-							disabled : document.getElementById("freezeFlag").value === "true" ? false
-									: true
-						});
-	});
-	$(function() {
-		$(".datepicker3")
-				.datepicker(
-						{
-							maxDate : 0,
-							changeMonth : true,
-							changeYear : true,
-							dateFormat : 'dd-M-yy',
-							showOn : 'button',
-							buttonImageOnly : true,
-							buttonImage : '/HAL_12/theme/images/datepicker.jpg',
-							disabled : document.getElementById("freezeFlag").value === "true" ? false
-									: true
-						});
-	});
-	$(function() {
-		$(".datepicker4")
-				.datepicker(
-						{
-							maxDate : 0,
-							changeMonth : true,
-							changeYear : true,
-							dateFormat : 'dd-M-yy',
-							showOn : 'button',
-							buttonImageOnly : true,
-							buttonImage : '/HAL_12/theme/images/datepicker.jpg',
-							disabled : document.getElementById("freezeFlag").value === "true" ? false
-									: true
-						});
-	});
+			});
+	
+	function showDatePickerInductionDate(){
+		var freezeFlag = document.getElementById("freezeFlag").value;
+		if (freezeFlag == "true") 
+			{
+			$(function(){
+				$('.inductionDateTimePicker').datetimepicker('show');
+			});
+			}
+		
+	}
+	function showDatePickerSignalOutDate(){
+	
+		var freezeFlag = document.getElementById("freezeFlag").value;
+		console.log('hello');
+		if (freezeFlag == "true") 
+			{
+			$(function(){
+				$('.signalOutDateTimePicker').datetimepicker('show');
+			});
+			}
+	}
 	
 	
 	function showConfirm() {
@@ -306,10 +297,19 @@ if (bulkImportStatus == "Error") {
 					<td><form:label path="inductionDate">
 							<spring:message code="label.inductionDate" />
 						</form:label><span style="color: red; font-weight: bold; margin-left: -46px;"></span></td>
-					<td class="datepicker2"><form:input type="text"
-							id="datepicker1" path="inductionDate" readonly="true"
-							class="form-control" title="${emmsDataForm.inductionDate}"
-							style="background-color: rgb(216, 216, 216); width: 70%;" /></td>
+					<td class="form-group date"><div class="input-group date">
+							<form:input 
+									readonly="true"
+									disabled="${!emmsDataForm.freeze}"
+									type="text" path="inductionDate"
+								class="form-control inductionDateTimePicker"
+								value="${emmsDataForm.inductionDate}"
+								style="background-color: #eeeeee; width: 180px;" />
+							<span class="input-group-addon"> <span
+								class="glyphicon glyphicon-calendar"
+								onclick="showDatePickerInductionDate()"></span>
+							</span>
+						</div></td>
 
 					<td><form:label path="mainAssetPart">
 							<spring:message code="label.mainAssetPart" />
@@ -327,10 +327,18 @@ if (bulkImportStatus == "Error") {
 					<td><form:label path="signalOutDate">
 							<spring:message code="label.signalOutDate" />
 						</form:label><span style="color: red; font-weight: bold; margin-left: -46px;"></span></td>
-					<td class="datepicker3"><form:input path="signalOutDate"
-							id="datepicker2" class="form-control" readonly="true"
-							title="${emmsDataForm.signalOutDate}"
-							style="background-color: rgb(216, 216, 216); width: 70%;" /></td>
+					<td class="form-group date"><div class="input-group date">
+							<form:input path="signalOutDate"
+							readonly="true"
+							disabled="${!emmsDataForm.freeze}"
+								value="${emmsDataForm.signalOutDate}"
+								class="form-control signalOutDateTimePicker"
+								style="background-color: #eeeeee; width: 180px;" />
+							<span class="input-group-addon"> <span
+								class="glyphicon glyphicon-calendar"
+								onclick="showDatePickerSignalOutDate()"></span>
+							</span>
+						</div></td>
 
 
 					<td><form:label path="mainAssetSerial">
@@ -365,9 +373,8 @@ if (bulkImportStatus == "Error") {
 					<td class="tableheading"><spring:message code="label.UOM" /></td>
 
 					<td class="tableheading"><spring:message
-							code="label.InstallationCount" /></td>
-					<td class="tableheading"><spring:message
-							code="label.InstallationDate" /></td>
+							code="label.ExistingCount" /></td>
+					
 					<td class="tableheading"><spring:message
 							code="label.CurrentCount" /></td>
 					<td class="tableheading"><spring:message code="label.Error" /></td>
@@ -406,14 +413,11 @@ if (bulkImportStatus == "Error") {
 
 
 					<td><form:input
-							path="meterFormList[${status.index}].installationCount"
+							path="meterFormList[${status.index}].existingCount"
 							readonly="${!emmsDataForm.freeze}"
-							title="${meterForm.installationCount}" class="form-control"
+							title="${meterForm.existingCount}" class="form-control"
 							style="width:202px;" /></td>
-					<td class="datepicker7"><form:input readonly="true"
-							path="meterFormList[${status.index}].installationDate"
-							title="${meterForm.installationDate}"
-							class="form-control datepicker3" style="width:145px;" /></td>
+					
 					<td><form:input
 							path="meterFormList[${status.index}].currentCount"
 							readonly="${!emmsDataForm.freeze}"

@@ -57,6 +57,14 @@ public class HalDao {
 
 		}
 	};
+	
+	private static List<String> complianceStatusOptions = new ArrayList<String>() {
+		private static final long serialVersionUID = 1L;
+		{
+			add("Performed");
+			add("Not Performed");
+		}
+	};
 
 	private static DateConvertor convertor = new DateConvertor();
 
@@ -373,10 +381,10 @@ public class HalDao {
 			pmDetailForm.setUom(rs.getString("UOM"));
 			pmDetailForm.setFrequencyUnit(rs.getString("frequency_unit"));
 			pmDetailForm.setFrequencyIteration(rs.getInt("iterationcalfrequency"));
-
+			pmDetailForm.setComplianceStatus(rs.getString("compliance_status"));
+			pmDetailForm.setComplianceStatusOptions(complianceStatusOptions);
 			pmDetailForm.setLastCompiledDate(convertor.getDate2(rs.getString("last_complied_date")));
 			pmDetailForm.setNextDueDate(convertor.getDate2(rs.getString("next_due_date")));
-
 			pmDetailForm.setLastCompiledValue(rs.getBigDecimal("last_complied_value"));
 			pmDetailForm.setNextDueValue(rs.getBigDecimal("next_due_value"));
 			pmDetailForm.setErrorStatus(rs.getString("error_status"));
@@ -644,11 +652,22 @@ public class HalDao {
 		int temp = jdbcTemplate.update(sql);
 
 		if (temp == 1) {
+			if(pmForm.getLastCompiledDate().length() > 0 && pmForm.getNextDueDate().length() > 0) {
 			sql = "update asset_pm set asset_pm.Last_Complied_Date='" + pmForm.getLastCompiledDate() + "',"
 					+ "asset_pm.Next_Due_Date='" + pmForm.getNextDueDate() + "'," + "asset_pm.Last_Complied_Value="
 					+ pmForm.getLastCompiledValue() + "," + "asset_pm.Next_Due_Value=" + pmForm.getNextDueValue() + ""
+					+ ", asset_pm.compliance_status='"+ pmForm.getComplianceStatus() +"'"
 					+ " where asset_pm.Record_ID='" + emmsDataForm.getRecordId() + "'" + " and asset_pm.Record_Row_ID='"
-					+ pmForm.getRecordRowId() + "'";
+					+ pmForm.getRecordRowId() + "'" ;
+			}
+			if(pmForm.getLastCompiledDate().length() > 0) {
+				sql = "update asset_pm set asset_pm.Last_Complied_Date='" + pmForm.getLastCompiledDate() + "',"
+						+ "asset_pm.Last_Complied_Value="
+						+ pmForm.getLastCompiledValue() + "," + "asset_pm.Next_Due_Value=" + pmForm.getNextDueValue() + ""
+						+ ", asset_pm.compliance_status='"+ pmForm.getComplianceStatus() +"'"
+						+ " where asset_pm.Record_ID='" + emmsDataForm.getRecordId() + "'" + " and asset_pm.Record_Row_ID='"
+						+ pmForm.getRecordRowId() + "'" ;
+			}
 			return jdbcTemplate.update(sql);
 		} else
 			return 0;

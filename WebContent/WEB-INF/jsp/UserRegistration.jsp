@@ -25,6 +25,14 @@
 	src="${path}/resources/theme/js/jquery-1.10.2.min.js"></script>
 <script type="text/javascript"
 	src="${path}/resources/theme/js/jquery.dataTables.js"></script>
+<script type="text/javascript">
+	function resetFields(){
+		document.getElementById("serviceNo").value = "";
+		document.getElementById("firstName").value = "";
+		document.getElementById("lastName").value = "";
+		document.getElementById("password").value = "";
+	}
+</script>
 </head>
 <body>
 	<form:form modelAttribute="userRegistrationForm" method="POST" action="${path}/userRegistration/onSubmit">
@@ -79,9 +87,9 @@
 
 					<td align="right"><input type="submit" value="Submit" id="save" name="action" class="btn" style="width: 70px;" /></td>
 
-					<td><input type="submit" name="action" id="validate" value="Reset" disabled="disabled" class="btn" style="width: 70px;"></td>
+					<td><input type="button" id="reset" value="Reset" class="btn" style="width: 70px;" onclick="resetFields()"></td>
 
-					<td align="left"><input type="submit" value="Cancel" disabled="disabled" name="action" class="btn" style="color: gray; width: 70px;" /></td>
+					<!-- <td align="left"><input type="submit" value="Cancel" disabled="disabled" name="action" class="btn" style="color: gray; width: 70px;" /></td> -->
 				</tr>
 			</thead>
 		</table>

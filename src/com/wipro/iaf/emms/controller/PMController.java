@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -157,7 +159,7 @@ public class PMController {
 			} else if (action.equals("Validate")) {
 				logger.info("Inside PMController Validate");
 				List<PMDetailForm> pmFormList = emmsDataForm.getPmDetailFormList();
-
+				Map<String, String> mpmNumbersMap = new HashMap<String, String>();
 				DateConvertor convertor = new DateConvertor();
 
 				boolean flag = true;
@@ -181,8 +183,11 @@ public class PMController {
 					for (PMDetailForm pmForm : pmFormList) {
 
 						pmForm.setRecordRowId(pmDetailFormList.get(i).getRecordRowId());
+						pmForm.setComplianceStatusOptions(pmDetailFormList.get(i).getComplianceStatusOptions());
+						
 						String lastCompiledDate = "";
 						String nextDueDate = "";
+						String validate = "";
 
 						if (pmForm.getLastCompiledDate().length() > 0) {
 							lastCompiledDate = pmForm.getLastCompiledDate();
@@ -195,24 +200,38 @@ public class PMController {
 						pmForm.setLastCompiledDate(lastCompiledDate);
 						pmForm.setNextDueDate(nextDueDate);
 
-						String validate = pmValidator.pmValidate(inductionDate, signalOutDate, lastCompiledDate,
-								nextDueDate, pmForm.getLastCompiledValue(), pmForm.getNextDueValue(),
-								pmForm.getFrequencyUnit());
-
-						if (validate == "") {
-							// NO WARNING ALL CORRECT
-							System.out.println("INSIDE VALIDATED");
-							status = Constants.VALIDATED;
-							pmForm.setErrorDesc(validate);
-							pmForm.setErrorStatus(status);
-						} else {
-							// ANY COLUMNS DOES NOT HAVE CORRECT DATA
-							System.out.println("INSIDE NOT VALIDATED");
-							status = Constants.NOTVALIDATED;
-							flag = true;
-							pmForm.setErrorDesc(validate);
-							pmForm.setErrorStatus(status);
+						if(pmForm.getComplianceStatus().equals("Performed")) {
+							validate = pmValidator.pmValidate(pmForm, inductionDate, signalOutDate, lastCompiledDate,
+									nextDueDate, pmForm.getLastCompiledValue(), pmForm.getNextDueValue(),
+									pmForm.getFrequencyUnit(), mpmNumbersMap);
 						}
+						
+						if(!mpmNumbersMap.containsKey(pmForm.getMpmNum())) {
+							mpmNumbersMap.put(pmForm.getMpmNum(), pmForm.getLastCompiledDate());
+						}
+						
+						if(pmForm.getComplianceStatus().equals("Performed")) {
+							
+							if (validate == "") {
+								// NO WARNING ALL CORRECT
+								System.out.println("INSIDE VALIDATED");
+								status = Constants.VALIDATED;
+								pmForm.setErrorDesc(validate);
+								pmForm.setErrorStatus(status);
+							} else {
+								// ANY COLUMNS DOES NOT HAVE CORRECT DATA
+								System.out.println("INSIDE NOT VALIDATED");
+								status = Constants.NOTVALIDATED;
+								flag = true;
+								pmForm.setErrorDesc(validate);
+								pmForm.setErrorStatus(status);
+							}
+						} else {
+							pmForm.setErrorDesc("");
+							pmForm.setErrorStatus("");
+						}
+						
+						
 
 						if (pmForm.getLastCompiledDate().length() > 0) {
 							pmForm.setLastCompiledDate(convertor.getDateTime(pmForm.getLastCompiledDate()));
@@ -223,7 +242,8 @@ public class PMController {
 						}
 
 						// Code for validation ends here
-						if (pmForm.getLastCompiledDate().length() > 0 && pmForm.getNextDueDate().length() > 0) {
+						//if (pmForm.getLastCompiledDate().length() > 0 && pmForm.getNextDueDate().length() > 0) {
+						if (pmForm.getLastCompiledDate().length() > 0) {
 							halService.update(emmsDataForm, pmForm);
 						}
 
@@ -249,8 +269,8 @@ public class PMController {
 					}
 				}
 
-				emmsDataForm.setInductionDate(convertor.getDate2(emmsDataForm.getInductionDate()));
-				emmsDataForm.setSignalOutDate(convertor.getDate2(emmsDataForm.getSignalOutDate()));
+				emmsDataForm.setInductionDate(inductionDate);
+				emmsDataForm.setSignalOutDate(signalOutDate);
 				model.addAttribute("emmsDataForm", emmsDataForm);
 				model.addAttribute("pageVar", "/WEB-INF/jsp/PMScreen.jsp");
 
@@ -265,8 +285,8 @@ public class PMController {
 				String inductionDate = "";
 				String signalOutDate = "";
 				if (0 < emmsDataForm.getSignalOutDate().length() && 0 < emmsDataForm.getInductionDate().length()) {
-					inductionDate = emmsDataForm.getInductionDate() + " " + time;
-					signalOutDate = emmsDataForm.getSignalOutDate() + " " + time;
+					inductionDate = emmsDataForm.getInductionDate();
+					signalOutDate = emmsDataForm.getSignalOutDate();
 					emmsDataForm.setInductionDate(convertor.getDate(inductionDate));
 					emmsDataForm.setSignalOutDate(convertor.getDate(signalOutDate));
 				} else {
@@ -280,6 +300,7 @@ public class PMController {
 					for (PMDetailForm pmForm : pmFormList) {
 
 						pmForm.setRecordRowId(pmDetailFormList.get(i).getRecordRowId());
+						pmForm.setComplianceStatusOptions(pmDetailFormList.get(i).getComplianceStatusOptions());
 
 						String lastCompiledDate = "";
 						String nextDueDate = "";
@@ -309,17 +330,17 @@ public class PMController {
 						}
 
 						// Code for validation ends here
-						if (pmForm.getLastCompiledDate().length() > 0 && pmForm.getNextDueDate().length() > 0) {
-
+						//if (pmForm.getLastCompiledDate().length() > 0 && pmForm.getNextDueDate().length() > 0) {
+						if (pmForm.getLastCompiledDate().length() > 0) {
 							halService.update(emmsDataForm, pmForm);
 						}
 
 						if (pmForm.getLastCompiledDate().length() > 0) {
-							pmForm.setLastCompiledDate(convertor.getDateTime4(lastCompiledDate));
+							pmForm.setLastCompiledDate(convertor.getDateTime5(lastCompiledDate));
 						}
 
 						if (pmForm.getNextDueDate().length() > 0) {
-							pmForm.setNextDueDate(convertor.getDateTime4(nextDueDate));
+							pmForm.setNextDueDate(convertor.getDateTime5(nextDueDate));
 						}
 
 						pmDetailFormList.get(i).setLastCompiledDate(pmForm.getLastCompiledDate());
@@ -329,10 +350,8 @@ public class PMController {
 
 					}
 				}
-				emmsDataForm.setInductionDate(convertor.getDate2(emmsDataForm.getInductionDate()));
-				emmsDataForm.setSignalOutDate(convertor.getDate2(emmsDataForm.getSignalOutDate()));
-				System.out.println("Length of PMLIST: " + emmsDataForm.getPmDetailFormList().size());
-				System.out.println("Length of PMLIST: " + this.pmDetailFormList.size());
+				emmsDataForm.setInductionDate(inductionDate);
+				emmsDataForm.setSignalOutDate(signalOutDate);
 				model.addAttribute("emmsDataForm", emmsDataForm);
 				model.addAttribute("pageVar", "/WEB-INF/jsp/PMScreen.jsp");
 

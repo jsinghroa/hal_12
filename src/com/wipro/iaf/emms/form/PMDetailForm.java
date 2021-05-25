@@ -1,6 +1,7 @@
 package com.wipro.iaf.emms.form;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -22,6 +23,8 @@ public class PMDetailForm {
 	private String frequencyUnit;
 	private String errorStatus;
 	private String errorDesc;
+	private String complianceStatus;
+	private List<String> complianceStatusOptions;
 	private String lastCompiledDate;
 	private String nextDueDate;
 	private BigDecimal lastCompiledValue;
@@ -135,6 +138,22 @@ public class PMDetailForm {
 		this.errorDesc = errorDesc;
 	}
 
+	public String getComplianceStatus() {
+		return complianceStatus;
+	}
+
+	public void setComplianceStatus(String complianceStatus) {
+		this.complianceStatus = complianceStatus;
+	}
+
+	public List<String> getComplianceStatusOptions() {
+		return complianceStatusOptions;
+	}
+
+	public void setComplianceStatusOptions(List<String> complianceStatusOptions) {
+		this.complianceStatusOptions = complianceStatusOptions;
+	}
+
 	public String getLastCompiledDate() {
 		return lastCompiledDate;
 	}
@@ -173,9 +192,10 @@ public class PMDetailForm {
 				+ ", installSerialNum=" + installSerialNum + ", workType=" + workType + ", mpmNum=" + mpmNum
 				+ ", mpmDescription=" + mpmDescription + ", meterName=" + meterName + ", uom=" + uom
 				+ ", frequencyIteration=" + frequencyIteration + ", frequencyUnit=" + frequencyUnit + ", errorStatus="
-				+ errorStatus + ", errorDesc=" + errorDesc + ", lastCompiledDate=" + lastCompiledDate + ", nextDueDate="
-				+ nextDueDate + ", lastCompiledValue=" + lastCompiledValue + ", nextDueValue=" + nextDueValue
-				+ ", recordRowId=" + recordRowId + "]";
+				+ errorStatus + ", errorDesc=" + errorDesc + ", complianceStatus=" + complianceStatus
+				+ ", complianceStatusOptions=" + complianceStatusOptions + ", lastCompiledDate=" + lastCompiledDate
+				+ ", nextDueDate=" + nextDueDate + ", lastCompiledValue=" + lastCompiledValue + ", nextDueValue="
+				+ nextDueValue + ", recordRowId=" + recordRowId + "]";
 	}
 
 }

@@ -208,7 +208,7 @@
 			format:'H:i',
 			step: 1,
 			minTime : '0:0',
-			maxTime : '30'
+			maxTime : today.getHours() + ":" + today.getMinutes()
 			});
 	});
 	
@@ -219,7 +219,7 @@
 			format:'H:i',
 			step: 1,
 			minTime : '0:0',
-			maxTime : '30'
+			maxTime : today.getHours() + ":" + today.getMinutes()
 			});
 	});
 	
@@ -243,24 +243,7 @@
 	function populateFlightDate(index)
 	{
 	
-	     var selectSortie=$('#sortieNumbers_'+index).val();
-	     console.log('inside sortie ='+selectSortie);
-	     var FlbSortieArForm={
-	    		 sortieNo:selectSortie
-	     }
-	    $.ajax({
-	    	type:"POST",
-	    	contentType :'application/json',
-	    	url:"${pageContext.request.contextPath}/FLB/fetchEtdDate",
-	    	data:JSON.stringify(FlbSortieArForm),
-	    	dataType : 'json',
-	    	success:function(data)
-	    	{
-	    		console.log('data='+data.etdDate);
-	    		$("#flightDate_"+index).val(data.etdDate);
-	    	}
-	    	
-	    });
+	     console.log('index='+index);
 		
 	};
 

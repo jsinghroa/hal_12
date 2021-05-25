@@ -1,4 +1,4 @@
-package com.wipro.iaf.emms.initializer;
+/*package com.wipro.iaf.emms.initializer;
 
 import org.springframework.security.web.context.AbstractSecurityWebApplicationInitializer;
 
@@ -9,4 +9,4 @@ public class SecurityWebApplicationInitializer extends AbstractSecurityWebApplic
 	public SecurityWebApplicationInitializer(){
 		//super(WebSecurityConfig.class);
 	}
-}
+}*/

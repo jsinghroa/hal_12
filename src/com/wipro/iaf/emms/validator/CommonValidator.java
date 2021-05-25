@@ -48,7 +48,7 @@ public class CommonValidator {
 	
 	public String timeStampValidate(String timeStamp) {
 		try {
-			SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yy HH:mm:ss");
+			SimpleDateFormat df = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss");
             df.setLenient(false);
             df.parse(timeStamp);
             return Constants.NOERROR;

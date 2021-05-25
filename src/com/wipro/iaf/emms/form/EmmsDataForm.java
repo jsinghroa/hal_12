@@ -309,25 +309,7 @@ public class EmmsDataForm {
 	public void setSelectedRecordId(String selectedRecordId) {
 		this.selectedRecordId = selectedRecordId;
 	}
-	@Override
-	public String toString() {
-		return "EmmsDataForm [recordId=" + recordId + ", desc=" + desc
-				+ ", tableOrder=" + tableOrder + ", mainAsset=" + mainAsset
-				+ ", mainAssetPart=" + mainAssetPart + ", mainAssetSerial="
-				+ mainAssetSerial + ", location=" + location
-				+ ", signalOutDate=" + signalOutDate + ", recordStatus="
-				+ recordStatus + ", recordIdStatus=" + recordIdStatus
-				+ ", selectedRecordId=" + selectedRecordId + ", inductionDate="
-				+ inductionDate + ", model=" + model + ", assetPmStatus="
-				+ assetPmStatus + ", assetConfigStatus=" + assetConfigStatus
-				+ ", assetMeterStatus=" + assetMeterStatus
-				+ ", installableStatus=" + installableStatus + ", flbStatus="
-				+ flbStatus + ", freeze=" + freeze + ", pmDetailFormList="
-				+ pmDetailFormList + ", assetFormList=" + assetFormList
-				+ ", installableFormList=" + installableFormList
-				+ ", meterFormList=" + meterFormList + ", flbFormList="
-				+ flbFormList + "]";
-	}
+	
 	public List<PMDetailForm> getPmDetailFormList() {
 		return pmDetailFormList;
 	}
@@ -353,6 +335,27 @@ public class EmmsDataForm {
 
 	public void setRecordIdStatus(String recordIdStatus) {
 		this.recordIdStatus = recordIdStatus;
+	}
+
+
+
+
+	@Override
+	public String toString() {
+		return "EmmsDataForm [recordId=" + recordId + ", desc=" + desc + ", tableOrder=" + tableOrder + ", mainAsset="
+				+ mainAsset + ", mainAssetPart=" + mainAssetPart + ", mainAssetSerial=" + mainAssetSerial
+				+ ", location=" + location + ", signalOutDate=" + signalOutDate + ", recordStatus=" + recordStatus
+				+ ", recordIdStatus=" + recordIdStatus + ", selectedRecordId=" + selectedRecordId + ", inductionDate="
+				+ inductionDate + ", model=" + model + ", assetPmStatus=" + assetPmStatus + ", assetConfigStatus="
+				+ assetConfigStatus + ", assetMeterStatus=" + assetMeterStatus + ", installableStatus="
+				+ installableStatus + ", flbValidationStatus=" + flbValidationStatus + ", flbStatus=" + flbStatus
+				+ ", bulkImportStatus=" + bulkImportStatus + ", flbNum=" + flbNum + ", freeze=" + freeze
+				+ ", pmDetailFormList=" + pmDetailFormList + ", assetFormList=" + assetFormList
+				+ ", installableFormList=" + installableFormList + ", meterFormList=" + meterFormList + ", flbFormList="
+				+ flbFormList + ", assetExcelfile=" + assetExcelfile + ", installableExcelfile=" + installableExcelfile
+				+ ", meterExcelfile=" + meterExcelfile + ", pmExcelfile=" + pmExcelfile + ", flbMeterDetailsFormList="
+				+ flbMeterDetailsFormList + ", flbSortieArFormList=" + flbSortieArFormList
+				+ ", flbPostFlightDataFormList=" + flbPostFlightDataFormList + "]";
 	}
 
 

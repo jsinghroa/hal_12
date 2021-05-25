@@ -215,16 +215,12 @@ public class ImportXMLController {
 
 			}
 
-			String tableName = "";
-			tableName = "Asset Cfg Plan";
-			tableOrder = "6";
-			tableStatusForm.setTableOrder(tableOrder);
+			
 			if (xmlFileCheck == true) {
 				success = true;
 			}
 			model.addAttribute("success", success);
 			// halService.importXml(assetConfigList); 
-			halDAO.updateTableOrder(tableStatusForm, tableName);
 			model.addAttribute("tableStatusForm", tableStatusForm);
 			model.addAttribute("pageVar", "/WEB-INF/jsp/recordIdStatus.jsp");
 
@@ -246,15 +242,12 @@ public class ImportXMLController {
 		}
 		
 		else {
-			tableStatusForm.setTableOrder(tableOrder);
+			
 			model.addAttribute("tableStatusForm", tableStatusForm);
 			model.addAttribute("pageVar", "/WEB-INF/jsp/recordIdStatus.jsp");
 		}
 		return "basic";
 	}
 
-	/*
-	 * @RequestMapping(value = "/desc", method = RequestMethod.GET) public
-	 * String showError(ModelMap model) { return "ModalContainer"; }
-	 */
+	
 }

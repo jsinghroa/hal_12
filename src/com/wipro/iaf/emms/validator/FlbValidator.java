@@ -245,6 +245,7 @@ public class FlbValidator {
 	
 	public String validateSortie(String sortieDate,String etd,String etdDate)
 	{
+		System.out.println("sortieDate="+sortieDate+"etd="+etd+"etdDate="+etdDate);
 		sortieErrorMsg = Constants.NOERROR;
 		if(sortieDate.isEmpty()) {
 			if(sortieErrorMsg.length() > 0) {
@@ -263,13 +264,13 @@ public class FlbValidator {
 		
 		if(etdDate.isEmpty()) {
 			if(sortieErrorMsg.length() > 0) {
-				sortieErrorMsg +=  " || " +  Constants.ETDMANDATORYERROR;
+				sortieErrorMsg +=  " || " +  Constants.ETDDATEMANDATORYERROR;
 	    	}
 	    	else
-	    		sortieErrorMsg += Constants.ETDMANDATORYERROR;
+	    		sortieErrorMsg += Constants.ETDDATEMANDATORYERROR;
 		}
 		//etd>sortie
-		if(null!=etdDate&&null!=sortieDate)
+		if(null!=etdDate&&null!=sortieDate&&!etdDate.equals("")&&!sortieDate.equals(""))
 		{
 		try {
 			if (new SimpleDateFormat("dd-MMM-yy").parse(sortieDate)

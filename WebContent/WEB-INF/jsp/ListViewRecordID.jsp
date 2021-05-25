@@ -129,7 +129,7 @@ function errorTableGenerate(recordId, errorStatusList) {
 	<table id="ListOfRecords" align="center" class="tabletopmargin10" width="70%">
 	<thead>
 				<tr>
-					<td class="tableheading" width="5%">Select</td>
+					
 					<td class="tableheading" width="5%"><spring:message code="label.recordId" /></td>
 					<td class="tableheading" width="5%"><spring:message code="label.userId" /></td>
 					<td class="tableheading" width="5%"><spring:message code="label.mainAsset" /></td>
@@ -141,19 +141,6 @@ function errorTableGenerate(recordId, errorStatusList) {
 				</thead>
 			<c:forEach var="emmsData" items="${recordIdList}" varStatus="theCount" >
 			<tr>
-			<td width="5%">
-			<c:if test="${emmsData.tableOrder == '6'}">
-			
-				<form:radiobutton path="recordId" disabled="true" value="${emmsData.recordId}" onclick="radioButtonSelected('${emmsData.tableOrder}')" ></form:radiobutton>
-			
-			</c:if>
-			<c:if test="${emmsData.tableOrder != '6'}">
-				<form:radiobutton path="recordId" value="${emmsData.recordId}" onclick="radioButtonSelected('${emmsData.tableOrder}')" ></form:radiobutton>
-			</c:if>
-			</td>
-			<%-- <td>
-				<form:radiobutton path="recordId" value="${emmsData.recordId}" onclick="radioButtonSelected('${emmsData.tableOrder}')" ></form:radiobutton>
-			</td> --%>
 			<td width="5%">${emmsData.recordId}</td>
 			<td width="5%"><security:authentication property="principal.username" /></td>
 			<td width="5%">${emmsData.mainAsset}</td>

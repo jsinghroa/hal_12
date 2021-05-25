@@ -61,12 +61,13 @@ public abstract interface Constants {
 	public static final String NEXTDUEVALUENULLERROR = "Next Due Value must be empty when Meter is 'Calendar Based'";
 	public static final String LASTCOMPLIEDDATEDIFFERENTFORSAMEMPM = "Last Complied date cannot be different for same Master PM records";
 
-	public static final String INITIALDATEMANDATORYERROR = "Initial Date should not be blank if Initial Count contains value";
 	public static final String CURRENTCOUNTMANDATORYERROR = "Current Count should not be blank if Initial Value and Initial Date is having value.";
-	public static final String INITIALCOUNTGREATERTOCURRENTCOUNTERROR = "Current Count must be equal or greater than the Initial Count";
+	public static final String EXISTINGCOUNTGREATERTOCURRENTCOUNTERROR = "Current Count must be equal or greater than the Initial Count";
 
 	public static final String SORTIEDATEMANDATORYERROR = "Sortie Date should not be blank";
 	public static final String ETDMANDATORYERROR = "ETD(IST) (HH:MM) should not be blank";
+	public static final String ETDDATEMANDATORYERROR = "ETD Date should not be blank";
+
 	public static final String INDUCTIONDATEGREATERTOSORTIEDATEERROR = "Sortie Date should be later than the Induction Date";
 	public static final String REASONMANDATORYERROR = "Reason should not be blank when Sortie Status is REJECT";
 	public static final String FLIGHTDATEGREATERTOCURRENTDATEERROR = "Flight Date cannot be later than the current time";
@@ -99,7 +100,7 @@ public abstract interface Constants {
 	public static final String READONLY="Asset is already attached to the Build Item. The field is read-only.";
 	public static final String DECIMAL="Please enter the Integer value only";
 	public static final String EXISTINGCURRENTCOUNTERROR="Current Count must be greater than the existing count of the asset";	
-	public static final String PMERROR="Please enter Install Count, Install Date and Current Count for the Installed P/N-Installed S/N-Meter combination as PM compliance data is available in PM Details section";
+	public static final String PMERROR="Please enter Existing Count,Current Count for the Installed P/N-Installed S/N-Meter combination as PM compliance data is available in PM Details section";
 	public static final String UOMERROR="Please enter the field in given uom format";	
 	public static final String ENDITEMPN="End Item P/N";
 	public static final String ENDITEMSN="End Item S/N";
@@ -138,7 +139,7 @@ public abstract interface Constants {
 	public static final String METERNAME="Metername";
 	public static final String INSTALLEDPARTDESCRIPTION="Installed Part Description";
 	public static final String UOM="UOM";
-	public static final String INITIALCOUNT="Initial Count";
+	public static final String EXISTINGCOUNT="Existing Count";
 	public static final String INSTALLATIONDATE="Installation Date";
 	public static final String CURRENTCOUNT="Current Count";
 	

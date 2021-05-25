@@ -22,7 +22,7 @@ public class DateConvertor {
 						.format(iDate);
 				return correctDate;
 			} catch (ParseException e) {
-				e.printStackTrace();
+				System.out.println(e.getMessage());
 				return " ";
 			}
 		}
@@ -42,7 +42,7 @@ public class DateConvertor {
 						.format(iDate);
 				return correctDate;
 			} catch (ParseException e) {
-				e.printStackTrace();
+				System.out.println(e.getMessage());
 				return "";
 			}
 		}
@@ -51,28 +51,49 @@ public class DateConvertor {
 	public String getDateTime(String date) {
 
 		if (null == date) {
-			System.out.println("inside null");
 			return "";
 		} else if (date.isEmpty()) {
 			return "";
 		} else {
 			try {
-				System.out.println("inside try");
-				Date iDate = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss")
+				
+				Date iDate = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss")
 						.parse(date);
-				String correctDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+				String correctDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
 						.format(iDate);
-				System.out.println("asdad" + correctDate);
 				return correctDate;
 			} catch (ParseException e) {
-				System.out.println("inside catch");
-				e.printStackTrace();
+				System.out.println(e.getMessage());
 				return "";
 			}
 		}
 
 	}
 
+	public String getDateTime1(String date) {
+
+		if (null == date) {
+			return "";
+		} else if (date.isEmpty()) {
+			return "";
+		} else {
+			try {
+				
+				Date iDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
+						.parse(date);
+				String correctDate = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss")
+						.format(iDate);
+				
+				return correctDate;
+			} catch (ParseException e) {
+				System.out.println(e.getMessage());
+				return "";
+			}
+		}
+
+	}
+	
+	
 	public String getDateTime2(String date) {
 
 		if (null == date) {
@@ -87,7 +108,7 @@ public class DateConvertor {
 						.format(iDate);
 				return correctDate;
 			} catch (ParseException e) {
-				e.printStackTrace();
+				System.out.println(e.getMessage());
 				return "";
 			}
 		}
@@ -106,7 +127,7 @@ public class DateConvertor {
 						.format(iDate);
 				return correctDate;
 			} catch (ParseException e) {
-				e.printStackTrace();
+				System.out.println(e.getMessage());
 				return "";
 			}
 		}
@@ -127,7 +148,7 @@ public class DateConvertor {
 				System.out.println("4:" + correctDate);
 				return correctDate;
 			} catch (ParseException e) {
-				e.printStackTrace();
+				System.out.println(e.getMessage());
 				return "";
 			}
 		}

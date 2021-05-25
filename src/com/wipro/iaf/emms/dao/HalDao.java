@@ -81,41 +81,24 @@ public class HalDao {
 			emmsDataForm.setMainAsset(resultSet.getString("Main_Asset_Num"));
 			emmsDataForm.setLocation(resultSet.getString("Location"));
 
-			if (resultSet.getMetaData().getColumnCount() == 4) {
-				System.out.println(resultSet.getString("table_order"));
-				System.out.println("4");
-				emmsDataForm.setTableOrder(resultSet.getString("table_order"));
-				if (emmsDataForm.getTableOrder().equals("1")) {
-					emmsDataForm.setRecordIdStatus("Table Asset Details Imported");
-				} else if (emmsDataForm.getTableOrder().equals("2")) {
-					emmsDataForm.setRecordIdStatus("Table Asset Model Imported");
-				} else if (emmsDataForm.getTableOrder().equals("3")) {
-					emmsDataForm.setRecordIdStatus("Table Asset Cfg Plan Imported");
-				} else if (emmsDataForm.getTableOrder().equals("4")) {
-					emmsDataForm.setRecordIdStatus("Table Asset Meter Plan Imported");
-				} else if (emmsDataForm.getTableOrder().equals("5")) {
-					emmsDataForm.setRecordIdStatus("Table Asset PM Imported");
-				} else if (emmsDataForm.getTableOrder().equals("6")) {
+			if (resultSet.getMetaData().getColumnCount() == 3) {
+				System.out.println("3");
 					emmsDataForm.setRecordIdStatus("All Table Data Imported");
-				}
-
+				
 			} else if (resultSet.getMetaData().getColumnCount() == 11) {
 				System.out.println("inside11");
-				emmsDataForm.setSignalOutDate(convertor.getDate2(resultSet.getString("Signal_Out_Date")));
-				emmsDataForm.setInductionDate(convertor.getDate2(resultSet.getString("Induction_Date")));
+				emmsDataForm.setSignalOutDate(convertor.getDateTime1(resultSet.getString("Signal_Out_Date")));
+				emmsDataForm.setInductionDate(convertor.getDateTime1(resultSet.getString("Induction_Date")));
 				emmsDataForm.setMainAssetPart(resultSet.getString("Existing_Asset_CM_Item"));
 				emmsDataForm.setMainAssetSerial(resultSet.getString("Existing_Asset_Serial"));
 				emmsDataForm.setDesc(resultSet.getString("CM_Item_Desc"));
 				emmsDataForm.setRecordStatus(resultSet.getString("Record_Status"));
-				System.out.println("freeze1=" + resultSet.getBoolean("Freeze"));
 				emmsDataForm.setFreeze(resultSet.getBoolean("Freeze"));
 				emmsDataForm.setFlbNum(resultSet.getString("flb_num"));
-				System.out.println(emmsDataForm.getRecordId() + emmsDataForm.getAssetConfigStatus()
-						+ emmsDataForm.getInstallableStatus() + emmsDataForm.isFreeze());
-			} else if (resultSet.getMetaData().getColumnCount() == 12) {
-				System.out.println("inside12");
-				emmsDataForm.setSignalOutDate(convertor.getDate2(resultSet.getString("Signal_Out_Date")));
-				emmsDataForm.setInductionDate(convertor.getDate2(resultSet.getString("Induction_Date")));
+				} else if (resultSet.getMetaData().getColumnCount() == 12) {
+				System.out.println("inside12:"+resultSet.getString("Signal_Out_Date"));
+				emmsDataForm.setSignalOutDate(convertor.getDateTime1(resultSet.getString("Signal_Out_Date")));
+				emmsDataForm.setInductionDate(convertor.getDateTime1(resultSet.getString("Induction_Date")));
 				emmsDataForm.setMainAssetPart(resultSet.getString("Main_Asset_Num"));
 				/*
 				 * emmsDataForm.setMainAssetSerial(resultSet .getString("Main_Asset_Num"));
@@ -128,45 +111,46 @@ public class HalDao {
 				emmsDataForm.setAssetMeterStatus(resultSet.getString("Asset_Meter_Status"));
 				emmsDataForm.setAssetPmStatus(resultSet.getString("Asset_PM_Status"));
 				emmsDataForm.setFreeze(resultSet.getBoolean("Freeze"));
-				System.out.println(emmsDataForm.getRecordId() + emmsDataForm.getAssetConfigStatus()
-						+ emmsDataForm.getInstallableStatus() + emmsDataForm.isFreeze());
+				
 			}
 			return emmsDataForm;
 		}
 	}
 
-	public EmmsDataForm fetchDetails(String selectedRecordId) {
-		String query = "select a.Record_ID,a.Main_Asset_Num,a.Location,a.Signal_Out_Date,a.Induction_Date,a.model,a.Record_Status,"
-				+ " a.Asset_Cfg_Status,a.Installable_Status,a.Asset_Meter_Status,a.Asset_PM_Status,a.Freeze from asset_details as a"
-				+ " where a.record_ID=?";
-		return this.jdbcTemplate.queryForObject(query, new Object[] { selectedRecordId }, new ListViewEmmsDataMapper());
-	}
+	
 
 	public List<EmmsDataForm> getEmmsDataOnView() {
 		String query = "select a.Record_ID,a.Main_Asset_Num,a.flb_num,a.Location,a.Signal_Out_Date,a.Induction_Date,b.Existing_Asset_CM_Item,"
 				+ "b.Existing_Asset_Serial,c.CM_Item_Desc,a.Record_Status,a.Freeze from asset_details as a, asset_cfg_actual as b"
-				+ ", asset_model as c ,"
-				+ " record_id_details d where a.Record_ID=d.Record_ID  and a.Record_ID=b.Record_ID  and d.table_order='6' group by d.Record_ID";
+				+ ", asset_model as c "
+				+ " where  a.Record_ID=b.Record_ID group by a.Record_ID";
 		System.out.println(query);
 		return this.jdbcTemplate.query(query, new ListViewEmmsDataMapper());
 
 	}
 
 	public List<EmmsDataForm> getRecordIdOnView() {
-		String query = "select  b.Record_ID,max(b.table_order)as table_order,a.Main_Asset_Num,a.Location from asset_details "
-				+ "as a join record_id_details as b on a.Record_ID=b.Record_ID join asset_cfg_actual as c on a.Record_ID=c.Record_ID where b.table_order='6' group by b.record_id";
+		String query = "select  a.Record_ID,a.Main_Asset_Num,a.Location from asset_details "
+				+ "as a group by a.record_id";
 
 		return this.jdbcTemplate.query(query, new ListViewEmmsDataMapper());
 	}
 
 	public List<EmmsDataForm> getRecordIdOnExport() {
-		String query = "select  b.Record_ID,max(b.table_order)as table_order,a.Main_Asset_Num,a.Location from asset_details "
-				+ "as a join record_id_details as b on a.Record_ID=b.Record_ID join asset_cfg_actual as c on a.Record_ID=c.Record_ID where Asset_PM_Status='Validation Completed' group by b.record_id";
+		String query = "select  a.Record_ID,a.Main_Asset_Num,a.Location from asset_details "
+				+ "as a where a.Asset_PM_Status='Validation Completed' group by a.record_id";
 
 		return this.jdbcTemplate.query(query, new ListViewEmmsDataMapper());
 	}
-
-	public void deleteData(String deleterecordId) {
+	
+	public EmmsDataForm fetchDetails(String selectedRecordId) {
+		String query = "select a.Record_ID,a.Main_Asset_Num,a.Location,a.Signal_Out_Date,a.Induction_Date,a.model,a.Record_Status,"
+				+ " a.Asset_Cfg_Status,a.Installable_Status,a.Asset_Meter_Status,a.Asset_PM_Status,a.Freeze from asset_details as a"
+				+ " where a.record_ID=?";
+		return this.jdbcTemplate.queryForObject(query, new Object[] { selectedRecordId }, new ListViewEmmsDataMapper());
+	}
+	
+public void deleteData(String deleterecordId) {
 		String fetchQuery = "select new_record_id from record_id_relationship where record_id=?";
 		String refRecordid = this.jdbcTemplate.queryForObject(fetchQuery, new Object[] { deleterecordId },
 				String.class);
@@ -254,8 +238,8 @@ public class HalDao {
 			assetConfigForm.setPosition(rs.getString("build_position"));
 			assetConfigForm.setSerialNum(rs.getString("Existing_Asset_Serial"));
 			assetConfigForm.setConditionCode(rs.getString("condition_code"));//
-			assetConfigForm.setDateOfManfacturing(convertor.getDateTime2(rs.getString("mfg_date")));//
-			assetConfigForm.setDateOfReciept(convertor.getDateTime2(rs.getString("receipt_date")));//
+			assetConfigForm.setDateOfManfacturing(convertor.getDateTime1(rs.getString("mfg_date")));
+			assetConfigForm.setDateOfReciept(convertor.getDateTime1(rs.getString("receipt_date")));
 			assetConfigForm.setErrorDesc(rs.getString("error_desc"));//
 			assetConfigForm.setErrorStatus(rs.getString("error_status"));//
 			assetConfigForm.setInLieuPn(rs.getString("New_In_Lieu_Part"));//
@@ -292,8 +276,8 @@ public class HalDao {
 			installableForm.setPosition(rs.getString("build_position"));
 			installableForm.setSerialnum(rs.getString("Existing_Asset_Serial"));
 			installableForm.setConditionCode(rs.getString("condition_code"));
-			installableForm.setDateofManufacturing(convertor.getDateTime2(rs.getString("mfg_date")));
-			installableForm.setDateofReceipt(convertor.getDateTime2(rs.getString("receipt_date")));
+			installableForm.setDateofManufacturing(convertor.getDateTime1(rs.getString("mfg_date")));
+			installableForm.setDateofReceipt(convertor.getDateTime1(rs.getString("receipt_date")));
 			installableForm.setErrorDescription(rs.getString("error_desc"));
 			installableForm.setErrorStatus(rs.getString("error_status"));
 			installableForm.setiNlieuPN(rs.getString("New_In_Lieu_Part"));
@@ -329,9 +313,9 @@ public class HalDao {
 			meterDetailsForm.setRecordRowId(rs.getString("Record_Row_ID"));
 
 			// EDITABLE
-			meterDetailsForm.setInstallationDate(convertor.getDateTime2(rs.getString("Count_Date")));
 			meterDetailsForm.setCurrentCount(rs.getString("Current_Count"));
-			meterDetailsForm.setInstallationCount(rs.getString("Install_Count"));
+			// existingCount=Install_Count
+			meterDetailsForm.setExistingCount(rs.getString("Install_Count"));
 
 			// FUNCTIONAL NEED
 			meterDetailsForm.setUom(rs.getString("UOM"));
@@ -345,9 +329,9 @@ public class HalDao {
 
 			if (meterDetailsForm.getUom().equalsIgnoreCase("hh:mm:ss")) {
 
-				if (null != meterDetailsForm.getInstallationCount()) {
+				if (null != meterDetailsForm.getExistingCount()) {
 
-					meterDetailsForm.setInstallationCount(getUomValue(meterDetailsForm.getInstallationCount()));
+					meterDetailsForm.setExistingCount(getUomValue(meterDetailsForm.getExistingCount()));
 
 				}
 				if (null != meterDetailsForm.getCurrentCount()) {
@@ -398,7 +382,7 @@ public class HalDao {
 
 	// Flb Sortie
 	public List<FlbSortieArForm> fetchFLBSortieARDetails(String recordID) {
-		String sql = "select * from flb_sortie_accept,asset_details where flb_sortie_accept.record_id=asset_details.record_id AND "
+		String sql = "select * from flb_sortie_accept,asset_details where asset_details.freeze='1' and flb_sortie_accept.record_id=asset_details.record_id AND "
 				+ "asset_details.record_id=?";
 		return this.jdbcTemplate.query(sql, new Object[] { recordID }, new FLBSortieArMapper());
 	}
@@ -431,7 +415,7 @@ public class HalDao {
 	}
 
 	public List<FlbPostFlightDataForm> fetchFLBPostFlightDetails(String recordID) {
-		String sql = "select * from asset_details,flb_post_flt_details where flb_post_flt_details.record_id=asset_details.record_id AND "
+		String sql = "select * from asset_details,flb_post_flt_details where asset_details.freeze='1' and flb_post_flt_details.record_id=asset_details.record_id AND "
 				+ "asset_details.record_id=?";
 		return this.jdbcTemplate.query(sql, new Object[] { recordID }, new FLBPostFlightMapper());
 	}
@@ -540,6 +524,8 @@ public class HalDao {
 				+ "asset_cfg_actual.Install_Serial_Item = ?, " + "asset_cfg_actual.condition_code = ?"
 				+ "WHERE (asset_details.record_id=asset_cfg_actual.record_id AND asset_cfg_actual.Record_Row_ID=?);";
 
+		String inductionDate=emmsDataForm.getInductionDate();
+		String signalOutDate=emmsDataForm.getSignalOutDate();
 		if (null != assetConfigForm.getDateOfReciept() && assetConfigForm.getDateOfReciept().isEmpty()) {
 			assetConfigForm.setDateOfReciept(null);
 		}
@@ -548,15 +534,15 @@ public class HalDao {
 			assetConfigForm.setDateOfManfacturing(null);
 		}
 		if (null != emmsDataForm.getInductionDate() && emmsDataForm.getInductionDate().isEmpty()) {
-			emmsDataForm.setInductionDate(null);
+			inductionDate=null;
 		}
 		if (null != emmsDataForm.getSignalOutDate() && emmsDataForm.getSignalOutDate().isEmpty()) {
-			emmsDataForm.setSignalOutDate(null);
+			signalOutDate=null;
 		}
 
 		int status = 0;
 		try {
-			status = jdbcTemplate.update(query, emmsDataForm.getInductionDate(), emmsDataForm.getSignalOutDate(),
+			status = jdbcTemplate.update(query,inductionDate,signalOutDate ,
 					emmsDataForm.getAssetConfigStatus(), emmsDataForm.getRecordStatus(),
 					assetConfigForm.getDateOfManfacturing(), assetConfigForm.getDateOfReciept(),
 					assetConfigForm.getInstalledPN(), assetConfigForm.getInLieuPn(), assetConfigForm.getErrorStatus(),
@@ -579,6 +565,8 @@ public class HalDao {
 				+ "asset_cfg_actual.Install_Serial_Item = ?, " + "asset_cfg_actual.condition_code = ?"
 				+ "WHERE (asset_details.record_id=asset_cfg_actual.record_id AND asset_cfg_actual.Record_Row_ID=?);";
 
+		String inductionDate=emmsDataForm.getInductionDate();
+		String signalOutDate=emmsDataForm.getSignalOutDate();
 		if (null != insAsset.getDateofReceipt() && insAsset.getDateofReceipt().isEmpty()) {
 			insAsset.setDateofReceipt(null);
 		}
@@ -587,15 +575,15 @@ public class HalDao {
 			insAsset.setDateofManufacturing(null);
 		}
 		if (null != emmsDataForm.getInductionDate() && emmsDataForm.getInductionDate().isEmpty()) {
-			emmsDataForm.setInductionDate(null);
+			inductionDate=null;
 		}
 		if (null != emmsDataForm.getSignalOutDate() && emmsDataForm.getSignalOutDate().isEmpty()) {
-			emmsDataForm.setSignalOutDate(null);
+			signalOutDate=null;
 		}
 
 		int status = 0;
 		try {
-			status = jdbcTemplate.update(query, emmsDataForm.getInductionDate(), emmsDataForm.getSignalOutDate(),
+			status = jdbcTemplate.update(query, inductionDate,signalOutDate,
 					emmsDataForm.getAssetConfigStatus(), emmsDataForm.getRecordStatus(),
 					insAsset.getDateofManufacturing(), insAsset.getDateofReceipt(), insAsset.getInstallablePN(),
 					insAsset.getiNlieuPN(), insAsset.getErrorStatus(), insAsset.getInstallableSN(),
@@ -613,33 +601,20 @@ public class HalDao {
 		if (meterForm.getCurrentCount().length() <= 0) {
 			meterForm.setCurrentCount(null);
 		}
-		if (meterForm.getInstallationCount().length() <= 0) {
-			meterForm.setInstallationCount(null);
+		if (meterForm.getExistingCount().length() <= 0) {
+			meterForm.setExistingCount(null);
 		}
 
-		String sql;
-		if (meterForm.getInstallationDate().length() > 0) {
-			sql = "update asset_details,asset_meter_actual set asset_details.induction_date='"
-					+ emmsDataForm.getInductionDate() + "', asset_details.signal_out_date='"
-					+ emmsDataForm.getSignalOutDate() + "'," + "asset_details.Asset_Meter_Status='"
-					+ emmsDataForm.getAssetMeterStatus() + "'," + "asset_details.Record_Status='"
-					+ emmsDataForm.getRecordStatus() + "',asset_meter_actual.current_count="
-					+ meterForm.getCurrentCount() + ",asset_meter_actual.error_status='" + meterForm.getError() + "',"
-					+ "asset_meter_actual.Install_Count=" + meterForm.getInstallationCount()
-					+ ",asset_meter_actual.Count_Date='" + meterForm.getInstallationDate() + "'"
-					+ " where asset_details.record_id=asset_meter_actual.record_id AND asset_meter_actual.Record_Row_ID='"
-					+ meterForm.getRecordRowId() + "'";
-		} else {
-			sql = "update asset_details,asset_meter_actual set asset_details.induction_date='"
-					+ emmsDataForm.getInductionDate() + "', asset_details.signal_out_date='"
-					+ emmsDataForm.getSignalOutDate() + "'," + "asset_details.Asset_Meter_Status='"
-					+ emmsDataForm.getAssetMeterStatus() + "'," + "asset_details.Record_Status='"
-					+ emmsDataForm.getRecordStatus() + "',asset_meter_actual.current_count="
-					+ meterForm.getCurrentCount() + ",asset_meter_actual.error_status='" + meterForm.getError() + "',"
-					+ "asset_meter_actual.Install_Count=" + meterForm.getInstallationCount() + ""
-					+ " where asset_details.record_id=asset_meter_actual.record_id AND asset_meter_actual.Record_Row_ID='"
-					+ meterForm.getRecordRowId() + "'";
-		}
+		String sql = "update asset_details,asset_meter_actual set asset_details.induction_date='"
+				+ emmsDataForm.getInductionDate() + "', asset_details.signal_out_date='"
+				+ emmsDataForm.getSignalOutDate() + "'," + "asset_details.Asset_Meter_Status='"
+				+ emmsDataForm.getAssetMeterStatus() + "'," + "asset_details.Record_Status='"
+				+ emmsDataForm.getRecordStatus() + "',asset_meter_actual.current_count=" + meterForm.getCurrentCount()
+				+ ",asset_meter_actual.error_status='" + meterForm.getError() + "',"
+				+ "asset_meter_actual.Install_Count=" + meterForm.getExistingCount() + ""
+				+ " where asset_details.record_id=asset_meter_actual.record_id AND asset_meter_actual.Record_Row_ID='"
+				+ meterForm.getRecordRowId() + "'";
+
 		System.out.println("UpdateMeterQuery:" + sql);
 		return jdbcTemplate.update(sql);
 	}
@@ -956,10 +931,12 @@ public class HalDao {
 				+ postFlightDataForm.getFlightHours() + ",'" + postFlightDataForm.getFlightType() + "','"
 				+ postFlightDataForm.getStatus() + "','" + postFlightDataForm.getCreationDate() + "','"
 				+ postFlightDataForm.getRecordRowId() + "')";
-		System.out.println("FLBQuery=" + query);
-
+		System.out.println("PostFlight Insert Query=" + query);
+		try {
 		jdbcTemplate.execute(query);
-
+		}catch(Exception e) {
+			System.out.println("Adding Post Flight Row Exception="+e.getMessage());
+		}
 	}
 
 	// Sorite AR DB insert
@@ -1008,8 +985,9 @@ public class HalDao {
 		String query = "UPDATE flb_post_flt_details SET " + "Flight_type = ?, " + "FLT_DATE = ?, "
 				+ "Departure_Time = ?, " + "Arrival_Time = ?, " + "Flt_status = ?, " + "Flt_Hrs = ?," + "error=?, "
 				+ "Sortie_Num=? " + "WHERE (Record_Row_ID = ?);";
+		
+		if (null !=postFlightDataForm.getFlightDate()&&postFlightDataForm.getFlightDate().isEmpty()) {
 
-		if (postFlightDataForm.getFlightDate().isEmpty()) {
 			postFlightDataForm.setFlightDate(null);
 		}
 		int status = jdbcTemplate.update(query, postFlightDataForm.getFlightType(), postFlightDataForm.getFlightDate(),
@@ -1033,7 +1011,8 @@ public class HalDao {
 	}
 
 	public static List<String> getSortieNumbers(String recordId) {
-		String query = "SELECT sortie_num FROM flb_sortie_accept where record_Id='" + recordId + "'";
+		String query = "SELECT sortie_num FROM flb_sortie_accept  where Sortie_Status='ACCEPTED' and record_Id='" + recordId + "'";
+
 		// List<String> sortieNumbers = new ArrayList<>();
 		List<String> sortieNumbers = jdbcTemplate.query(query, new RowMapper<String>() {
 			public String mapRow(ResultSet rs, int rowNum) throws SQLException {
@@ -1054,6 +1033,13 @@ public class HalDao {
 		} catch (Exception e) {
 			System.out.println("updateSortieStatusExceptioCatch=" + e.getMessage());
 		}
+	}
+
+	public String getEtdDate(String sortieNo) {
+		String query="select Etd_Date from flb_sortie_accept where Sortie_Num=?";
+		String etdDate=this.jdbcTemplate.queryForObject(query, new Object[] { sortieNo }, String.class);
+		System.out.println("EtdDATE="+etdDate);
+		return convertor.getDate2(etdDate);
 	}
 
 }

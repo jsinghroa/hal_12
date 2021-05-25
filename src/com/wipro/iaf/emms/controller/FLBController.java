@@ -9,15 +9,21 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.fasterxml.jackson.databind.util.Converter;
 import com.wipro.iaf.emms.constants.Constants;
@@ -108,7 +114,7 @@ public class FLBController {
 	}
 
 	@RequestMapping(value = { "/saveFlb3" }, method = RequestMethod.GET)
-	public List<FlbMeterDetailsForm> fetchFLBMeterDetails(String recordID, EmmsDataForm emmsDataFor) {
+	public List<FlbMeterDetailsForm> fetchFLBMeterDetails(String recordID, EmmsDataForm emmsDataForm) {
 		emmsDataForm.setRecordId(recordID);
 		emmsDataForm.setSelectedRecordId(recordID);
 		this.emmsDataForm = emmsDataForm;
@@ -237,6 +243,8 @@ public class FLBController {
 						// int i = halService.update(emmsDataForm, flbdetail);
 					}
 				}
+				emmsDataForm.setSignalOutDate(this.emmsDataForm.getSignalOutDate());
+				emmsDataForm.setInductionDate(this.emmsDataForm.getInductionDate());
 				model.addAttribute("emmsDataForm", emmsDataForm);
 				model.addAttribute("pageVar", "/WEB-INF/jsp/FLBScreen.jsp");
 
@@ -292,12 +300,12 @@ public class FLBController {
 							.getStatuses());
 					postFlightRow.setFlightTypes(this.flbPostFlightDataList
 							.get(k).getFlightTypes());
-					this.flbPostFlightDataList.get(k).getListSortieNumber().add(newSortieRow.getSortieNo());
 					postFlightRow.setListSortieNumber(this.flbPostFlightDataList.get(k).getListSortieNumber());
 					k++;
 				}
 				}
-
+				emmsDataForm.setSignalOutDate(this.emmsDataForm.getSignalOutDate());
+				emmsDataForm.setInductionDate(this.emmsDataForm.getInductionDate());
 				
 				
 				model.addAttribute("emmsDataForm", emmsDataForm);
@@ -309,10 +317,8 @@ public class FLBController {
 				System.out.println("Inside add post flight");
 				int flightNumber = 0;
 				Date d = new Date();
-				System.out.println(d.getDate() + d.getMonth() + d.getYear());
 				String currentDate = String.valueOf(d.getDate() + ":"
 						+ d.getMonth() + ":" + d.getYear());
-				System.out.println("CurrentDate=" + currentDate);
 				// Setting Lookup
 				int i = 0;
 				
@@ -332,8 +338,7 @@ public class FLBController {
 							.get(i).getFlightTypes());
 					postFlightRow.setListSortieNumber(this.flbPostFlightDataList.get(i).getListSortieNumber());
 					i++;
-					System.out.println(postFlightRow.getCreationDate() + ":"
-							+ currentDate);
+					System.out.println("CreationDate:CurrentDate="+postFlightRow.getCreationDate() + ":"+ currentDate);
 					if (null != postFlightRow.getCreationDate()
 							&& postFlightRow.getCreationDate().equals(
 									currentDate)) {
@@ -364,25 +369,30 @@ public class FLBController {
 
 				// Inserting new row to database.
 				try {
-					System.out.println("inside update");
+					System.out.println("Adding New Post Flight Data");
 					halService.insertPostFlight(postFlightDataForm);
 				} catch (Exception e) {
-					System.out.println(e.getMessage());
+					System.out.println("Controller Adding Post Flight Row Exception="+e.getMessage());
 				}
 				emmsDataForm.getFlbPostFlightDataFormList().add(
 						postFlightDataForm);
 
 				this.flbPostFlightDataList = emmsDataForm
 						.getFlbPostFlightDataFormList();
-				System.out.println(this.flbPostFlightDataList.toString());
+				System.out.println("PostFlight List After Adding New Post Flight Data= "+this.flbPostFlightDataList.toString());
+				emmsDataForm.setSignalOutDate(this.emmsDataForm.getSignalOutDate());
+				emmsDataForm.setInductionDate(this.emmsDataForm.getInductionDate());
 				model.addAttribute("emmsDataForm", emmsDataForm);
 				model.addAttribute("pageVar", "/WEB-INF/jsp/FLBScreen.jsp");
 			} else if (action != null && action.equals("Save")) {
 				System.out.println("Inside  Save");
 				DateConvertor convertor = new DateConvertor();
-				
+				List<String> localSortieNumbers=new ArrayList<String>();
 				List<FlbSortieArForm> flbSortieList = emmsDataForm.getFlbSortieArFormList();
-				if (null != flbSortieList && flbSortieList.size() > 0) {int i = 0;
+				
+				if (null != flbSortieList && flbSortieList.size() > 0) {
+					System.out.println("sortieListSize="+flbSortieList.size());
+					int i = 0;
 					for (FlbSortieArForm flbSortieArRow: flbSortieList) {
 						
 						flbSortieArRow.setRecordRowId(this.flbSortieArList.get(i).getRecordRowId());
@@ -390,6 +400,13 @@ public class FLBController {
 						
 						
 						System.out.println("SortieRow="+flbSortieArRow.toString());
+						
+						if(flbSortieArRow.getSortieStatus().equalsIgnoreCase(Constants.ACCEPTED))
+						{
+							localSortieNumbers.add(flbSortieArRow.getSortieNo());
+						}
+						
+						
 						
 						String validateSortie=flbValidator.validateSortie(flbSortieArRow.getSortieDate(),flbSortieArRow.getETD(),
 								flbSortieArRow.getEtdDate());
@@ -433,7 +450,6 @@ public class FLBController {
 				if(null != postFlightList && postFlightList.size() > 0){
 					int i = 0;
 					for (FlbPostFlightDataForm postFlightRow : postFlightList) {
-						System.out.println("--PostFlightRow="+postFlightRow);
 						postFlightRow.setStatuses(this.flbPostFlightDataList
 								.get(i).getStatuses());
 						postFlightRow
@@ -443,7 +459,7 @@ public class FLBController {
 								.get(i).getRecordRowId());
 						postFlightRow.setFlightTypes(this.flbPostFlightDataList
 								.get(i).getFlightTypes());
-						postFlightRow.setListSortieNumber(this.flbPostFlightDataList.get(i).getListSortieNumber());
+						postFlightRow.setListSortieNumber(localSortieNumbers);
 						
 						postFlightRow.setFlightHours(getHours(
 								postFlightRow.getArrivalTime(),
@@ -459,31 +475,38 @@ public class FLBController {
 						else
 						{
 							postFlightRow.setError(Constants.VALIDATED);
+						
+						}
 						try {
 							halService.updatePostFlight(postFlightRow);
 						} catch (Exception e) {
-							System.out.println(e.getMessage());
-						}
+							System.out.println("Updating PostFlight Exception="+e.getMessage());
 						}
 						if(postFlightRow.getStatus().equalsIgnoreCase(Constants.CLOSEDPOSTFLIGHTSTATUS)&& 
 								!postFlightRow.getSortieNumber().isEmpty())
 						{   
-							System.out.println("Inside SortieStatus Update");
+							System.out.println("Updating SortieStatus of "+i+"th row");
+							try {
 							halService.updateSortieStatus(postFlightRow);
-							
+							}catch(Exception e) {
+								
+								System.out.println("Updating SortieStatus Exception="+e.getMessage());
+							}
 							
 						}
 						i++;
 						postFlightRow.setFlightDate(convertor.getDateTime2(postFlightRow.getFlightDate()));
 					}
 				}
-				System.out.println("After statusUpdate="+this.emmsDataForm
-						.getSelectedRecordId()+":"+this.emmsDataForm.toString());
+				System.out.println("GlobalEmmsDataForm="+this.emmsDataForm.toString());
 				emmsDataForm.setFlbSortieArFormList(this
 						.fetchFLBSortieArDetails(this.emmsDataForm
-								.getSelectedRecordId(),emmsDataForm));
+								.getSelectedRecordId(),this.emmsDataForm));
 				
-
+				emmsDataForm.setSignalOutDate(this.emmsDataForm.getSignalOutDate());
+				emmsDataForm.setInductionDate(this.emmsDataForm.getInductionDate());
+				System.out.println("Global Dates After Update="+this.emmsDataForm.getInductionDate()+":"+this.emmsDataForm.getSignalOutDate());
+				System.out.println("Dates After Update="+emmsDataForm.getInductionDate()+":"+emmsDataForm.getSignalOutDate());
 				model.addAttribute("emmsDataForm", emmsDataForm);
 				model.addAttribute("pageVar", "/WEB-INF/jsp/FLBScreen.jsp");
 
@@ -522,6 +545,15 @@ public class FLBController {
 		String hours = String.valueOf((float) (arrival.getTime() - departure
 				.getTime()) / 3600000);
 		return hours;
+	}
+	
+	@RequestMapping(value="/fetchEtdDate", method = RequestMethod.POST,produces = "application/json")
+	public  @ResponseBody FlbSortieArForm fetchEtdDate(@RequestBody FlbSortieArForm flbSortie) {
+		System.out.println("Sortie="+flbSortie.getSortieNo()+"insidecontroller");
+		FlbSortieArForm flbSortie1=new FlbSortieArForm();
+		flbSortie1.setEtdDate(halService.getEtdDate(flbSortie.getSortieNo()));	
+		System.out.println("Controller Etd Date"+flbSortie1.getEtdDate());
+		return flbSortie1;
 	}
 
 }

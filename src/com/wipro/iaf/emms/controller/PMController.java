@@ -9,6 +9,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.log4j.Logger;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -71,8 +74,11 @@ public class PMController {
 	}
 
 	@RequestMapping(value = "/savePm", method = RequestMethod.POST)
-	public String submit(@ModelAttribute("emmsDataForm") EmmsDataForm emmsDataForm, BindingResult bindingResult,
-			ModelMap model, @RequestParam String action, @RequestParam String linkSelected) {
+	public String submit(
+			@ModelAttribute("emmsDataForm") EmmsDataForm emmsDataForm,
+			BindingResult bindingResult, ModelMap model,
+			@RequestParam String action, @RequestParam String linkSelected,HttpServletResponse response) {
+
 		if (linkSelected.equals(Constants.LISTVIEW)) {
 			List<EmmsDataForm> emmsDataFormList = halService.getEmmsDataOnView();
 			model.addAttribute("emmsDataForm", this.emmsDataForm);
@@ -358,9 +364,10 @@ public class PMController {
 			} else if (action.equals("Export")) {
 
 				System.out.println("INSIDE EXPORT");
+				
+				String filename = "PM.xlsx";
+				//String filename = "D:\\PM.xlsx";
 
-				String filename = "C:\\Users\\Public\\Desktop\\PM.xlsx";
-				// String filename = "D:\\PM.xlsx";
 				XSSFWorkbook workbook = new XSSFWorkbook();
 				XSSFSheet sheet = workbook.createSheet("PMExportedData");
 				XSSFRow head = sheet.createRow((short) 0);
@@ -418,11 +425,10 @@ public class PMController {
 					}
 
 				}
-				FileOutputStream fout;
+				
 				try {
-					fout = new FileOutputStream(filename);
-					workbook.write(fout);
-					fout.close();
+					response.setHeader("Content-disposition", "attachment; filename=\""+filename+"\"");
+					workbook.write(response.getOutputStream());
 
 				} catch (Exception e) {
 

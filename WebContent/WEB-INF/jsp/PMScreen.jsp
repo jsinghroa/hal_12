@@ -101,8 +101,7 @@ function success(size)
 	$('#spinner').show();
 	var table=$('#ListOfRecords').DataTable();
 	table.page.len(size+1).draw();
-	alert('File saved on Desktop');
-}
+	}
 function checkExtension() {
 
 	var file = document.getElementById("pmExcelfile").value;

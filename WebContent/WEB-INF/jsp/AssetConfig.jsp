@@ -20,17 +20,23 @@
 	type="text/css" />
 <script type="text/javascript"
 	src="${path}/resources/theme/js/jquery-1.9.1.js"></script>
-
-
-
 <script type="text/javascript"
 	src="${path}/resources/theme/js/jquery-1.10.2.min.js"></script>
 <script type="text/javascript"
 	src="${path}/resources/theme/js/jquery.ui.datepicker.js"></script>
 <script type="text/javascript"
 	src="${path}/resources/theme/js/jquery.dataTables.js"></script>
+
+<link href="${path}/resources/theme/css/jquery.datetimepicker.min.css"
+	rel="stylesheet" type="text/css" />
+<link href="${path}/resources/theme/css/jquery.ui.all.css"
+	rel="stylesheet" type="text/css" />
 <script type="text/javascript"
-	src="${path}/resources/theme/js/config.js"></script>
+	src="${path}/resources/theme/js/jquery.datetimepicker.full.js"></script>
+<script type="text/javascript"
+	src="${path}/resources/theme/js/jquery.datetimepicker.full.min.js"></script>
+<script type="text/javascript"
+	src="${path}/resources/theme/js/jquery.datetimepicker.min.js"></script>
 
 <script type="text/javascript">
 	$('document').ready(function() {
@@ -78,10 +84,6 @@
 		            }
 		        }
 				
-				
-				
-				
-				
 				var freezeFlag = document.getElementById("freezeFlag").value;
 				console.log('freeze=' + freezeFlag);
 				if (freezeFlag == "true") {
@@ -104,28 +106,6 @@
 			});
 			
 			
-	/* function manageindicator() {
-        //var bt = document.getElementById('submit');
-        var ele = document.getElementsByTagName('indicator'); 
-		var sta= document.getElementsByTagName('status');
-        // Loop through each element.
-        for (i = 0; i < ele.length && sta.length; i++) {
-        	
-			console.log('inside for');
-			
-            // Check the element type
-            
-            if (ele[i].type == 'text' && ele[i].value == 'I' && sta[i].value == 'Not Validated' ) {
-            	console.log('inside if');
-                bt.disabled = true;    // Disable the button.
-                return false;
-            }
-            else {
-                bt.disabled = false;   // Enable the button.
-            }
-        }
-    } */    
-
 	function LinkSelected(linkSelected) {
 		$("#linkSelected").val(linkSelected);
 		$("#linkSelection").click();
@@ -149,7 +129,7 @@
 		$('#spinner').show();
 		var table=$('#ListOfRecords').DataTable();
 		table.page.len(size+1).draw();
-		alert('File saved on Desktop');
+		
 	}
 	function checkExtension() {
 
@@ -174,71 +154,8 @@
 	//609200
 	//130.230-wasadmin-secure@123
 	//155.0.130.230:9062/admin
-	$(function() {
-		$("#datepicker1")
-				.datepicker(
-						{
-							maxDate : 0,
-							changeMonth : true,
-							changeYear : true,
-							dateFormat : 'dd-M-yy',
-							showOn : 'button',
-							buttonImageOnly : true,
-							buttonImage : '/HAL_12/theme/images/datepicker.jpg',
-							disabled : document.getElementById("freezeFlag").value === "true" ? true
-									: false
-						});
-	});
-
-	$(function() {
-		$("#datepicker2")
-				.datepicker(
-						{
-							maxDate : 0,
-							
-							changeMonth : true,
-							changeYear : true,
-							dateFormat : 'dd-M-yy',
-							showOn : 'button',
-							buttonImageOnly : true,
-							buttonImage : '/HAL_12/theme/images/datepicker.jpg',
-							disabled : document.getElementById("freezeFlag").value === "true" ? true
-									: false
-
-						});
-	});
-	$(function() {
-		$(".datepicker3")
-				.datepicker(
-						{
-							maxDate : 0,
-							changeMonth : true,
-							changeYear : true,
-							dateFormat : 'dd-M-yy',
-							showOn : 'button',
-							buttonImageOnly : true,
-							buttonImage : '/HAL_12/theme/images/datepicker.jpg',
-							disabled : document.getElementById("freezeFlag").value === "true" ? true
-									: false
-
-						});
-	});
-	$(function() {
-		$(".datepicker4")
-				.datepicker(
-						{
-							maxDate : 0,
-							changeMonth : true,
-							changeYear : true,
-							dateFormat : 'dd-M-yy',
-							showOn : 'button',
-							buttonImageOnly : true,
-							buttonImage : '/HAL_12/theme/images/datepicker.jpg',
-							disabled : document.getElementById("freezeFlag").value === "true" ? true
-									: false
-
-						});
-	});
+	
+	
 
 	function showConfirm() {
 		$("#popo_olay2").css("display", "block");
@@ -253,9 +170,7 @@
 
 	}
 	
-	
-	
-			function updateTableLength(size) 
+		function updateTableLength(size) 
 			{
 			console.log('Size='+size);
 			var table=$('#ListOfRecords').DataTable();
@@ -264,7 +179,89 @@
 		
 			};
 	
-	
+			$(function()
+					{
+						$(".inductionDateTimePicker").datetimepicker({
+							format: 'd-M-Y H:i:s',
+							step: 1,
+							maxDate:0
+						});
+						
+						$(".signalOutDateTimePicker").datetimepicker({
+							format: 'd-M-Y H:i:s',
+							step: 1,
+							maxDate:0
+						});
+					});
+			$(function(){
+				var table = $('#ListOfRecords').dataTable();
+				var tableApi = $('#ListOfRecords').DataTable();
+				var defaultPageLength = tableApi.page.len();
+				var count = table.fnGetData().length;
+				tableApi.page.len(count).draw();
+				console.log(count);
+				var datetimepickerm;
+				var datetimepickerr;
+				for(i=0 ; i<count ; i++){
+					datetimepickerm	= ".manufacturingDateTimePicker"+i;
+					datetimepickerr = ".receiptDateTimePicker"+i;
+					$(datetimepickerr).datetimepicker({
+						format: 'd-M-Y H:i:s',
+						step: 1,
+						maxDate:0});
+					
+					$(datetimepickerm).datetimepicker({
+						format: 'd-M-Y H:i:s',
+						step: 1,
+						maxDate:0});
+				}
+				tableApi.page.len(defaultPageLength).draw();
+				console.log();
+			});
+			function showDatePickerInductionDate(){
+				var freezeFlag = document.getElementById("freezeFlag").value;
+				if (freezeFlag == "true") 
+					{}
+				else{
+					$(function(){
+					$('.inductionDateTimePicker').datetimepicker('show');
+				});
+				}
+			}
+			function showDatePickerSignalOutDate(){
+			
+				var freezeFlag = document.getElementById("freezeFlag").value;
+				
+				if (freezeFlag == "true") 
+					{}else
+						{
+						$(function(){
+							$('.signalOutDateTimePicker').datetimepicker('show');
+						});
+						}
+			}
+			function showDatePickerManufactureDate(index){
+				var freezeFlag = document.getElementById("freezeFlag").value;
+				console.log("DateTimePicker selected: "+index);
+				if (freezeFlag == "true") 
+					{}
+					else
+					{
+						$(function(){
+					var element = ".manufacturingDateTimePicker"+index;
+					$(element).datetimepicker('show');
+				});}
+			}
+			function showDatePickerReceiptDate(index){
+				var freezeFlag = document.getElementById("freezeFlag").value;
+				console.log("DateTimePicker selected: "+index);
+				if (freezeFlag == "true") 
+					{}else{
+				$(function(){
+					var element = ".receiptDateTimePicker"+index;
+					$(element).datetimepicker('show');
+				});}
+			}
 	
 	
 	
@@ -339,7 +336,7 @@
 									<div class="inBtn">
 										<table>
 											<tr>
-												<td><input type="submit" value="Yes" 
+												<td><input type="submit" value="Yes"
 													style="width: 70px; margin-left: 120px;" class="btn"
 													name="action" id="yes"></td>
 												<td><a class="btn"
@@ -432,11 +429,20 @@
 					<td><form:label path="inductionDate">
 							<spring:message code="label.inductionDate" />
 						</form:label><span style="color: red; font-weight: bold; margin-left: -46px;"></span></td>
-					<td class="datepicker2"><form:input type="text"
-							id="datepicker1" readonly="true" class="form-control"
-							path="inductionDate" value="${emmsDataForm.inductionDate}"
-							style="background-color: rgb(216, 216, 216); width: 70%;" /></td>
-
+					<td class="form-group date"><div class="input-group date">
+							<form:input 
+									readonly="true"
+									disabled="${emmsDataForm.freeze}"
+									type="text" path="inductionDate"
+								class="form-control inductionDateTimePicker"
+								value="${emmsDataForm.inductionDate}"
+								style="background-color: #eeeeee; width: 180px;" />
+							<span class="input-group-addon"> <span
+								class="glyphicon glyphicon-calendar"
+								onclick="showDatePickerInductionDate()"></span>
+							</span>
+						</div></td>
+						
 					<td><form:label path="mainAssetPart">
 							<spring:message code="label.mainAssetPart" />
 						</form:label><span style="color: red; font-weight: bold; margin-left: -46px;"></span></td>
@@ -453,11 +459,18 @@
 					<td><form:label path="signalOutDate">
 							<spring:message code="label.signalOutDate" />
 						</form:label><span style="color: red; font-weight: bold; margin-left: -46px;"></span></td>
-					<td class="datepicker3"><form:input path="signalOutDate"
-							id="datepicker2" readonly="true"
-							value="${emmsDataForm.signalOutDate}" class="form-control"
-							style="background-color: rgb(216, 216, 216); width: 70%;" /></td>
-
+					<td class="form-group date"><div class="input-group date">
+							<form:input path="signalOutDate"
+							readonly="true"
+							disabled="${emmsDataForm.freeze}"
+								value="${emmsDataForm.signalOutDate}"
+								class="form-control signalOutDateTimePicker"
+								style="background-color: #eeeeee; width: 180px;" />
+							<span class="input-group-addon"> <span
+								class="glyphicon glyphicon-calendar"
+								onclick="showDatePickerSignalOutDate()"></span>
+							</span>
+						</div></td>
 
 					<td><form:label path="mainAssetSerial">
 							<spring:message code="label.mainAssetSerial" />
@@ -472,7 +485,7 @@
 			</table>
 			<br /> <br />
 		</div>
-	
+
 		<c:set var="size" value="0"></c:set>
 		<table id="ListOfRecords" align="center" class="tabletopmargin10"
 			width="100%" style="overflow-x: hidden;">
@@ -513,10 +526,10 @@
 				<tr style="width: 100%;">
 					<td><form:input
 							path="assetFormList[${status.index}].indicator"
-							class="form-control" title="${assetConfigForm.indicator }" 
+							class="form-control" title="${assetConfigForm.indicator }"
 							id="indicator"
 							style="width:70px; background-color: rgb(216, 216, 216); word-wrap:break-word; "
-							readonly="true"  /></td>
+							readonly="true" /></td>
 					<td><form:input path="assetFormList[${status.index}].lcn"
 							class="form-control" title="${assetConfigForm.lcn}"
 							style="width:140px; background-color: rgb(216, 216, 216); word-wrap:break-word; "
@@ -554,51 +567,57 @@
 						<c:set var="bitype" value="true"></c:set>
 					</c:if>
 
-					<td>
-					<form:select disabled="${emmsDataForm.freeze || (disableIndicator=='1' && assetConfigForm.indicator=='I' && (assetConfigForm.errorStatus=='Validated' || assetConfigForm.errorStatus=='Warning' || assetConfigForm.errorStatus=='Validated With Warning'))}"
+					<td><form:select
+							disabled="${emmsDataForm.freeze}"
 							path="assetFormList[${status.index}].installedPN"
 							class="form-control" style="width:130px;word-wrap:break-word;"
 							id="installledPN">
 							<form:option value="" label="- - -Select- - -"></form:option>
 							<form:options items="${assetConfigForm.installedPNList}" />
-						</form:select>
-						</td>
+						</form:select></td>
 
 					<td><form:input path="assetFormList[${status.index}].inLieuPn"
-							readonly="${emmsDataForm.freeze || (disableIndicator=='1' && assetConfigForm.indicator=='I' && (assetConfigForm.errorStatus=='Validated' || assetConfigForm.errorStatus=='Warning' || assetConfigForm.errorStatus=='Validated With Warning'))}" class="form-control"
-							title="${assetConfigForm.inLieuPn}"
+							readonly="${emmsDataForm.freeze}"
+							class="form-control" title="${assetConfigForm.inLieuPn}"
 							style="width:70px; word-wrap:break-word;" /></td>
 					<td><form:input
 							path="assetFormList[${status.index}].installedSN"
-							readonly="${emmsDataForm.freeze || (disableIndicator=='1' && assetConfigForm.indicator=='I' && (assetConfigForm.errorStatus=='Validated' || assetConfigForm.errorStatus=='Warning' || assetConfigForm.errorStatus=='Validated With Warning'))}" class="form-control"
-							title="${assetConfigForm.installedSN}"
+							readonly="${emmsDataForm.freeze}"
+							class="form-control" title="${assetConfigForm.installedSN}"
 							style="width:70px; word-wrap:break-word;" /></td>
 					<%-- value="${assetConfigForm.biType=='Logical'?assetConfigForm.serialNum:assetConfigForm.installedSN}" --%>
-					<td><form:select disabled="${emmsDataForm.freeze || (disableIndicator=='1' && assetConfigForm.indicator=='I' && (assetConfigForm.errorStatus=='Validated' || assetConfigForm.errorStatus=='Warning' || assetConfigForm.errorStatus=='Validated With Warning'))}"
+					<td><form:select
+							disabled="${emmsDataForm.freeze}"
 							path="assetFormList[${status.index}].conditionCode"
 							class="form-control" style="width:130px; word-wrap:break-word;"
 							id="conditionCode" title="${assetConfigForm.conditionCode}">
 							<form:option value="" label="- - -Select- - -"></form:option>
 							<form:options items="${assetConfigForm.conditionCodes}" />
-
-
-							<%-- <c:forEach
-							items="${assetConfigForm.installedPNList}"
-							var="pnList">
-							<form:option value="${pnList}" label="${pnList}"></form:option>
-						</c:forEach> --%>
-
 						</form:select></td>
-					<td class="datepicker"><form:input  disabled="${disableIndicator=='1' && assetConfigForm.indicator=='I' && (assetConfigForm.errorStatus=='Validated' || assetConfigForm.errorStatus=='Warning' || assetConfigForm.errorStatus=='Validated With Warning')}"
+					<td class="form-group date">
+						<div class="input-group date"><form:input
+						readonly="true"
+							disabled="${emmsDataForm.freeze}"
 							path="assetFormList[${status.index}].dateOfManfacturing"
-							class="form-control datepicker3"
+							class="form-control manufacturingDateTimePicker${status.index}"
 							title="${assetConfigForm.dateOfManfacturing}"
-							style="width:117px; word-wrap:break-word;background-color: rgb(255, 255, 255);" /></td>
-					<td class="datepicker1"><form:input  disabled="${disableIndicator=='1' && assetConfigForm.indicator=='I' && (assetConfigForm.errorStatus=='Validated' || assetConfigForm.errorStatus=='Warning' || assetConfigForm.errorStatus=='Validated With Warning')}"
+							style="width:117px; word-wrap:break-word;background-color: rgb(255, 255, 255);" />
+							<span class="input-group-addon">
+               				<span class="glyphicon glyphicon-calendar" onclick="showDatePickerManufactureDate(${status.index})"></span>
+               				</span></div>
+							</td>
+					<td class="form-group date">
+						<div class="input-group date"><form:input
+						readonly="true"
+						disabled="${emmsDataForm.freeze}"
 							path="assetFormList[${status.index}].dateOfReciept"
-							class="form-control datepicker4"
+							class="form-control receiptDateTimePicker${status.index}"
 							title="${assetConfigForm.dateOfReciept}"
-							style="width:117px; word-wrap:break-word;background-color: rgb(255, 255, 255);" /></td>
+							style="width:117px; word-wrap:break-word;background-color: rgb(255, 255, 255);" />
+							<span class="input-group-addon">
+							<span class="glyphicon glyphicon-calendar" onclick="showDatePickerReceiptDate(${status.index})"></span>
+               				</span></div>
+							</td>
 
 
 					<c:set var="class1" value="defaultstatus"></c:set>
@@ -632,11 +651,11 @@
 							readonly="true" /></td>
 				</tr>
 				<%-- value="${assetConfigForm.biType=='Logical'?'Asset is already attached to the Build Item. The field is read-only.':assetConfigForm.errorDesc}" --%>
-			
+
 				<c:set var="size" value="${status.index}"></c:set>
-				
+
 			</c:forEach>
-					
+
 		</table>
 		<br />
 		<br />
@@ -645,21 +664,17 @@
 			<thead>
 				<tr align="center">
 
-					<td align="right"><input type="submit" onclick="updateTableLength(${size})" value="Save" id="save"
+					<td align="right"><input type="submit"
+						onclick="updateTableLength(${size})" value="Save" id="save"
 						name="action" class="btn" style="width: 70px;" /></td>
 
-					<td><input type="submit" onclick="updateTableLength(${size})" name="action" id="validate"
-						value="Validate" class="btn" style="width: 70px;"></td>
+					<td><input type="submit" onclick="updateTableLength(${size})"
+						name="action" id="validate" value="Validate" class="btn"
+						style="width: 70px;"></td>
 
 					<td><input type="submit" name="action" id="export"
-					onclick="success(${size})"
-						value="Export" class="btn" style="width: 70px;"></td>
-
-
-
-
-
-
+						onclick="success(${size})" value="Export" class="btn"
+						style="width: 70px;"></td>
 
 					<td><input type="submit" name="action" id="import"
 						disabled="disabled" value="Import" class="btn"
@@ -684,38 +699,9 @@
 
 		</table>
 
-
-
-
-		<!-- <table>
-	<tr align="center" >
-			
-
-			<td><input type="submit" value="Submit" id="submits"
-				disabled="disabled" name="action" class="btn"
-				style="color: gray; width: 70px; " /></td>
-		
-
-		
-			<td><input type="submit" name="action" id="validate"
-				value="Validate" class="btn"
-				style="width: 70px;  margin-top: -29px;"></td>
-		
-		
-			<td><input type="submit" value="Save" id="save" name="action"
-				class="btn"
-				style="width: 70px;  margin-top: -29px;" /></td>
-		
-		<td><input type="hidden" value="" id="linkSelected" name="linkSelected" /></td>
-	    <td>	<input type="submit" style="visibility: hidden;" id="linkSelection"
-			name="action" onclick="" /></td>
-	</tr>
-		</table> -->
-
 	</form:form>
 
 
 </body>
 
 </html>
-			

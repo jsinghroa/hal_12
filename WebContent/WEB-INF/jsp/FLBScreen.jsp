@@ -19,10 +19,7 @@
 	type="text/css" />
 <link href="${path}/resources/theme/css/bootstrap.css" rel="stylesheet"
 	type="text/css" />
-<link href="${path}/resources/theme/css/jquery.timepicker.css"
-	rel="stylesheet" type="text/css" />
-<link href="${path}/resources/theme/css/jquery.timepicker.min.css"
-	rel="stylesheet" type="text/css" />
+
 <script type="text/javascript"
 	src="${path}/resources/theme/js/jquery-1.9.1.js"></script>
 <script type="text/javascript"
@@ -33,10 +30,17 @@
 
 <script type="text/javascript"
 	src="${path}/resources/theme/js/jquery.dataTables.js"></script>
+<link href="${path}/resources/theme/css/jquery.datetimepicker.min.css"
+	rel="stylesheet" type="text/css" />
+<link href="${path}/resources/theme/css/jquery.ui.all.css"
+	rel="stylesheet" type="text/css" />
 <script type="text/javascript"
-	src="${path}/resources/theme/js/jquery.timepicker.js"></script>
+	src="${path}/resources/theme/js/jquery.datetimepicker.full.js"></script>
 <script type="text/javascript"
-	src="${path}/resources/theme/js/jquery.timepicker.min.js"></script>
+	src="${path}/resources/theme/js/jquery.datetimepicker.full.min.js"></script>
+<script type="text/javascript"
+	src="${path}/resources/theme/js/jquery.datetimepicker.min.js"></script>
+
 <script type="text/javascript">
 	$(document).ready(function() {
 
@@ -51,6 +55,19 @@
 		});
 		
 	});
+	$('document').ready(function() {
+
+		var freezeFlag = document.getElementById("freezeFlag").value;
+		console.log('freeze=' + freezeFlag);
+		if (freezeFlag == "false") {
+			document.getElementById("validate").disabled = true;
+			document.getElementById("submit").disabled = true;
+			document.getElementById("sortieNewRow").disabled = true;
+			document.getElementById("postButton").disabled = true;
+		}
+
+	});
+	
 	
 	// To change sortie status based on the id of column
 	function changeSortieStatus(sortieStatusOf, desiredStatus, index) {
@@ -78,24 +95,14 @@
 		return num < 10 ? "0" + num : num;
 	}
 
-	$(function() {
-		$(".timepickerClass").timepicker({
-			timeFormat : 'HH:mm',
-			interval : 1
-		});
-	});
+	
 
 	function LinkSelected(linkSelected) {
 		$("#linkSelected").val(linkSelected);
 		$("#linkSelection").click();
 	}
 
- 	$(function() {	
-		$(".timepickerClass").timepicker({
-			timeFormat : 'HH:mm',
-			interval:1
-		});
-	});
+ 	
 	function updateStatus(status) {
 		console.log(status);
 		if (status == "ACTIVE") {
@@ -104,10 +111,53 @@
 		}
 	}
 
+	$(function()
+			{
+				$(".inductionDateTimePicker").datetimepicker({
+					format: 'd-M-Y H:i:s',
+					step: 1,
+					maxDate:0,
+					disabled: false
+				});
+				
+				$(".signalOutDateTimePicker").datetimepicker({
+					format: 'd-M-Y H:i:s',
+					step: 1,
+					maxDate:0,
+					disabled: false
+				});
+			});
+	
+	function showDatePickerInductionDate(){
+		var freezeFlag = document.getElementById("freezeFlag").value;
+		$(function(){
+			$('.inductionDateTimePicker').datetimepicker('hide');
+		});
+		
+		
+	}
+	function showDatePickerSignalOutDate(){
+	
+		var freezeFlag = document.getElementById("freezeFlag").value;
+		console.log('hello');
+		$(function(){
+			$('.signalOutDateTimePicker').datetimepicker('hide');
+		});
+		
+	}
 	$(function() {
-		$(".datepicker1").datepicker(
-
-		{
+		$(".etdDatePicker").datepicker({
+			maxDate : 0,
+			changeMonth : true,
+			changeYear : true,
+			dateFormat : 'dd-M-yy',
+			showOn : 'button',
+			buttonImageOnly : true,
+			buttonImage : '/HAL_12/theme/images/datepicker.jpg'
+		});
+	});
+	$(function() {
+		$(".sortieDatePicker").datepicker({
 			maxDate : 0,
 			changeMonth : true,
 			changeYear : true,
@@ -119,7 +169,7 @@
 	});
 
 	$(function() {
-		$(".datepicker2").datepicker({
+		$(".flightDatePicker").datepicker({
 			maxDate : 0,
 			changeMonth : true,
 			changeYear : true,
@@ -127,92 +177,74 @@
 			showOn : 'button',
 			buttonImageOnly : true,
 			buttonImage : '/HAL_12/theme/images/datepicker.jpg'
+
 		});
 	});
 	
-	$(function() {
-		$(".datepicker3").datepicker({
-			maxDate : 0,
-			changeMonth : true,
-			changeYear : true,
-			dateFormat : 'dd-M-yy',
-			showOn : 'button',
-			buttonImageOnly : true,
-			buttonImage : '/HAL_12/theme/images/datepicker.jpg'
-		});
-	});
-	$(function() {
-		$(".datepicker4").datepicker({
-			maxDate : 0,
-			changeMonth : true,
-			changeYear : true,
-			dateFormat : 'dd-M-yy',
-			showOn : 'button',
-			buttonImageOnly : true,
-			buttonImage : '/HAL_12/theme/images/datepicker.jpg'
-		});
-	});
-
-	$(function() {
-		$(".datepicker5").datepicker({
-			maxDate : 0,
-			changeMonth : true,
-			changeYear : true,
-			dateFormat : 'dd-M-yy',
-			showOn : 'button',
-			buttonImageOnly : true,
-			buttonImage : '/HAL_12/theme/images/datepicker.jpg'
-
-		});
-	});
-	$(function() {
-		$(".datepicker4").datepicker({
-			maxDate : 0,
-			changeMonth : true,
-			changeYear : true,
-			dateFormat : 'dd-M-yy',
-			showOn : 'button',
-			buttonImageOnly : true,
-			buttonImage : '/HAL_12/theme/images/datepicker.jpg'
-		});
-	});
 	
 	var today = new Date();
 	$(function() {
-		$(".datepicker7").timepicker({
-
-			timeFormat : 'HH:mm',
-			interval : 1,
-			minTime : '0:0',
-			maxTime : today.getHours() + ":" + today.getMinutes(),
-			scrollDefault: 'now'
-			 
-
-		});
+		
+		$(".etdTimePicker").datetimepicker({
+			datepicker:false,
+			format:'H:i',
+			step: 1,
+			
+			});
+	});
+	
+	$(function() {	
+ 		$(".durationTimePicker").datetimepicker({
+			datepicker:false,
+			format:'H:i',
+			step: 1,
+			
+			});
 	});
 	
 	$(function() {
-		$(".datepicker6").timepicker({
-
-			timeFormat : 'HH:mm',
-			interval : 1,
+		$(".departureTimePicker").datetimepicker({
+			datepicker:false,
+			format:'H:i',
+			step: 1,
 			minTime : '0:0',
 			maxTime : today.getHours() + ":" + today.getMinutes()
-
-		});
+			});
 	});
 	
+	
+	$(function() {
+		$(".arrivalTimePicker").datetimepicker({
+			datepicker:false,
+			format:'H:i',
+			step: 1,
+			minTime : '0:0',
+			maxTime : today.getHours() + ":" + today.getMinutes()
+			});
+	});
+	
+	
 		
 		
 		
 	
-	function updateTableLength(size) 
+	function updateTableLength(sortieSize,postFlightSize,meterSize) 
 	{
-	console.log('hhh'+size);
-	var table=$('#ListOfRecords').DataTable();
+	console.log('sizes='+sortieSize+' '+postFlightSize+' '+meterSize);
+	var table1=$('#ListOfRecords').DataTable();
+	var table2=$('#ListOfRecords1').DataTable();
+	var table3=$('#ListOfRecords2').DataTable();
 	
-	table.page.len(size+1).draw();
-
+	table1.page.len(sortieSize+1).draw();
+	table2.page.len(postFlightSize+1).draw();
+	/* table3.page.len(meterSize+1).draw();
+ */
+	};
+	function populateFlightDate(index)
+	{
+	
+	     console.log('index='+index);
+		
 	};
 
 	
@@ -294,6 +326,11 @@
 							readonly="true"
 							style="background-color: rgb(216, 216, 216); width: 90%; margin-left:-30%" /></td>
 
+
+					<td><form:input type="hidden" path="freeze" id="freezeFlag"
+							class="form-control" value="${emmsDataForm.freeze}"
+							readonly="true" /></td>
+
 				</tr>
 
 				<tr>
@@ -329,10 +366,19 @@
 					<td><form:label path="inductionDate">
 							<spring:message code="label.inductionDate" />
 						</form:label><span style="color: red; font-weight: bold; margin-left: -46px;"></span></td>
-					<td class="datepicker2"><form:input type="text"
-							path="inductionDate" class="form-control datepicker1"
-							value="${emmsDataForm.inductionDate}"
-							style="background-color: rgb(216, 216, 216); width: 70%;" /></td>
+					<td class="form-group date"><div class="input-group date">
+							<form:input 
+									readonly="true"
+									disabled="true"
+									type="text" path="inductionDate"
+								class="form-control inductionDateTimePicker"
+								value="${emmsDataForm.inductionDate}"
+								style="background-color: #eeeeee; width: 180px;" />
+							<span class="input-group-addon"> <span
+								class="glyphicon glyphicon-calendar"
+								onclick="showDatePickerInductionDate()"></span>
+							</span>
+						</div></td>
 
 					<td><form:label path="mainAssetPart">
 							<spring:message code="label.mainAssetPart" />
@@ -351,11 +397,18 @@
 					<td><form:label path="signalOutDate">
 							<spring:message code="label.signalOutDate" />
 						</form:label><span style="color: red; font-weight: bold; margin-left: -46px;"></span></td>
-					<td class="datepicker3"><form:input path="signalOutDate"
-							value="${emmsDataForm.signalOutDate}"
-							class="datepicker2 form-control"
-							style="background-color: rgb(216, 216, 216); width: 70%;" /></td>
-
+					<td class="form-group date"><div class="input-group date">
+							<form:input path="signalOutDate"
+							readonly="true"
+							disabled="true"
+								value="${emmsDataForm.signalOutDate}"
+								class="form-control signalOutDateTimePicker"
+								style="background-color: #eeeeee; width: 180px;" />
+							<span class="input-group-addon"> <span
+								class="glyphicon glyphicon-calendar"
+								onclick="showDatePickerSignalOutDate()"></span>
+							</span>
+						</div></td>
 
 					<td><form:label path="mainAssetSerial">
 							<spring:message code="label.mainAssetSerial" />
@@ -418,21 +471,22 @@
 						<td class="datepicker"><form:input
 								path="flbSortieArFormList[${status.index}].sortieDate"
 								id="sortieDate__${status.index }"
-								class="form-control datepicker3" title="${FLBForm.sortieDate}"
+								class="form-control sortieDatePicker"
+								title="${FLBForm.sortieDate}"
 								style="width:125px; word-wrap:break-word;background-color: rgb(255, 255, 255);" />
 						</td>
 						<td class="datepicker"><form:input
 								path="flbSortieArFormList[${status.index}].etdDate"
-								class="form-control datepicker3" title="${FLBForm.etdDate}"
+								class="form-control etdDatePicker" title="${FLBForm.etdDate}"
 								style="width:125px;" /></td>
 						<td><form:input
-								path="flbSortieArFormList[${status.index}].ETD"
-								class="form-control timepickerClass" title="${FLBForm.ETD}"
+								path="flbSortieArFormList[${status.index}].ETD" readonly="true"
+								class="form-control etdTimePicker" title="${FLBForm.ETD}"
 								style="width:120px;" /></td>
 						<td><form:input
 								path="flbSortieArFormList[${status.index}].duration"
-								class="form-control timepickerClass" title="${FLBForm.duration}"
-								style="width:120px;" /></td>
+								readonly="true" class="form-control durationTimePicker"
+								title="${FLBForm.duration}" style="width:120px;" /></td>
 						<td><form:input
 								path="flbSortieArFormList[${status.index}].flightType"
 								class="form-control" title="${FLBForm.flightType}"
@@ -469,13 +523,13 @@
 							class="icon__acceptReject" src="${path}/theme/images/reject.gif"
 							style="cursor: pointer;" alt="reject" /></td>
 
-<c:set var="class1" value="defaultstatus"></c:set>
-					<c:if test="${FLBForm.error=='Validated'}">
-						<c:set var="class1" value="validated"></c:set>
-					</c:if>
-					<c:if test="${FLBForm.error=='Not Validated'}">
-						<c:set var="class1" value="notvalidated"></c:set>
-					</c:if>
+						<c:set var="class1" value="defaultstatus"></c:set>
+						<c:if test="${FLBForm.error=='Validated'}">
+							<c:set var="class1" value="validated"></c:set>
+						</c:if>
+						<c:if test="${FLBForm.error=='Not Validated'}">
+							<c:set var="class1" value="notvalidated"></c:set>
+						</c:if>
 
 						<td><form:input
 								path="flbSortieArFormList[${status.index}].error"
@@ -488,17 +542,18 @@
 								style="width:100px; background-color: rgb(216, 216, 216);"
 								readonly="true" /></td>
 					</tr>
+					<c:set var="sortieSize" value="${status.index}"></c:set>
 				</c:forEach>
 			</tbody>
 		</table>
 
 		<div style="margin-top: 0; margin-bottom: 10vh; margin-right: 10px;">
-			<input type="submit" style="float: right;" value="New Row"
+			<input type="submit" style="float: right;" value="New Row" id="sortieNewRow"
 				name="addSortieRow" class="btn" />
 		</div>
 
 		<c:set var="size" value="0"></c:set>
-		<table id="ListOfRecords" class="listOfRecords tabletopmargin10"
+		<table id="ListOfRecords1" class="listOfRecords tabletopmargin10"
 			width="100%" style="overflow-x: hidden;">
 			<thead>
 				<tr>
@@ -550,7 +605,7 @@
 						style="font-size: 13px; font-weight: bold !important; line-height: 22px;">
 						<spring:message code="label.ErrorDescription" />
 					</td>
-					
+
 
 				</tr>
 			</thead>
@@ -563,8 +618,10 @@
 								class="form-control" title="${FLBForm.flbNo }"
 								style="width:160px; background-color: rgb(216, 216, 216);"
 								readonly="true" /></td>
-								
-								<td><form:select
+
+						<td><form:select
+								onchange="populateFlightDate(${status.index})"
+								id="sortieNumbers_${status.index}"
 								path="flbPostFlightDataFormList[${status.index}].sortieNumber"
 								class="form-control status" style="width:150px;"
 								title="${FLBForm.sortieNumber}">
@@ -577,15 +634,16 @@
 								title="${FLBForm.flightNumber}"
 								style="width:230px; background-color: rgb(216, 216, 216);" /></td>
 						<td class="flbDatePicker"><form:input
+								id="flightDate_${status.index}"
 								path="flbPostFlightDataFormList[${status.index}].flightDate"
-								class="form-control datepicker5" title="${FLBForm.flightDate}"
-								style="width:165px;" /></td>
+								class="form-control flightDatePicker"
+								title="${FLBForm.flightDate}" style="width:165px;" /></td>
 						<td class="flbDatePicker1"><form:input
-								class="form-control datepicker6" readonly="true"
+								class="form-control departureTimePicker" readonly="true"
 								path="flbPostFlightDataFormList[${status.index}].departureTime"
 								title="${FLBForm.departureTime}" style="width:190px;" /></td>
 						<td class="flbDatePicker2"><form:input
-								class="form-control datepicker7" readonly="true"
+								class="form-control arrivalTimePicker" readonly="true"
 								path="flbPostFlightDataFormList[${status.index}].arrivalTime"
 								title="${FLBForm.arrivalTime}" style="width:184px;" /></td>
 						<td><form:input
@@ -600,28 +658,29 @@
 								<form:option value="" label="- - -Select- - -"></form:option>
 								<form:options items="${FLBForm.flightTypes}" />
 							</form:select></td>
-
+						
 						<td><form:select
+								disabled="${FLBForm.status=='CLOSED'}"
 								path="flbPostFlightDataFormList[${status.index}].status"
 								class="form-control status" style="width:150px;"
 								title="${FLBForm.status}">
 								<form:option value="" label="- - -Select- - -"></form:option>
 								<form:options items="${FLBForm.statuses}" />
 							</form:select></td>
-							
-							<c:set var="class1" value="defaultstatus"></c:set>
-					<c:if test="${FLBForm.error=='Validated'}">
-						<c:set var="class1" value="validated"></c:set>
-					</c:if>
-					<c:if test="${FLBForm.error=='Not Validated'}">
-						<c:set var="class1" value="notvalidated"></c:set>
-					</c:if>
-					
-							
-							
-							
-							
-							
+
+						<c:set var="class1" value="defaultstatus"></c:set>
+						<c:if test="${FLBForm.error=='Validated'}">
+							<c:set var="class1" value="validated"></c:set>
+						</c:if>
+						<c:if test="${FLBForm.error=='Not Validated'}">
+							<c:set var="class1" value="notvalidated"></c:set>
+						</c:if>
+
+
+
+
+
+
 						<td><form:input
 								path="flbPostFlightDataFormList[${status.index}].error"
 								class="${class1} form-control" title="${FLBForm.error}"
@@ -642,7 +701,7 @@
 
 
 					</tr>
-					<c:set var="size" value="${status.index}"></c:set>
+					<c:set var="postFlightSize" value="${status.index}"></c:set>
 				</c:forEach>
 			</tbody>
 
@@ -651,14 +710,16 @@
 		</table>
 
 		<div style="margin-top: 0; margin-bottom: 10vh;">
-			<input type="submit" onclick="updateTableLength(${size})"
+			<input type="submit"
+				onclick="updateTableLength(${sortieSize},${postFlightSize},${meterSize})"
 				value="New Row" id="postButton" name="addPostFlightRow" class="btn"
+				
 				style="float: right; margin-right: 10px;" />
 		</div>
 
 		<input type="submit" name="action"
-			onclick="updateTableLength(${size})" id="validate" value="Save"
-			class="btn"
+			onclick="updateTableLength(${sortieSize},${postFlightSize},${meterSize})"
+			id="validate" value="Save" class="btn"
 			style="width: 80px; margin-left: auto; margin-right: auto">
 		<br />
 		<br />
@@ -784,13 +845,14 @@
 								style="width:600px; background-color: rgb(216, 216, 216);"
 								readonly="true" /></td>
 					</tr>
+					<c:set var="meterSize" value="${status.index}"></c:set>
 				</c:forEach>
 			</tbody>
 		</table>
 		<br />
 		<br />
 
-		<input type="submit" value="Submit"
+		<input type="submit" value="Submit" id="submit"
 			style="width: 70px; margin-left: auto; margin-right: auto"
 			name="action" class="btn" style="color: gray; " />
 

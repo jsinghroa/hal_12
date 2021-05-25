@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -83,7 +85,7 @@ public class MeterController {
 	public String submit(
 			@ModelAttribute("emmsDataForm") EmmsDataForm emmsDataForm,
 			BindingResult bindingResult, ModelMap model,
-			@RequestParam String action, @RequestParam String linkSelected) {
+			@RequestParam String action, @RequestParam String linkSelected,HttpServletResponse response) {
 		if (linkSelected.equals(Constants.LISTVIEW)) {
 			List<EmmsDataForm> emmsDataFormList = halService
 					.getEmmsDataOnView();
@@ -197,27 +199,17 @@ public class MeterController {
 				int date = 0;
 				String status = Constants.NOTVALIDATED;
 				String time = new Time(System.currentTimeMillis()).toString();
-				String inductionDate = "";
-				String signalOutDate = "";
-				
-				
-				if (0 < emmsDataForm.getSignalOutDate().length()
-						&& 0 < emmsDataForm.getInductionDate().length()) {
-					inductionDate = emmsDataForm.getInductionDate() + " "
-							+ time;
-					signalOutDate = emmsDataForm.getSignalOutDate() + " "
-							+ time;
-					emmsDataForm.setInductionDate(convertor
-							.getDate(inductionDate));
-					emmsDataForm.setSignalOutDate(convertor
-							.getDate(signalOutDate));
-				} else {
-					date = 1;
-					emmsDataForm.setInductionDate("");
+				if (null==emmsDataForm.getSignalOutDate()||emmsDataForm.getSignalOutDate().length()<=0) {
 					emmsDataForm.setSignalOutDate("");
-					
 				}
+				if (null==emmsDataForm.getInductionDate()||emmsDataForm.getInductionDate().length()<=0) {
 
+					emmsDataForm.setInductionDate("");
+
+				}
+				emmsDataForm.setInductionDate(convertor.getDateTime(emmsDataForm.getInductionDate()));
+				emmsDataForm.setSignalOutDate(convertor.getDateTime(emmsDataForm.getSignalOutDate()));
+				
 				emmsDataForm.setAssetMeterStatus(this.emmsDataForm
 						.getAssetMeterStatus());
 				Map<String, String> fetchPmValues = new HashMap<String, String>();
@@ -255,8 +247,7 @@ public class MeterController {
 						 * When validated without entering data in any row
 						 */
 						if (meterForm.getCurrentCount().length() <= 0
-								&& meterForm.getInstallationCount().length() <= 0
-								&& meterForm.getInstallationDate().length() <= 0) {
+								&& meterForm.getExistingCount().length() <= 0) {
 
 							System.out
 									.println("METER->THERE IS NO DATA IN A CURRENT ROW");
@@ -281,20 +272,11 @@ public class MeterController {
 							 */
 							System.out
 									.println("METER->THERE IS DATA IN A CURRENT ROW");
-							String installationDate = "";
 							i++;
-							if (!meterForm.getInstallationDate().isEmpty()) {
-								installationDate = meterForm
-										.getInstallationDate() + " " + time;
-							}
-
-							meterForm.setInstallationDate(installationDate);
-
 							System.out.println("METER->VALIDATION STARTS");
 							String validate = meterValidator
 									.meterDetailsValidate(meterForm
-											.getInstallationCount(), meterForm
-											.getInstallationDate(), meterForm
+											.getExistingCount(), meterForm
 											.getCurrentCount(), meterForm
 											.getExAstCurrentCount(), meterForm
 											.getExistingInstalledPn(),
@@ -345,12 +327,7 @@ public class MeterController {
 
 							}
 
-							meterForm.setInstallationDate(convertor
-									.getDateTime(meterForm
-											.getInstallationDate()));
-
 							System.out.println("UPDATE STARTS");
-
 							if (emmsDataForm.getSignalOutDate().length() > 0
 									&& emmsDataForm.getInductionDate().length() > 0) {
 								System.out.println("DATE HAS VALUE");
@@ -368,12 +345,12 @@ public class MeterController {
 													.setCurrentCount(meterValidator
 															.getDecimalValue(meterForm
 																	.getCurrentCount()));
-										if (!meterForm.getInstallationCount()
+										if (!meterForm.getExistingCount()
 												.isEmpty())
 											meterForm
-													.setInstallationCount(meterValidator
+													.setExistingCount(meterValidator
 															.getDecimalValue(meterForm
-																	.getInstallationCount()));
+																	.getExistingCount()));
 									}
 									
 									if(!validate.contains(Constants.COUNTLENGTHERROR))
@@ -390,11 +367,11 @@ public class MeterController {
 												.setCurrentCount(meterValidator.getUomValue(meterForm
 														.getCurrentCount()));
 									if (null != meterForm
-											.getInstallationCount()&&meterForm.getUom().equalsIgnoreCase(
+											.getExistingCount()&&meterForm.getUom().equalsIgnoreCase(
 													"hh:mm:ss"))
 										meterForm
-												.setInstallationCount(meterValidator.getUomValue(meterForm
-														.getInstallationCount()));
+												.setExistingCount(meterValidator.getUomValue(meterForm
+														.getExistingCount()));
 
 								} else {
 
@@ -410,25 +387,23 @@ public class MeterController {
 								meterForm
 										.setErrorDescription(Constants.NOTNULL1);
 							}
-							meterForm.setInstallationDate(convertor
-									.getDateTime4(installationDate));
-
+							
 						}
 
 					}
+				
 				}
 				}catch(Exception e){e.getMessage();}
-				emmsDataForm.setInductionDate(convertor.getDate2(emmsDataForm
-						.getInductionDate()));
-				emmsDataForm.setSignalOutDate(convertor.getDate2(emmsDataForm
-						.getSignalOutDate()));
+				emmsDataForm.setInductionDate(convertor.getDateTime1(emmsDataForm.getInductionDate()));
+				emmsDataForm.setSignalOutDate(convertor.getDateTime1(emmsDataForm.getSignalOutDate()));
 
 				model.addAttribute("emmsDataForm", emmsDataForm);
 				model.addAttribute("pageVar", "/WEB-INF/jsp/meterDetails.jsp");
 			}else if (action.equals("Export")) {
 
 				System.out.println("INSIDE EXPORT");
-				String filename = "C:\\Users\\Public\\Desktop\\MeterDetails.xlsx";
+				String filename="MeterDetails.xlsx";
+				//String filepath = "C:\\Users\\Public\\Desktop//";
 				//String filename = "D:\\MeterDetails.xlsx";
 				XSSFWorkbook workbook = new XSSFWorkbook();
 				XSSFSheet sheet = workbook.createSheet("MeterExportedData");
@@ -438,11 +413,10 @@ public class MeterController {
 				head.createCell(2).setCellValue(Constants.InstalledSN);
 				head.createCell(3).setCellValue(Constants.METERNAME);
 				head.createCell(4).setCellValue(Constants.UOM);
-				head.createCell(5).setCellValue(Constants.INITIALCOUNT);
-				head.createCell(6).setCellValue(Constants.INSTALLATIONDATE);
-				head.createCell(7).setCellValue(Constants.CURRENTCOUNT);
-				head.createCell(8).setCellValue(Constants.ErrorStatus);
-				head.createCell(9).setCellValue(Constants.ErrorDescription);
+				head.createCell(5).setCellValue(Constants.EXISTINGCOUNT);
+				head.createCell(6).setCellValue(Constants.CURRENTCOUNT);
+				head.createCell(7).setCellValue(Constants.ErrorStatus);
+				head.createCell(8).setCellValue(Constants.ErrorDescription);
 				XSSFRow row = null;
 				int rowIndex = 1;
 				List<MeterDetailsForm> meterForms = emmsDataForm
@@ -464,25 +438,24 @@ public class MeterController {
 						row.createCell(4).setCellValue(
 								meterExportForm.getUom());
 						row.createCell(5).setCellValue(
-								meterExportForm.getInstallationCount());
+								meterExportForm.getExistingCount());
 						row.createCell(6).setCellValue(
-								meterExportForm.getInstallationDate());
-						row.createCell(7).setCellValue(
 								meterExportForm.getCurrentCount());
-						row.createCell(8).setCellValue(
+						row.createCell(7).setCellValue(
 								meterExportForm.getError());
-						row.createCell(9).setCellValue(
+						row.createCell(8).setCellValue(
 								meterExportForm.getErrorDescription());
 						rowIndex++;
 					}
 
 				}
-				FileOutputStream fout;
+				
 				try {
 					
-					fout = new FileOutputStream(filename);
-					workbook.write(fout);
-					fout.close();
+					
+					response.setHeader("Content-disposition", "attachment; filename=\""+filename+"\"");
+					workbook.write(response.getOutputStream());
+					
 
 				} catch (Exception e) {
 
@@ -543,25 +516,16 @@ public class MeterController {
 						
 						if (row.getCell(5) != null) {
 							System.out.println("inside inital coutn");
-						String initialCount=meterValidator
+						String existingCount=meterValidator
 								.checkCellType2003(row.getCell(5),excelMeterForm.getUom());
-						System.out.println("ic="+initialCount);
-						excelMeterForm.setInstallationCount(initialCount);
+						System.out.println("ic="+existingCount);
+						excelMeterForm.setExistingCount(existingCount);
 						}
+						
 						if (row.getCell(6) != null) {
-							String installationDates=commonValidator
-									.checkCellType2003(row.getCell(6));
-							if (commonValidator.timeStampValidate1(
-									installationDates).equals(
-									Constants.NOERROR)) {
-							
-						excelMeterForm.setInstallationDate(installationDates);
-						}
-						}
-						if (row.getCell(7) != null) {
 						excelMeterForm
 								.setCurrentCount(meterValidator
-										.checkCellType2003(row.getCell(7),excelMeterForm.getUom()));
+										.checkCellType2003(row.getCell(6),excelMeterForm.getUom()));
 						}
 						excelMeterForm.setError(oldMeterList.get(i)
 								.getError());

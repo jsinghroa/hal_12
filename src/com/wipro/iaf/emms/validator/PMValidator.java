@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.springframework.context.annotation.Scope;
@@ -12,6 +13,7 @@ import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.stereotype.Component;
 
 import com.wipro.iaf.emms.constants.Constants;
+import com.wipro.iaf.emms.form.PMDetailForm;
 
 @Component
 @Scope(value = "session", proxyMode = ScopedProxyMode.TARGET_CLASS)
@@ -22,9 +24,9 @@ public class PMValidator {
 
 	String formatValidation;
 
-	public String pmValidate(String inductionDate, String signalOutDate,
+	public String pmValidate(PMDetailForm pmForm, String inductionDate, String signalOutDate,
 			String lastCompliedDate, String nextDueDate,
-			BigDecimal lastCompliedValue, BigDecimal nextDueValue, String frequencyUnit) {
+			BigDecimal lastCompliedValue, BigDecimal nextDueValue, String frequencyUnit, Map<String, String> mpmNumbersMap) {
 
 		pmErrorMsg = Constants.NOERROR;
 
@@ -82,8 +84,19 @@ public class PMValidator {
 					pmErrorMsg += Constants.TIMESTAMPFORMATERROR;
 			}
 		}
+		
+		//MPM validations, for same MPM all rows must have same LastComplied Date.
+		if(mpmNumbersMap.containsKey(pmForm.getMpmNum())) {
+			if(!pmForm.getLastCompiledDate().equals(mpmNumbersMap.get(pmForm.getMpmNum()))) {
+				if (pmErrorMsg.length() > 0) {
+					pmErrorMsg += " || " + Constants.LASTCOMPLIEDDATEDIFFERENTFORSAMEMPM;
+				} else
+					pmErrorMsg += Constants.LASTCOMPLIEDDATEDIFFERENTFORSAMEMPM;
+			}
+		}
+		
 
-		// last compiled date validations
+		// last complied date validations
 		if (lastCompliedDate.isEmpty()) {
 			if (pmErrorMsg.length() > 0) {
 				pmErrorMsg += " || " + Constants.LASTCOMPLIEDDATEMANDATORYERROR;
@@ -119,42 +132,44 @@ public class PMValidator {
 		}
 
 		// next due date validations
-		if (nextDueDate.isEmpty()) {
-			if (pmErrorMsg.length() > 0) {
-				pmErrorMsg += " || " + Constants.NEXTDUEDATEMANDATORYERROR;
-			} else
-				pmErrorMsg += Constants.NEXTDUEDATEMANDATORYERROR;
-		}
-		formatValidation = commonValidator.timeStampValidate(nextDueDate);
-		if(!pmErrorMsg.contains(Constants.TIMESTAMPFORMATERROR)){
-			if (!formatValidation.isEmpty()) {
+		if(frequencyUnit.equals("YEARS")) {
+			if (nextDueDate.isEmpty()) {
 				if (pmErrorMsg.length() > 0) {
-					pmErrorMsg += " || " + formatValidation;
+					pmErrorMsg += " || " + Constants.NEXTDUEDATEMANDATORYERROR;
 				} else
-					pmErrorMsg += formatValidation;
+					pmErrorMsg += Constants.NEXTDUEDATEMANDATORYERROR;
 			}
-		}
-		
-		try {
-			if (new SimpleDateFormat("dd-MMM-yy hh:mm:ss").parse(nextDueDate)
-					.compareTo(new SimpleDateFormat("dd-MMM-yy hh:mm:ss").parse(lastCompliedDate)) <= 0) {
-				if (pmErrorMsg.length() > 0) {
-					pmErrorMsg += " || "
-							+ Constants.LASTCOMPLIEDDATEGREATERTONEXTDUEDATEERROR;
-				} else
-					pmErrorMsg += Constants.LASTCOMPLIEDDATEGREATERTONEXTDUEDATEERROR;
-			}
-		} catch (ParseException e) {
+			formatValidation = commonValidator.timeStampValidate(nextDueDate);
 			if(!pmErrorMsg.contains(Constants.TIMESTAMPFORMATERROR)){
-				if (pmErrorMsg.length() > 0) {
-					pmErrorMsg += " || " + Constants.TIMESTAMPFORMATERROR;
-				} else
-					pmErrorMsg += Constants.TIMESTAMPFORMATERROR;
+				if (!formatValidation.isEmpty()) {
+					if (pmErrorMsg.length() > 0) {
+						pmErrorMsg += " || " + formatValidation;
+					} else
+						pmErrorMsg += formatValidation;
+				}
+			}
+			
+			try {
+				if (new SimpleDateFormat("dd-MMM-yy hh:mm:ss").parse(nextDueDate)
+						.compareTo(new SimpleDateFormat("dd-MMM-yy hh:mm:ss").parse(lastCompliedDate)) <= 0) {
+					if (pmErrorMsg.length() > 0) {
+						pmErrorMsg += " || "
+								+ Constants.LASTCOMPLIEDDATEGREATERTONEXTDUEDATEERROR;
+					} else
+						pmErrorMsg += Constants.LASTCOMPLIEDDATEGREATERTONEXTDUEDATEERROR;
+				}
+			} catch (ParseException e) {
+				if(!pmErrorMsg.contains(Constants.TIMESTAMPFORMATERROR)){
+					if (pmErrorMsg.length() > 0) {
+						pmErrorMsg += " || " + Constants.TIMESTAMPFORMATERROR;
+					} else
+						pmErrorMsg += Constants.TIMESTAMPFORMATERROR;
+				}
 			}
 		}
 
 		// last complied value validations
-		if(frequencyUnit == "") {
+		if(frequencyUnit.equals("")) {
 			if (!(lastCompliedValue != null)) {
 				if (pmErrorMsg.length() > 0) {
 					pmErrorMsg += " || " + Constants.LASTCOMPLIEDVALUEMANDATORYERROR;
@@ -180,7 +195,7 @@ public class PMValidator {
 		}
 
 		// next due value validations		
-		if(frequencyUnit == "") {
+		if(frequencyUnit.equals("")) {
 			if (!(nextDueValue != null)) {
 				if (pmErrorMsg.length() > 0) {
 					pmErrorMsg += " || " + Constants.NEXTDUEVALUEMANDATORYERROR;

@@ -30,8 +30,14 @@ public class UserRegistrationController {
 	
 	@RequestMapping(value={"/onSubmit"}, method=RequestMethod.POST)
 	public String onPageSubmit(@ModelAttribute("userRegistrationForm") UserRegistrationForm userRegistrationForm,BindingResult bindingResult, ModelMap model){
-		halService.insertRegisteredUser(userRegistrationForm);
+		int registerStatus = halService.insertRegisteredUser(userRegistrationForm);
 		model.addAttribute("pageVar", "/WEB-INF/jsp/UserRegistration.jsp");
+		if(registerStatus == 1) {
+			model.addAttribute("regStatus", "success");
+		} else {
+			model.addAttribute("regStatus", "failure");
+		}
+		
 		return "basic";
 	}
 }

@@ -25,6 +25,14 @@
 	src="${path}/resources/theme/js/jquery-1.10.2.min.js"></script>
 <script type="text/javascript"
 	src="${path}/resources/theme/js/jquery.dataTables.js"></script>
+<script type="text/javascript">
+	function resetFields(){
+		document.getElementById("serviceNo").value = "";
+		document.getElementById("firstName").value = "";
+		document.getElementById("lastName").value = "";
+		document.getElementById("password").value = "";
+	}
+</script>
 </head>
 <body>
 	<form:form modelAttribute="userRegistrationForm" method="POST" action="${path}/userRegistration/onSubmit">
@@ -32,9 +40,13 @@
 			<spring:message code="label.UserRegistration.header" />
 		</div>
 
-		<div>
-		<c:if test="${param.regStatus != null }">
+		<div height="100%">
+		<%-- <c:if test="${param.regStatus == 'success' }"> --%>
+		<c:if test="${regStatus == 'success' }">
 			<i style="margin-left:42%; color: blue;">Registration Completed Successfully!</i>
+		</c:if>
+		<c:if test="${regStatus == 'failure' }">
+			<i style="margin-left:42%; color: red;">Registration Failed!</i>
 		</c:if>
 		<table align="center" width="30%" height="100%" style="margin-top:10px;overflow-x: auto;">
 		<thead>
@@ -55,10 +67,12 @@
 				</form:label></td>
 				<td width="400"><form:input path="lastName" class="form-control" style="width: 200px;" required="required"/></td></tr>
 				
-			<%-- <tr align="center"><td width="200"><form:label path="label">
-					<spring:message code="label.rank" />
+			<tr align="center"><td width="200"><form:label path="label">
+					<spring:message code="label.role" />
 				</form:label></td>
-				<td width="400"><form:input path="rank" class="form-control" style="width: 200px;"/></td></tr> --%>
+				<td width="400" height="35px">
+					<form:radiobutton class="form-check-input" path = "role" value = "ROLE_ADMIN" label = "Admin" />
+                  	<form:radiobutton class="form-check-input" path = "role" value = "ROLE_EMPLOYEE" label = "Employee" checked="checked"/></td></tr>
 				
 			<tr align="center"><td width="200"><form:label path="label">
 					<spring:message code="label.password" />
@@ -73,15 +87,15 @@
 
 					<td align="right"><input type="submit" value="Submit" id="save" name="action" class="btn" style="width: 70px;" /></td>
 
-					<td><input type="submit" name="action" id="validate" value="Reset" disabled="disabled" class="btn" style="width: 70px;"></td>
+					<td><input type="button" id="reset" value="Reset" class="btn" style="width: 70px;" onclick="resetFields()"></td>
 
-					<td align="left"><input type="submit" value="Cancel" disabled="disabled" name="action" class="btn" style="color: gray; width: 70px;" /></td>
+					<!-- <td align="left"><input type="submit" value="Cancel" disabled="disabled" name="action" class="btn" style="color: gray; width: 70px;" /></td> -->
 				</tr>
 			</thead>
 		</table>
 		</div>	
 		</div>
-		<input type="hidden" name="regStatus" value="success"/>
+		<!-- <input type="hidden" name="regStatus" value="success"/> -->
 	</form:form>
 </body>
 </html>

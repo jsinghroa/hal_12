@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.servlet.configuration.EnableWebMvcSecurity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -39,8 +40,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		
 		super.configure(http);
-		http.authorizeRequests()
-				.anyRequest().authenticated()
+		http
+			.authorizeRequests()
+			.antMatchers("/**").hasRole("EMPLOYEE")
+			.antMatchers("/userRegistration/**").hasRole("ADMIN")
+			.anyRequest().authenticated()
 			.and()
 			.formLogin()
 				.loginPage("/LoginPage")

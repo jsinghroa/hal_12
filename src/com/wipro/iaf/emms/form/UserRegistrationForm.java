@@ -11,7 +11,7 @@ public class UserRegistrationForm {
 	private String serviceNo;
 	private String firstName;
 	private String lastName;
-	private String rank;
+	private String role;
 	private String password;
 	private String label;
 
@@ -39,12 +39,12 @@ public class UserRegistrationForm {
 		this.lastName = lastName;
 	}
 
-	public String getRank() {
-		return rank;
+	public String getRole() {
+		return role;
 	}
 
-	public void setRank(String rank) {
-		this.rank = rank;
+	public void setRole(String role) {
+		this.role = role;
 	}
 
 	public String getPassword() {
@@ -66,7 +66,7 @@ public class UserRegistrationForm {
 	@Override
 	public String toString() {
 		return "UserRegistrationForm [serviceNo=" + serviceNo + ", firstName="
-				+ firstName + ", lastName=" + lastName + ", rank=" + rank
+				+ firstName + ", lastName=" + lastName + ", role=" + role
 				+ ", password=" + password + ", label=" + label + "]";
 	}
 

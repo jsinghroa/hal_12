@@ -1,7 +1,7 @@
 package com.wipro.iaf.emms.form;
 
 import java.math.BigDecimal;
-import java.util.Date;
+import java.util.List;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -18,10 +18,13 @@ public class PMDetailForm {
 	private String mpmNum;
 	private String mpmDescription;
 	private String meterName;
+	private String uom;
 	private int frequencyIteration;
 	private String frequencyUnit;
 	private String errorStatus;
 	private String errorDesc;
+	private String complianceStatus;
+	private List<String> complianceStatusOptions;
 	private String lastCompiledDate;
 	private String nextDueDate;
 	private BigDecimal lastCompiledValue;
@@ -95,6 +98,14 @@ public class PMDetailForm {
 		this.meterName = meterName;
 	}
 
+	public String getUom() {
+		return uom;
+	}
+
+	public void setUom(String uom) {
+		this.uom = uom;
+	}
+
 	public int getFrequencyIteration() {
 		return frequencyIteration;
 	}
@@ -125,6 +136,22 @@ public class PMDetailForm {
 
 	public void setErrorDesc(String errorDesc) {
 		this.errorDesc = errorDesc;
+	}
+
+	public String getComplianceStatus() {
+		return complianceStatus;
+	}
+
+	public void setComplianceStatus(String complianceStatus) {
+		this.complianceStatus = complianceStatus;
+	}
+
+	public List<String> getComplianceStatusOptions() {
+		return complianceStatusOptions;
+	}
+
+	public void setComplianceStatusOptions(List<String> complianceStatusOptions) {
+		this.complianceStatusOptions = complianceStatusOptions;
 	}
 
 	public String getLastCompiledDate() {
@@ -161,18 +188,14 @@ public class PMDetailForm {
 
 	@Override
 	public String toString() {
-		return "PMDetailForm [installedPN=" + installedPN
-				+ ", installedPartDesc=" + installedPartDesc
-				+ ", installSerialNum=" + installSerialNum + ", workType="
-				+ workType + ", mpmNum=" + mpmNum + ", mpmDescription="
-				+ mpmDescription + ", meterName=" + meterName
-				+ ", frequencyIteration=" + frequencyIteration
-				+ ", frequencyUnit=" + frequencyUnit + ", errorStatus="
-				+ errorStatus + ", errorDesc=" + errorDesc
-				+ ", lastCompiledDate=" + lastCompiledDate + ", nextDueDate="
-				+ nextDueDate + ", lastCompiledValue=" + lastCompiledValue
-				+ ", nextDueValue=" + nextDueValue + ", recordRowId="
-				+ recordRowId + "]";
+		return "PMDetailForm [installedPN=" + installedPN + ", installedPartDesc=" + installedPartDesc
+				+ ", installSerialNum=" + installSerialNum + ", workType=" + workType + ", mpmNum=" + mpmNum
+				+ ", mpmDescription=" + mpmDescription + ", meterName=" + meterName + ", uom=" + uom
+				+ ", frequencyIteration=" + frequencyIteration + ", frequencyUnit=" + frequencyUnit + ", errorStatus="
+				+ errorStatus + ", errorDesc=" + errorDesc + ", complianceStatus=" + complianceStatus
+				+ ", complianceStatusOptions=" + complianceStatusOptions + ", lastCompiledDate=" + lastCompiledDate
+				+ ", nextDueDate=" + nextDueDate + ", lastCompiledValue=" + lastCompiledValue + ", nextDueValue="
+				+ nextDueValue + ", recordRowId=" + recordRowId + "]";
 	}
 
 }

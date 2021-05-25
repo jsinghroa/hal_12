@@ -57,6 +57,14 @@ public class HalDao {
 
 		}
 	};
+	
+	private static List<String> complianceStatusOptions = new ArrayList<String>() {
+		private static final long serialVersionUID = 1L;
+		{
+			add("Performed");
+			add("Not Performed");
+		}
+	};
 
 	private static DateConvertor convertor = new DateConvertor();
 
@@ -354,12 +362,13 @@ public void deleteData(String deleterecordId) {
 			pmDetailForm.setMpmDescription(rs.getString("mpm_description"));
 			pmDetailForm.setWorkType(rs.getString("work_type"));
 			pmDetailForm.setMeterName(rs.getString("meter_name"));
+			pmDetailForm.setUom(rs.getString("UOM"));
 			pmDetailForm.setFrequencyUnit(rs.getString("frequency_unit"));
 			pmDetailForm.setFrequencyIteration(rs.getInt("iterationcalfrequency"));
-
+			pmDetailForm.setComplianceStatus(rs.getString("compliance_status"));
+			pmDetailForm.setComplianceStatusOptions(complianceStatusOptions);
 			pmDetailForm.setLastCompiledDate(convertor.getDate2(rs.getString("last_complied_date")));
 			pmDetailForm.setNextDueDate(convertor.getDate2(rs.getString("next_due_date")));
-
 			pmDetailForm.setLastCompiledValue(rs.getBigDecimal("last_complied_value"));
 			pmDetailForm.setNextDueValue(rs.getBigDecimal("next_due_value"));
 			pmDetailForm.setErrorStatus(rs.getString("error_status"));
@@ -618,11 +627,22 @@ public void deleteData(String deleterecordId) {
 		int temp = jdbcTemplate.update(sql);
 
 		if (temp == 1) {
+			if(pmForm.getLastCompiledDate().length() > 0 && pmForm.getNextDueDate().length() > 0) {
 			sql = "update asset_pm set asset_pm.Last_Complied_Date='" + pmForm.getLastCompiledDate() + "',"
 					+ "asset_pm.Next_Due_Date='" + pmForm.getNextDueDate() + "'," + "asset_pm.Last_Complied_Value="
 					+ pmForm.getLastCompiledValue() + "," + "asset_pm.Next_Due_Value=" + pmForm.getNextDueValue() + ""
+					+ ", asset_pm.compliance_status='"+ pmForm.getComplianceStatus() +"'"
 					+ " where asset_pm.Record_ID='" + emmsDataForm.getRecordId() + "'" + " and asset_pm.Record_Row_ID='"
-					+ pmForm.getRecordRowId() + "'";
+					+ pmForm.getRecordRowId() + "'" ;
+			}
+			if(pmForm.getLastCompiledDate().length() > 0) {
+				sql = "update asset_pm set asset_pm.Last_Complied_Date='" + pmForm.getLastCompiledDate() + "',"
+						+ "asset_pm.Last_Complied_Value="
+						+ pmForm.getLastCompiledValue() + "," + "asset_pm.Next_Due_Value=" + pmForm.getNextDueValue() + ""
+						+ ", asset_pm.compliance_status='"+ pmForm.getComplianceStatus() +"'"
+						+ " where asset_pm.Record_ID='" + emmsDataForm.getRecordId() + "'" + " and asset_pm.Record_Row_ID='"
+						+ pmForm.getRecordRowId() + "'" ;
+			}
 			return jdbcTemplate.update(sql);
 		} else
 			return 0;
@@ -826,15 +846,20 @@ public void deleteData(String deleterecordId) {
 	}
 
 	public int insertRegisteredUser(UserRegistrationForm user) {
-		String sql = "insert into users (username, password, enabled, firstName, lastName) values(?, ?, ?, ?, ?)";
-		int status = jdbcTemplate.update(sql, user.getServiceNo(), user.getPassword(), 1, user.getFirstName(),
-				user.getLastName());
-		System.out.println("status: " + status);
-		if (status == 1) {
-			sql = "insert into authorities (username, authority) values(?, ?)";
-			status = jdbcTemplate.update(sql, user.getServiceNo(), "ROLE_EMPLOYEE");
-		}
-		return status;
+		String sql = "select count(*) from users where username = ? ";
+		int userCount = this.jdbcTemplate.queryForObject(sql, Integer.class, user.getServiceNo());
+		if (userCount == 0) {
+			sql = "insert into users (username, password, enabled, firstName, lastName) values(?, ?, ?, ?, ?)";
+			int status = jdbcTemplate.update(sql, user.getServiceNo(), user.getPassword(), 1, user.getFirstName(),
+					user.getLastName());
+			System.out.println("status: " + status);
+			if (status == 1) {
+				sql = "insert into authorities (username, authority) values(?, ?)";
+				status = jdbcTemplate.update(sql, user.getServiceNo(), user.getRole());
+			}
+			return status;
+		} else
+			return 0;
 	}
 
 	public static String getUomValue(String value) {
@@ -962,6 +987,7 @@ public void deleteData(String deleterecordId) {
 				+ "Sortie_Num=? " + "WHERE (Record_Row_ID = ?);";
 		
 		if (null !=postFlightDataForm.getFlightDate()&&postFlightDataForm.getFlightDate().isEmpty()) {
+
 			postFlightDataForm.setFlightDate(null);
 		}
 		int status = jdbcTemplate.update(query, postFlightDataForm.getFlightType(), postFlightDataForm.getFlightDate(),
@@ -986,6 +1012,7 @@ public void deleteData(String deleterecordId) {
 
 	public static List<String> getSortieNumbers(String recordId) {
 		String query = "SELECT sortie_num FROM flb_sortie_accept  where Sortie_Status='ACCEPTED' and record_Id='" + recordId + "'";
+
 		// List<String> sortieNumbers = new ArrayList<>();
 		List<String> sortieNumbers = jdbcTemplate.query(query, new RowMapper<String>() {
 			public String mapRow(ResultSet rs, int rowNum) throws SQLException {

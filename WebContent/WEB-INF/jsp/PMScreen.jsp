@@ -231,12 +231,15 @@ $(function(){
 		datetimepickerl	= ".datetimepickerl"+i;
 		datetimepickern = ".datetimepickern"+i;
 		$(datetimepickern).datetimepicker({
-			format: 'd-M-Y H:i:s',
-			step: 1
+			format: 'd-M-Y H:i:00',
+			formatTime: 'H:i',
+			step: 1,
+			minDate: 0
 		});
 		
 		$(datetimepickerl).datetimepicker({
-			format: 'd-M-Y H:i:s',
+			format: 'd-M-Y H:i:00',
+			formatTime: 'H:i',
 			step: 1
 		});
 	}
@@ -265,7 +268,6 @@ function showDatePickerLastCompliedDate(index){
 }
 
 function showDatePickerNextDueDate(index){
-	console.log("DateTimePicker selected: "+index);
 	$(function(){
 		var element = ".datetimepickern"+index;
 		$(element).datetimepicker('show');
@@ -470,6 +472,8 @@ function updateTableLength(size)
 					<td class="tableheading"><spring:message
 							code="label.frequencyUnit" /></td>
 					<td class="tableheading"><spring:message
+							code="label.complianceStatus" /></td>
+					<td class="tableheading"><spring:message
 							code="label.lastCompiledDate" /></td>
 					<td class="tableheading"><spring:message
 							code="label.nextDueDate" /></td>
@@ -535,6 +539,14 @@ function updateTableLength(size)
 							class="form-control" value="${pmForm.frequencyUnit}"
 							style="width:90px; background-color: rgb(216, 216, 216);"
 							readonly="true" title="${pmForm.frequencyUnit }"/></td>
+					<td>
+						<form:select path="pmDetailFormList[${status.index }].complianceStatus"
+							class="form-control" style="width:130px; word-wrap:break-word;" 
+							title="${pmForm.complianceStatus }">
+							<form:options items="${pmForm.complianceStatusOptions }" />
+							</form:select>
+					</td>
+							
 					<td class="form-group date">
 						<div class="input-group date"><form:input readonly="true"
 							path="pmDetailFormList[${status.index}].lastCompiledDate"

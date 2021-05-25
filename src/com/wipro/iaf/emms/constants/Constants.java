@@ -50,7 +50,7 @@ public abstract interface Constants {
 	public static final String LASTCOMPLIEDDATEMANDATORYERROR = "Last Complied Date should not be blank";
 	public static final String LASTCOMPLIEDDATEGREATERTOINDUCTIONERROR ="Last Complied Date should be earlier than the Induction Date";
 	public static final String LASTCOMPLIEDDATEGREATERTOSIGNALOUTERROR = "Last Complied Date should be earlier than the Signal Out Date";
-	public static final String NEXTDUEDATEMANDATORYERROR = "Next Due Date should not be blank";
+	public static final String NEXTDUEDATEMANDATORYERROR = "Next Due Date should not be blank when Meter is 'Calendar Based'";
 	public static final String LASTCOMPLIEDDATEGREATERTONEXTDUEDATEERROR = "Next Due Date should be later than the Last Complied Date";
 	public static final String LASTCOMPLIEDVALUEMANDATORYERROR = "Last Complied Value should not be blank when Meter is 'Meter Based";
 	public static final String NEXTDUEVALUEMANDATORYERROR = "Next Due Value should not be blank when Meter is 'Meter Based'";
@@ -59,6 +59,7 @@ public abstract interface Constants {
 	public static final String LASTCOMPLIEDVALUENEGATIVEERROR = "Last Complied Value should not be Negative";
 	public static final String NEXTDUEVALUENEGATIVEERROR = "Next Due Value should not be Negative";
 	public static final String NEXTDUEVALUENULLERROR = "Next Due Value must be empty when Meter is 'Calendar Based'";
+	public static final String LASTCOMPLIEDDATEDIFFERENTFORSAMEMPM = "Last Complied date cannot be different for same Master PM records";
 
 	public static final String INITIALDATEMANDATORYERROR = "Initial Date should not be blank if Initial Count contains value";
 	public static final String CURRENTCOUNTMANDATORYERROR = "Current Count should not be blank if Initial Value and Initial Date is having value.";

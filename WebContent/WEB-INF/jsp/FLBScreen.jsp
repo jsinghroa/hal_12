@@ -73,6 +73,18 @@
 	function changeSortieStatus(sortieStatusOf, desiredStatus, index) {
 		console.log(document.getElementById(sortieStatusOf).value);
 		if (document.getElementById(sortieStatusOf).value === "PENDING") {
+			if(desiredStatus == "REJECTED"){
+				const reason = $('#reason__' + index);
+				console.log(reason.val());
+				if(reason.val()==null || reason.val()==""){
+					reason.focus();
+					reason.attr("required", "required");
+					reason.attr("placeholder", "Required to reject sortie");
+				}
+				$("#" + sortieStatusOf).val(desiredStatus);
+				const timeNow = new Date();
+				$("#statusDate__" + index).val(convertTime(timeNow));	
+			}
 			$("#" + sortieStatusOf).val(desiredStatus);
 			const timeNow = new Date();
 			$("#statusDate__" + index).val(convertTime(timeNow));
@@ -367,10 +379,8 @@
 							<spring:message code="label.inductionDate" />
 						</form:label><span style="color: red; font-weight: bold; margin-left: -46px;"></span></td>
 					<td class="form-group date"><div class="input-group date">
-							<form:input 
-									readonly="true"
-									disabled="true"
-									type="text" path="inductionDate"
+							<form:input readonly="true" disabled="true" type="text"
+								path="inductionDate"
 								class="form-control inductionDateTimePicker"
 								value="${emmsDataForm.inductionDate}"
 								style="background-color: #eeeeee; width: 180px;" />
@@ -398,9 +408,7 @@
 							<spring:message code="label.signalOutDate" />
 						</form:label><span style="color: red; font-weight: bold; margin-left: -46px;"></span></td>
 					<td class="form-group date"><div class="input-group date">
-							<form:input path="signalOutDate"
-							readonly="true"
-							disabled="true"
+							<form:input path="signalOutDate" readonly="true" disabled="true"
 								value="${emmsDataForm.signalOutDate}"
 								class="form-control signalOutDateTimePicker"
 								style="background-color: #eeeeee; width: 180px;" />
@@ -487,10 +495,14 @@
 								path="flbSortieArFormList[${status.index}].duration"
 								readonly="true" class="form-control durationTimePicker"
 								title="${FLBForm.duration}" style="width:120px;" /></td>
-						<td><form:input
-								path="flbSortieArFormList[${status.index}].flightType"
-								class="form-control" title="${FLBForm.flightType}"
-								style="width:80px;" /></td>
+						<td><form:select
+								path="flbSortieArFormList[${status.index }].flightType"
+								class="form-control" style="width:140px; word-wrap:break-word;"
+								title="${FLBForm.flightType }">
+								<form:option value="" label="- - -Select- - -"></form:option>
+								<form:options items="${FLBForm.flightTypes}" />
+							</form:select></td>
+
 						<td><form:input id="sortieStatus__${status.index}"
 								path="flbSortieArFormList[${status.index}].sortieStatus"
 								class="form-control" title="${FLBForm.sortieStatus}"
@@ -512,8 +524,8 @@
 								style="width:100px;" /></td>
 						<td><form:input
 								path="flbSortieArFormList[${status.index}].reason"
-								class="form-control" title="${FLBForm.reason}"
-								style="width:120px; " /></td>
+								class="form-control" id="reason__${status.index }"
+								title="${FLBForm.reason}" style="width:180px; " /></td>
 						<td><img
 							onclick="changeSortieStatus('sortieStatus__${status.index}', 'ACCEPTED', '${status.index }')"
 							class="icon__acceptReject" src="${path}/theme/images/accept.gif"
@@ -548,8 +560,8 @@
 		</table>
 
 		<div style="margin-top: 0; margin-bottom: 10vh; margin-right: 10px;">
-			<input type="submit" style="float: right;" value="New Row" id="sortieNewRow"
-				name="addSortieRow" class="btn" />
+			<input type="submit" style="float: right;" value="New Row"
+				id="sortieNewRow" name="addSortieRow" class="btn" />
 		</div>
 
 		<c:set var="size" value="0"></c:set>
@@ -658,9 +670,8 @@
 								<form:option value="" label="- - -Select- - -"></form:option>
 								<form:options items="${FLBForm.flightTypes}" />
 							</form:select></td>
-						
-						<td><form:select
-								disabled="${FLBForm.status=='CLOSED'}"
+
+						<td><form:select disabled="${FLBForm.status=='CLOSED'}"
 								path="flbPostFlightDataFormList[${status.index}].status"
 								class="form-control status" style="width:150px;"
 								title="${FLBForm.status}">
@@ -713,7 +724,6 @@
 			<input type="submit"
 				onclick="updateTableLength(${sortieSize},${postFlightSize},${meterSize})"
 				value="New Row" id="postButton" name="addPostFlightRow" class="btn"
-				
 				style="float: right; margin-right: 10px;" />
 		</div>
 

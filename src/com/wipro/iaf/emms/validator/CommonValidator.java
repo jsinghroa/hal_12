@@ -85,14 +85,7 @@ public class CommonValidator {
 	    return textErrorMsg;
 	}
 	
-	//Validation logic for UOM data type pending
-	public String meterValidate(String currentCount) {
-		String errorMsg = Constants.NOERROR;
-		
-		/*UOM Validation Logic*/
-		
-		return errorMsg;
-	}
+
 	public boolean decimalValidate(String decimalValue) {
 		String regex = "^\\d+\\.\\d+";
 		String regex1="^\\d+";
@@ -111,16 +104,9 @@ public class CommonValidator {
 	}
 
 	//controller se validate aya 
-	public boolean uomValidate(String value)
+	public boolean uomValidate(String value, String uom)
 	{
-		//check length
-		/*if(value.length()==7&&value.charAt(1)==':')
-		{
-			System.out.println("length=7");
-			
-		}
-		else 
-		{*/
+		if(uom.equalsIgnoreCase("hh:mm:ss")) {
 			if(value.length()!=8)
 		
 		{
@@ -161,6 +147,40 @@ public class CommonValidator {
 		}
 		
 		return true;
+		}else
+		{		
+			if(value.length()!=5)
+				
+			{
+				System.out.println("inside length");
+				
+				return false;
+			}
+			
+			
+			char s1=value.charAt(2);
+	
+			if(!(s1==':'))
+			{
+				System.out.println("inside colon");
+				return false;
+			}
+			else
+			{ 
+				int h,m;
+				
+				try{
+					h=Integer.parseInt(value.substring(0,2));
+					m=Integer.parseInt(value.substring(3,5));
+				}catch(Exception e)
+				{
+					System.out.println("uomValidateException="+e.getMessage());
+					return false;
+				}
+				}
+			
+			return true;
+		}	
 	}
 	
 	public boolean fileNameMatch(String file){
@@ -199,6 +219,11 @@ public class CommonValidator {
 		}
 		System.out.println("strcELLvALUE="+strCellValue);
 		return strCellValue;
+	}
+
+	public boolean uomValidate2(String existingCount) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	

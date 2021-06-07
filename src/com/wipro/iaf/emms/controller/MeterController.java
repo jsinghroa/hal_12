@@ -344,13 +344,13 @@ public class MeterController {
 											meterForm
 													.setCurrentCount(meterValidator
 															.getDecimalValue(meterForm
-																	.getCurrentCount()));
+																	.getCurrentCount(),meterForm.getUom()));
 										if (!meterForm.getExistingCount()
 												.isEmpty())
 											meterForm
 													.setExistingCount(meterValidator
 															.getDecimalValue(meterForm
-																	.getExistingCount()));
+																	.getExistingCount(),meterForm.getUom()));
 									}
 									
 									if(!validate.contains(Constants.COUNTLENGTHERROR))
@@ -365,13 +365,13 @@ public class MeterController {
 											"hh:mm:ss"))
 										meterForm
 												.setCurrentCount(meterValidator.getUomValue(meterForm
-														.getCurrentCount()));
+														.getCurrentCount(),meterForm.getUom()));
 									if (null != meterForm
 											.getExistingCount()&&meterForm.getUom().equalsIgnoreCase(
 													"hh:mm:ss"))
 										meterForm
 												.setExistingCount(meterValidator.getUomValue(meterForm
-														.getExistingCount()));
+														.getExistingCount(),meterForm.getUom()));
 
 								} else {
 

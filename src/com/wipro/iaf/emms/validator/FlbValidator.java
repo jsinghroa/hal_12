@@ -230,14 +230,7 @@ public class FlbValidator {
 				flbErrorMsg += Constants.TIMESTAMPFORMATERROR;
 		}
 		
-		formatValidation = commonValidator.meterValidate(meterReading);
-		if(!formatValidation.isEmpty()) {
-			if(flbErrorMsg.length() > 0) {
-				flbErrorMsg += "\n" + formatValidation;
-	    	}
-	    	else
-	    		flbErrorMsg += formatValidation;
-		}
+		
 		
 		return flbErrorMsg;
 	}

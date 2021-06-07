@@ -254,8 +254,26 @@
 	};
 	function populateFlightDate(index)
 	{
-	
+		
 	     console.log('index='+index);
+	     var selectSortie=$('#sortieNumbers_'+index).val();
+	     console.log('inside sortie ='+selectSortie);
+	     var FlbSortieArForm={
+	     		 sortieNo:selectSortie
+	     }
+	     $.ajax({
+	     	type:"POST",
+	     	contentType :'application/json',
+	     	url:"${pageContext.request.contextPath}/FLB/fetchEtdDate?${_csrf.parameterName }=${_csrf.token }",
+	     	data:JSON.stringify(FlbSortieArForm),
+	     	dataType : 'json',
+	     	success:function(data)
+	     	{
+	     		console.log('data='+data.etdDate);
+	     		$("#flightDate_"+index).val(data.etdDate);
+	     	}
+	     	
+	     });
 		
 	};
 
@@ -268,7 +286,7 @@
 
 <body>
 
-	<form:form method="POST" action="${path}/FLB/saveFlb"
+	<form:form method="POST" action="${path}/FLB/saveFlb?${_csrf.parameterName }=${_csrf.token }"
 		commandName="emmsDataForm"
 		style="overflow-y: auto; overflow-x: hidden; height: 91%;">
 		<div class="pageheader">
@@ -632,9 +650,9 @@
 								readonly="true" /></td>
 
 						<td><form:select
-								onchange="populateFlightDate(${status.index})"
 								id="sortieNumbers_${status.index}"
 								path="flbPostFlightDataFormList[${status.index}].sortieNumber"
+								onchange="populateFlightDate(${status.index})"
 								class="form-control status" style="width:150px;"
 								title="${FLBForm.sortieNumber}">
 								<form:option value="" label="- - -Select- - -"></form:option>

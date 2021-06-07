@@ -426,9 +426,11 @@ public class FLBController {
 						} catch (Exception e) {
 							System.out.println("Updating PostFlight Exception=" + e.getMessage());
 						}
-						if (postFlightRow.getStatus().equalsIgnoreCase(Constants.CLOSEDPOSTFLIGHTSTATUS)
-								&& !postFlightRow.getSortieNumber().isEmpty()) {
-							System.out.println("Updating SortieStatus of " + i + "th row");
+						if(null!=postFlightRow.getStatus()&&postFlightRow.getStatus().equalsIgnoreCase(Constants.CLOSEDPOSTFLIGHTSTATUS)&& 
+								!postFlightRow.getSortieNumber().isEmpty())
+						{   
+							System.out.println("Updating SortieStatus of "+i+"th row");
+
 							try {
 								halService.updateSortieStatus(postFlightRow);
 							} catch (Exception e) {

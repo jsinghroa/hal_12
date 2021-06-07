@@ -397,6 +397,7 @@ public class HalDao {
 			FLBForm.setETD(rs.getString("ETD_IST"));
 			FLBForm.setDuration(rs.getString("Duration"));
 			FLBForm.setFlightType(rs.getString("Flight_Type"));
+			FLBForm.setFlightTypes(getFlightTypes("1001"));
 			FLBForm.setStatusDate(rs.getString("Sortie_Status_Date"));
 			FLBForm.setChangedBy(rs.getString("Change_By"));
 			FLBForm.setRemarks(rs.getString("Caution_Remarks"));
@@ -989,7 +990,7 @@ public class HalDao {
 			System.out.println("Data not inserted in Sortie ar table");
 		}
 
-		jdbcTemplate.execute(query);
+		//jdbcTemplate.execute(query);
 	}
 
 	// Sorite data update

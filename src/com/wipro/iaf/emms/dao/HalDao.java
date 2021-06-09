@@ -57,7 +57,7 @@ public class HalDao {
 
 		}
 	};
-	
+
 	private static List<String> complianceStatusOptions = new ArrayList<String>() {
 		private static final long serialVersionUID = 1L;
 		{
@@ -83,8 +83,8 @@ public class HalDao {
 
 			if (resultSet.getMetaData().getColumnCount() == 3) {
 				System.out.println("3");
-					emmsDataForm.setRecordIdStatus("All Table Data Imported");
-				
+				emmsDataForm.setRecordIdStatus("All Table Data Imported");
+
 			} else if (resultSet.getMetaData().getColumnCount() == 11) {
 				System.out.println("inside11");
 				emmsDataForm.setSignalOutDate(convertor.getDateTime1(resultSet.getString("Signal_Out_Date")));
@@ -95,8 +95,8 @@ public class HalDao {
 				emmsDataForm.setRecordStatus(resultSet.getString("Record_Status"));
 				emmsDataForm.setFreeze(resultSet.getBoolean("Freeze"));
 				emmsDataForm.setFlbNum(resultSet.getString("flb_num"));
-				} else if (resultSet.getMetaData().getColumnCount() == 12) {
-				System.out.println("inside12:"+resultSet.getString("Signal_Out_Date"));
+			} else if (resultSet.getMetaData().getColumnCount() == 12) {
+				System.out.println("inside12:" + resultSet.getString("Signal_Out_Date"));
 				emmsDataForm.setSignalOutDate(convertor.getDateTime1(resultSet.getString("Signal_Out_Date")));
 				emmsDataForm.setInductionDate(convertor.getDateTime1(resultSet.getString("Induction_Date")));
 				emmsDataForm.setMainAssetPart(resultSet.getString("Main_Asset_Num"));
@@ -111,19 +111,16 @@ public class HalDao {
 				emmsDataForm.setAssetMeterStatus(resultSet.getString("Asset_Meter_Status"));
 				emmsDataForm.setAssetPmStatus(resultSet.getString("Asset_PM_Status"));
 				emmsDataForm.setFreeze(resultSet.getBoolean("Freeze"));
-				
+
 			}
 			return emmsDataForm;
 		}
 	}
 
-	
-
 	public List<EmmsDataForm> getEmmsDataOnView() {
 		String query = "select a.Record_ID,a.Main_Asset_Num,a.flb_num,a.Location,a.Signal_Out_Date,a.Induction_Date,b.Existing_Asset_CM_Item,"
 				+ "b.Existing_Asset_Serial,c.CM_Item_Desc,a.Record_Status,a.Freeze from asset_details as a, asset_cfg_actual as b"
-				+ ", asset_model as c "
-				+ " where  a.Record_ID=b.Record_ID group by a.Record_ID";
+				+ ", asset_model as c " + " where  a.Record_ID=b.Record_ID group by a.Record_ID";
 		System.out.println(query);
 		return this.jdbcTemplate.query(query, new ListViewEmmsDataMapper());
 
@@ -142,15 +139,15 @@ public class HalDao {
 
 		return this.jdbcTemplate.query(query, new ListViewEmmsDataMapper());
 	}
-	
+
 	public EmmsDataForm fetchDetails(String selectedRecordId) {
 		String query = "select a.Record_ID,a.Main_Asset_Num,a.Location,a.Signal_Out_Date,a.Induction_Date,a.model,a.Record_Status,"
 				+ " a.Asset_Cfg_Status,a.Installable_Status,a.Asset_Meter_Status,a.Asset_PM_Status,a.Freeze from asset_details as a"
 				+ " where a.record_ID=?";
 		return this.jdbcTemplate.queryForObject(query, new Object[] { selectedRecordId }, new ListViewEmmsDataMapper());
 	}
-	
-public void deleteData(String deleterecordId) {
+
+	public void deleteData(String deleterecordId) {
 		String fetchQuery = "select new_record_id from record_id_relationship where record_id=?";
 		String refRecordid = this.jdbcTemplate.queryForObject(fetchQuery, new Object[] { deleterecordId },
 				String.class);
@@ -331,11 +328,13 @@ public void deleteData(String deleterecordId) {
 
 				if (null != meterDetailsForm.getExistingCount()) {
 
-					meterDetailsForm.setExistingCount(getUomValue(meterDetailsForm.getExistingCount()));
+					meterDetailsForm.setExistingCount(
+							getUomValue(meterDetailsForm.getExistingCount(), meterDetailsForm.getUom()));
 
 				}
 				if (null != meterDetailsForm.getCurrentCount()) {
-					meterDetailsForm.setCurrentCount(getUomValue(meterDetailsForm.getCurrentCount()));
+					meterDetailsForm.setCurrentCount(
+							getUomValue(meterDetailsForm.getCurrentCount(), meterDetailsForm.getUom()));
 
 				}
 			}
@@ -525,8 +524,8 @@ public void deleteData(String deleterecordId) {
 				+ "asset_cfg_actual.Install_Serial_Item = ?, " + "asset_cfg_actual.condition_code = ?"
 				+ "WHERE (asset_details.record_id=asset_cfg_actual.record_id AND asset_cfg_actual.Record_Row_ID=?);";
 
-		String inductionDate=emmsDataForm.getInductionDate();
-		String signalOutDate=emmsDataForm.getSignalOutDate();
+		String inductionDate = emmsDataForm.getInductionDate();
+		String signalOutDate = emmsDataForm.getSignalOutDate();
 		if (null != assetConfigForm.getDateOfReciept() && assetConfigForm.getDateOfReciept().isEmpty()) {
 			assetConfigForm.setDateOfReciept(null);
 		}
@@ -535,20 +534,19 @@ public void deleteData(String deleterecordId) {
 			assetConfigForm.setDateOfManfacturing(null);
 		}
 		if (null != emmsDataForm.getInductionDate() && emmsDataForm.getInductionDate().isEmpty()) {
-			inductionDate=null;
+			inductionDate = null;
 		}
 		if (null != emmsDataForm.getSignalOutDate() && emmsDataForm.getSignalOutDate().isEmpty()) {
-			signalOutDate=null;
+			signalOutDate = null;
 		}
 
 		int status = 0;
 		try {
-			status = jdbcTemplate.update(query,inductionDate,signalOutDate ,
-					emmsDataForm.getAssetConfigStatus(), emmsDataForm.getRecordStatus(),
-					assetConfigForm.getDateOfManfacturing(), assetConfigForm.getDateOfReciept(),
-					assetConfigForm.getInstalledPN(), assetConfigForm.getInLieuPn(), assetConfigForm.getErrorStatus(),
-					assetConfigForm.getInstalledSN(), assetConfigForm.getConditionCode(),
-					assetConfigForm.getRecordRowId());
+			status = jdbcTemplate.update(query, inductionDate, signalOutDate, emmsDataForm.getAssetConfigStatus(),
+					emmsDataForm.getRecordStatus(), assetConfigForm.getDateOfManfacturing(),
+					assetConfigForm.getDateOfReciept(), assetConfigForm.getInstalledPN(), assetConfigForm.getInLieuPn(),
+					assetConfigForm.getErrorStatus(), assetConfigForm.getInstalledSN(),
+					assetConfigForm.getConditionCode(), assetConfigForm.getRecordRowId());
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -566,8 +564,8 @@ public void deleteData(String deleterecordId) {
 				+ "asset_cfg_actual.Install_Serial_Item = ?, " + "asset_cfg_actual.condition_code = ?"
 				+ "WHERE (asset_details.record_id=asset_cfg_actual.record_id AND asset_cfg_actual.Record_Row_ID=?);";
 
-		String inductionDate=emmsDataForm.getInductionDate();
-		String signalOutDate=emmsDataForm.getSignalOutDate();
+		String inductionDate = emmsDataForm.getInductionDate();
+		String signalOutDate = emmsDataForm.getSignalOutDate();
 		if (null != insAsset.getDateofReceipt() && insAsset.getDateofReceipt().isEmpty()) {
 			insAsset.setDateofReceipt(null);
 		}
@@ -576,19 +574,18 @@ public void deleteData(String deleterecordId) {
 			insAsset.setDateofManufacturing(null);
 		}
 		if (null != emmsDataForm.getInductionDate() && emmsDataForm.getInductionDate().isEmpty()) {
-			inductionDate=null;
+			inductionDate = null;
 		}
 		if (null != emmsDataForm.getSignalOutDate() && emmsDataForm.getSignalOutDate().isEmpty()) {
-			signalOutDate=null;
+			signalOutDate = null;
 		}
 
 		int status = 0;
 		try {
-			status = jdbcTemplate.update(query, inductionDate,signalOutDate,
-					emmsDataForm.getAssetConfigStatus(), emmsDataForm.getRecordStatus(),
-					insAsset.getDateofManufacturing(), insAsset.getDateofReceipt(), insAsset.getInstallablePN(),
-					insAsset.getiNlieuPN(), insAsset.getErrorStatus(), insAsset.getInstallableSN(),
-					insAsset.getConditionCode(), insAsset.getRecordRowId());
+			status = jdbcTemplate.update(query, inductionDate, signalOutDate, emmsDataForm.getAssetConfigStatus(),
+					emmsDataForm.getRecordStatus(), insAsset.getDateofManufacturing(), insAsset.getDateofReceipt(),
+					insAsset.getInstallablePN(), insAsset.getiNlieuPN(), insAsset.getErrorStatus(),
+					insAsset.getInstallableSN(), insAsset.getConditionCode(), insAsset.getRecordRowId());
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 		}
@@ -628,21 +625,21 @@ public void deleteData(String deleterecordId) {
 		int temp = jdbcTemplate.update(sql);
 
 		if (temp == 1) {
-			if(pmForm.getLastCompiledDate().length() > 0 && pmForm.getNextDueDate().length() > 0) {
-			sql = "update asset_pm set asset_pm.Last_Complied_Date='" + pmForm.getLastCompiledDate() + "',"
-					+ "asset_pm.Next_Due_Date='" + pmForm.getNextDueDate() + "'," + "asset_pm.Last_Complied_Value="
-					+ pmForm.getLastCompiledValue() + "," + "asset_pm.Next_Due_Value=" + pmForm.getNextDueValue() + ""
-					+ ", asset_pm.compliance_status='"+ pmForm.getComplianceStatus() +"'"
-					+ " where asset_pm.Record_ID='" + emmsDataForm.getRecordId() + "'" + " and asset_pm.Record_Row_ID='"
-					+ pmForm.getRecordRowId() + "'" ;
-			}
-			if(pmForm.getLastCompiledDate().length() > 0) {
+			if (pmForm.getLastCompiledDate().length() > 0 && pmForm.getNextDueDate().length() > 0) {
 				sql = "update asset_pm set asset_pm.Last_Complied_Date='" + pmForm.getLastCompiledDate() + "',"
-						+ "asset_pm.Last_Complied_Value="
-						+ pmForm.getLastCompiledValue() + "," + "asset_pm.Next_Due_Value=" + pmForm.getNextDueValue() + ""
-						+ ", asset_pm.compliance_status='"+ pmForm.getComplianceStatus() +"'"
-						+ " where asset_pm.Record_ID='" + emmsDataForm.getRecordId() + "'" + " and asset_pm.Record_Row_ID='"
-						+ pmForm.getRecordRowId() + "'" ;
+						+ "asset_pm.Next_Due_Date='" + pmForm.getNextDueDate() + "'," + "asset_pm.Last_Complied_Value="
+						+ pmForm.getLastCompiledValue() + "," + "asset_pm.Next_Due_Value=" + pmForm.getNextDueValue()
+						+ "" + ", asset_pm.compliance_status='" + pmForm.getComplianceStatus() + "'"
+						+ " where asset_pm.Record_ID='" + emmsDataForm.getRecordId() + "'"
+						+ " and asset_pm.Record_Row_ID='" + pmForm.getRecordRowId() + "'";
+			}
+			if (pmForm.getLastCompiledDate().length() > 0) {
+				sql = "update asset_pm set asset_pm.Last_Complied_Date='" + pmForm.getLastCompiledDate() + "',"
+						+ "asset_pm.Last_Complied_Value=" + pmForm.getLastCompiledValue() + ","
+						+ "asset_pm.Next_Due_Value=" + pmForm.getNextDueValue() + "" + ", asset_pm.compliance_status='"
+						+ pmForm.getComplianceStatus() + "'" + " where asset_pm.Record_ID='"
+						+ emmsDataForm.getRecordId() + "'" + " and asset_pm.Record_Row_ID='" + pmForm.getRecordRowId()
+						+ "'";
 			}
 			return jdbcTemplate.update(sql);
 		} else
@@ -863,44 +860,77 @@ public void deleteData(String deleterecordId) {
 			return 0;
 	}
 
-	public static String getUomValue(String value) {
+	public static String getUomValue(String value, String uomType) {
 		// String a[]=value.split(".0");
-		String decimalValue = "";
-		for (int i = 0; i < value.length(); i++) {
-			if (value.charAt(i) == '.') {
-				break;
+		if (uomType.equalsIgnoreCase("hh:mm:ss")) {
+			String decimalValue = "";
+			for (int i = 0; i < value.length(); i++) {
+				if (value.charAt(i) == '.') {
+					break;
+				}
+				decimalValue = decimalValue + value.charAt(i);
+
 			}
-			decimalValue = decimalValue + value.charAt(i);
 
+			Long l = Long.parseLong(decimalValue);
+
+			int s = (int) (l % 60);
+			int h = (int) (l / 60);
+			int m = h % 60;
+			h = h / 60;
+
+			String hh = String.valueOf(h);
+			String mm = String.valueOf(m);
+			String ss = String.valueOf(s);
+
+			if (hh.length() < 2) {
+
+				hh = "0" + hh;
+			}
+			if (mm.length() < 2) {
+
+				mm = "0" + mm;
+			}
+			if (ss.length() < 2) {
+
+				ss = "0" + ss;
+			}
+
+			String uom = hh + ":" + mm + ":" + ss;
+
+			return uom;
+		} else {
+			String decimalValue = "";
+			for (int i = 0; i < value.length(); i++) {
+				if (value.charAt(i) == '.') {
+					break;
+				}
+				decimalValue = decimalValue + value.charAt(i);
+
+			}
+
+			Long l = Long.parseLong(decimalValue);
+
+			int h = (int) (l / 60);
+			int m = h % 60;
+			h = h / 60;
+
+			String hh = String.valueOf(h);
+			String mm = String.valueOf(m);
+
+			if (hh.length() < 2) {
+
+				hh = "0" + hh;
+			}
+			if (mm.length() < 2) {
+
+				mm = "0" + mm;
+			}
+
+			String uom = hh + ":" + mm;
+
+			return uom;
 		}
-
-		Long l = Long.parseLong(decimalValue);
-
-		int s = (int) (l % 60);
-		int h = (int) (l / 60);
-		int m = h % 60;
-		h = h / 60;
-
-		String hh = String.valueOf(h);
-		String mm = String.valueOf(m);
-		String ss = String.valueOf(s);
-
-		if (hh.length() < 2) {
-
-			hh = "0" + hh;
-		}
-		if (mm.length() < 2) {
-
-			mm = "0" + mm;
-		}
-		if (ss.length() < 2) {
-
-			ss = "0" + ss;
-		}
-
-		String uom = hh + ":" + mm + ":" + ss;
-
-		return uom;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -934,9 +964,9 @@ public void deleteData(String deleterecordId) {
 				+ postFlightDataForm.getRecordRowId() + "')";
 		System.out.println("PostFlight Insert Query=" + query);
 		try {
-		jdbcTemplate.execute(query);
-		}catch(Exception e) {
-			System.out.println("Adding Post Flight Row Exception="+e.getMessage());
+			jdbcTemplate.execute(query);
+		} catch (Exception e) {
+			System.out.println("Adding Post Flight Row Exception=" + e.getMessage());
 		}
 	}
 
@@ -986,8 +1016,8 @@ public void deleteData(String deleterecordId) {
 		String query = "UPDATE flb_post_flt_details SET " + "Flight_type = ?, " + "FLT_DATE = ?, "
 				+ "Departure_Time = ?, " + "Arrival_Time = ?, " + "Flt_status = ?, " + "Flt_Hrs = ?," + "error=?, "
 				+ "Sortie_Num=? " + "WHERE (Record_Row_ID = ?);";
-		
-		if (null !=postFlightDataForm.getFlightDate()&&postFlightDataForm.getFlightDate().isEmpty()) {
+
+		if (null != postFlightDataForm.getFlightDate() && postFlightDataForm.getFlightDate().isEmpty()) {
 
 			postFlightDataForm.setFlightDate(null);
 		}
@@ -1012,7 +1042,8 @@ public void deleteData(String deleterecordId) {
 	}
 
 	public static List<String> getSortieNumbers(String recordId) {
-		String query = "SELECT sortie_num FROM flb_sortie_accept  where Sortie_Status='ACCEPTED' and record_Id='" + recordId + "'";
+		String query = "SELECT sortie_num FROM flb_sortie_accept  where Sortie_Status='ACCEPTED' and record_Id='"
+				+ recordId + "'";
 
 		// List<String> sortieNumbers = new ArrayList<>();
 		List<String> sortieNumbers = jdbcTemplate.query(query, new RowMapper<String>() {
@@ -1037,9 +1068,9 @@ public void deleteData(String deleterecordId) {
 	}
 
 	public String getEtdDate(String sortieNo) {
-		String query="select Etd_Date from flb_sortie_accept where Sortie_Num=?";
-		String etdDate=this.jdbcTemplate.queryForObject(query, new Object[] { sortieNo }, String.class);
-		System.out.println("EtdDATE="+etdDate);
+		String query = "select Etd_Date from flb_sortie_accept where Sortie_Num=?";
+		String etdDate = this.jdbcTemplate.queryForObject(query, new Object[] { sortieNo }, String.class);
+		System.out.println("EtdDATE=" + etdDate);
 		return convertor.getDate2(etdDate);
 	}
 

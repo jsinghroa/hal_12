@@ -18,7 +18,7 @@ public class DateConvertor {
 		} else {
 			try {
 				Date iDate = new SimpleDateFormat("dd-MMM-yyyy").parse(date);
-				String correctDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss")
+				String correctDate = new SimpleDateFormat("yyyy-MM-dd")
 						.format(iDate);
 				return correctDate;
 			} catch (ParseException e) {
@@ -37,8 +37,8 @@ public class DateConvertor {
 			return "";
 		} else {
 			try {
-				Date iDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(date);
-				String correctDate = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss")
+				Date iDate = new SimpleDateFormat("yyyy-MM-dd").parse(date);
+				String correctDate = new SimpleDateFormat("dd-MMM-yyyy")
 						.format(iDate);
 				return correctDate;
 			} catch (ParseException e) {

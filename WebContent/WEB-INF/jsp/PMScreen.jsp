@@ -57,8 +57,8 @@
 
 <script type="text/javascript"
 	src="${path}/resources/theme/js/bootstrap.js"></script>
-<script type="text/javascript"
-	src="${path}/resources/theme/js/bootstrap.min.js"></script>
+<%-- <script type="text/javascript"
+	src="${path}/resources/theme/js/bootstrap.min.js"></script> --%>
 <script type="text/javascript"
 	src="${path}/resources/theme/js/jquery.tipsy.js"></script>
 <script type="text/javascript"
@@ -219,7 +219,7 @@ $(function()
 			});
 		});
 		
-$(function()
+/* $(function()
 		{
 			$(".datetimepickeri").datetimepicker({
 				format: 'd-M-Y H:i:s',
@@ -230,9 +230,9 @@ $(function()
 				format: 'd-M-Y H:i:s',
 				step: 1
 			});
-		});
+		}); */
 
-$(function(){
+/* $(function(){
 	var table = $('#ListOfRecords').dataTable();
 	var tableApi = $('#ListOfRecords').DataTable();
 	var defaultPageLength = tableApi.page.len();
@@ -244,31 +244,44 @@ $(function(){
 	for(i=0 ; i<count ; i++){
 		datetimepickerl	= ".datetimepickerl"+i;
 		datetimepickern = ".datetimepickern"+i;
+
+		$(datetimepickerl).datetimepicker({
+			format: 'd-M-Y H:i:00',
+			formatTime: 'H:i',
+			step: 1
+		});
+		
 		$(datetimepickern).datetimepicker({
 			format: 'd-M-Y H:i:00',
 			formatTime: 'H:i',
 			step: 1,
 			minDate: 0
 		});
-		
-		$(datetimepickerl).datetimepicker({
-			format: 'd-M-Y H:i:00',
-			formatTime: 'H:i',
-			step: 1
-		});
+
 	}
 	tableApi.page.len(defaultPageLength).draw();
 	console.log();
-});
+}); */
 
 function showDatePickerInductionDate(){
 	$(function(){
+		$(".datetimepickeri").datetimepicker({
+			format: 'd-M-Y H:i:s',
+			step: 1
+		});
+		
 		$('.datetimepickeri').datetimepicker('show');
 	});
 }
 
 function showDatePickerSignalOutDate(){
 	$(function(){
+		
+		$(".datetimepickers").datetimepicker({
+			format: 'd-M-Y H:i:s',
+			step: 1
+		});
+		
 		$('.datetimepickers').datetimepicker('show');
 	});
 }
@@ -277,6 +290,13 @@ function showDatePickerLastCompliedDate(index){
 	console.log("DateTimePicker selected: "+index);
 	$(function(){
 		var element = ".datetimepickerl"+index;
+		
+		$(element).datetimepicker({
+			format: 'd-M-Y H:i:00',
+			formatTime: 'H:i',
+			step: 1
+		});
+		
 		$(element).datetimepicker('show');
 	});
 }
@@ -284,6 +304,12 @@ function showDatePickerLastCompliedDate(index){
 function showDatePickerNextDueDate(index){
 	$(function(){
 		var element = ".datetimepickern"+index;
+		$(element).datetimepicker({
+			format: 'd-M-Y H:i:00',
+			formatTime: 'H:i',
+			step: 1,
+			minDate: 0
+		});
 		$(element).datetimepicker('show');
 	});
 }
@@ -297,27 +323,33 @@ function updateTableLength(size)
 
 };
 
-$(document).ready(function(){
-	$("[data-toggle *= popover]").on('shown.bs.popover', function() {
-	    setTimeout(function() {
-	        $("[data-toggle *= popover]").popover('hide');
+$(function(){
+	$("[data-toggle *= popover]").on('focusin', function(){
+		$("[data-toggle *= popover]").popover('destroy');
+	});
+	
+	$("[data-toggle *= popover]").on('focusout', function(){
+		setTimeout(function() {
+	        $("[data-toggle *= popover]").popover('destroy');
 	    }, 5000);
 	});
-	
 });
 
-function showPopover(index){
+function showPopover(index, element){
 	$(function(){
-		var element = '[data-toggle="popover' + index +'"]';
-		//var element = '#datetimepickern'+index;
+		$(element).popover({
+			placement: 'left'
+		
+		});
+		
 		$(element).popover('show');
 	});
-	
 }
 
-function validateFrequency(index, frequency, frequencyUnit){
+function validateFrequencyForDates(index, frequency, frequencyUnit){
 	const lastCompliedDate = new Date(document.getElementById("datetimepickerl"+index).value);
 	const nextDueDate = new Date(document.getElementById("datetimepickern"+index).value);
+	
 	var years = 0;
 	var days = 0;
 	console.log(nextDueDate);
@@ -326,18 +358,31 @@ function validateFrequency(index, frequency, frequencyUnit){
 			years = Math.trunc((nextDueDate-lastCompliedDate)/(1000*60*60*24*365));
 			console.log(years);
 			if(frequency != years){
-				showPopover(index);
+				showPopover(index, '[data-toggle="popover' + index +'"]');
 			}
 		}
 		if(frequencyUnit == "DAYS"){
 			days = Math.trunc((nextDueDate-lastCompliedDate)/(1000*60*60*24));
 			console.log(days);
 			if(frequency != days){
-				showPopover(index);
+				showPopover(index, '[data-toggle="popover' + index +'"]');
 			}
 		}
 	}
+}
+
+function validateFrequencyForValues(index, frequency, frequencyUnit){
+	const lastCompliedValue = parseInt(document.getElementById("last-complied-value-"+index).value);
+	const nextDueValue = parseInt(document.getElementById("next-due-value-"+index).value);
 	
+	if(lastCompliedValue != "" && nextDueValue != ""){
+		if(frequencyUnit == ""){
+			if(frequency != (nextDueValue-lastCompliedValue)){
+				console.log(nextDueValue-lastCompliedValue);
+				showPopover(index, '[data-toggle="popover-1-' + index +'"]');
+			}
+		}
+	}
 }
 
 </script>
@@ -618,23 +663,24 @@ function validateFrequency(index, frequency, frequencyUnit){
                				<span class="glyphicon glyphicon-calendar" onclick="showDatePickerLastCompliedDate(${status.index})"></span>
                				</span></div></td>
 					<td class="form-group date">
-						<div class="input-group date"><form:input readonly="true" id="datetimepickern${status.index}" data-toggle="popover${status.index}" data-title="Warning!"  
-							data-content="The frequency is not matching with the difference in Last Complied Date and Next Due Date"
+						<div class="input-group date"><form:input readonly="true" id="datetimepickern${status.index}" data-toggle="popover${status.index}"  data-title="Warning!" 
+							data-content="The frequency is not matching with the difference in Last Complied Date and Next Due Date" 
 							path="pmDetailFormList[${status.index}].nextDueDate"
 							class="form-control datetimepickern${status.index}" value="${pmForm.nextDueDate}"
-							style="width:180px;" required="required" onfocusout="validateFrequency(${status.index}, ${pmForm.frequencyIteration }, '${pmForm.frequencyUnit}')"/>
+							style="width:180px;" required="required" onfocusout="validateFrequencyForDates(${status.index}, ${pmForm.frequencyIteration }, '${pmForm.frequencyUnit}')"/>
 							<span class="input-group-addon">
                				<span class="glyphicon glyphicon-calendar" onclick="showDatePickerNextDueDate(${status.index})" ></span>
                				</span></div>
                				</td>
-					<td><form:input
+					<td><form:input id="last-complied-value-${status.index}"
 							path="pmDetailFormList[${status.index}].lastCompiledValue"
 							readonly="${!emmsDataForm.freeze}" class="form-control"
 							value="${pmForm.lastCompiledValue}" style="width:85px;" title="${pmForm.lastCompiledValue }"/></td>
-					<td><form:input
+					<td><form:input id="next-due-value-${status.index}" data-title= "Warning!"
+							data-content= "The frequency is not matching with the difference in Last Complied Value and Next Due Value" data-toggle="popover-1-${status.index}"
 							path="pmDetailFormList[${status.index}].nextDueValue"
 							readonly="${!emmsDataForm.freeze}" class="form-control"
-							value="${pmForm.nextDueValue}" style="width:77px;" title="${pmForm.nextDueValue }"/></td>
+							value="${pmForm.nextDueValue}" style="width:77px;" onfocusout="validateFrequencyForValues(${status.index}, ${pmForm.frequencyIteration }, '${pmForm.frequencyUnit}')"/></td>
 
 					<c:set var="class1" value="defaultstatus"></c:set>
 

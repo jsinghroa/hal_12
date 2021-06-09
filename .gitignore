@@ -1,7 +1,7 @@
 # Compiled class file
 *.class
 
-# All Build files
+# Build files
 build/
 
 # Log file

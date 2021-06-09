@@ -173,5 +173,24 @@ public class DateConvertor {
 			}
 		}
 	}
+	
+	public String getDateTime6(String date) {
+
+		if (null == date) {
+			return "";
+		} else if (date.isEmpty()) {
+			return "";
+		} else {
+			try {
+				Date iDate = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss").parse(date);
+				String correctDate = new SimpleDateFormat("dd-MMM-yyyy hh:mm:ss")
+						.format(iDate);
+				return correctDate;
+			} catch (ParseException e) {
+				System.out.println(e.getMessage());
+				return "";
+			}
+		}
+	}
 
 }

@@ -352,7 +352,6 @@ public class HalDao {
 
 	private static final class PMListViewMapper implements RowMapper<PMDetailForm> {
 		public PMDetailForm mapRow(ResultSet rs, int row) throws SQLException {
-			System.out.println("lsist viwew");
 			PMDetailForm pmDetailForm = new PMDetailForm();
 			pmDetailForm.setInstalledPN(rs.getString("Install_CM_Item"));
 			pmDetailForm.setInstalledPartDesc("BUILD_ITEM");
@@ -366,8 +365,8 @@ public class HalDao {
 			pmDetailForm.setFrequencyIteration(rs.getInt("iterationcalfrequency"));
 			pmDetailForm.setComplianceStatus(rs.getString("compliance_status"));
 			pmDetailForm.setComplianceStatusOptions(complianceStatusOptions);
-			pmDetailForm.setLastCompiledDate(convertor.getDate2(rs.getString("last_complied_date")));
-			pmDetailForm.setNextDueDate(convertor.getDate2(rs.getString("next_due_date")));
+			pmDetailForm.setLastCompiledDate(convertor.getDateTime6(rs.getString("last_complied_date")));
+			pmDetailForm.setNextDueDate(convertor.getDateTime6(rs.getString("next_due_date")));
 			pmDetailForm.setLastCompiledValue(rs.getBigDecimal("last_complied_value"));
 			pmDetailForm.setNextDueValue(rs.getBigDecimal("next_due_value"));
 			pmDetailForm.setErrorStatus(rs.getString("error_status"));

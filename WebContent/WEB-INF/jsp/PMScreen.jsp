@@ -374,8 +374,8 @@ function validateFrequencyForDates(index, frequency, frequencyUnit){
 function validateFrequencyForValues(index, frequency, frequencyUnit){
 	const lastCompliedValue = parseInt(document.getElementById("last-complied-value-"+index).value);
 	const nextDueValue = parseInt(document.getElementById("next-due-value-"+index).value);
-	
-	if(lastCompliedValue != "" && nextDueValue != ""){
+	console.log(lastCompliedValue +" "+nextDueValue)
+	if(!isNaN(lastCompliedValue) && !isNaN(nextDueValue)){
 		if(frequencyUnit == ""){
 			if(frequency != (nextDueValue-lastCompliedValue)){
 				console.log(nextDueValue-lastCompliedValue);

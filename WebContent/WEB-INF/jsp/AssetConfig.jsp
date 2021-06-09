@@ -437,7 +437,7 @@
 								class="form-control inductionDateTimePicker"
 								value="${emmsDataForm.inductionDate}"
 								style="background-color: #eeeeee; width: 180px;" />
-							<span class="input-group-addon"> <span
+							<span class="input-group-addon" style="width: 0%;"> <span
 								class="glyphicon glyphicon-calendar"
 								onclick="showDatePickerInductionDate()"></span>
 							</span>
@@ -466,7 +466,7 @@
 								value="${emmsDataForm.signalOutDate}"
 								class="form-control signalOutDateTimePicker"
 								style="background-color: #eeeeee; width: 180px;" />
-							<span class="input-group-addon"> <span
+							<span class="input-group-addon" style="width: 0%"> <span
 								class="glyphicon glyphicon-calendar"
 								onclick="showDatePickerSignalOutDate()"></span>
 							</span>

@@ -16,12 +16,7 @@
 	type="text/css" />
 <link href="${path}/resources/theme/css/home_new.css" rel="stylesheet"
 	type="text/css" />
-<link href="${path}/resources/theme/css/bootstrap.css" rel="stylesheet"
-	type="text/css" />
-<link href="${path}/resources/theme/css/bootstrap-datetimepicker.css" rel="stylesheet"
-	type="text/css" />
-<link href="${path}/resources/theme/css/bootstrap-datetimepicker.min.css" rel="stylesheet"
-	type="text/css" />
+	
 <link href="${path}/resources/theme/css/jquery.timepicker.css" rel="stylesheet"
 	type="text/css" />
 <link href="${path}/resources/theme/css/jquery.timepicker.min.css" rel="stylesheet"
@@ -30,17 +25,23 @@
 	type="text/css" />
 <link href="${path}/resources/theme/css/jquery.ui.all.css" rel="stylesheet"
 	type="text/css" />
+<link href="${path}/resources/theme/css/bootstrap.css" rel="stylesheet"
+	type="text/css" />
+<link href="${path}/resources/theme/css/bootstrap.min.css" rel="stylesheet"
+	type="text/css" />
+<link href="${path}/resources/theme/css/bootstrap-datetimepicker.css" rel="stylesheet"
+	type="text/css" />
+<link href="${path}/resources/theme/css/bootstrap-datetimepicker.min.css" rel="stylesheet"
+	type="text/css" />
 
 <script type="text/javascript"
 	src="${path}/resources/theme/js/jquery.js"></script>
-<%-- <script type="text/javascript"
-	src="${path}/resources/theme/js/jquery-1.9.1.js"></script> --%>
 <script type="text/javascript"
 	src="${path}/resources/theme/js/jquery-1.10.2.min.js"></script>
-<%-- <script type="text/javascript"
-	src="${path}/resources/theme/js/bootstrap-datetimepicker.js"></script>
 <script type="text/javascript"
-	src="${path}/resources/theme/js/bootstrap-datetimepicker.min.js"></script> --%>
+	src="${path}/resources/theme/js/jquery.ui.js"></script>
+<%-- <script type="text/javascript"
+	src="${path}/resources/theme/js/jquery-1.9.1.js"></script> --%>
 
 <script type="text/javascript"
 	src="${path}/resources/theme/js/jquery.ui.datepicker.js"></script>
@@ -53,6 +54,20 @@
 
 <script type="text/javascript"
 	src="${path}/resources/theme/js/jquery.dataTables.js"></script>
+
+<script type="text/javascript"
+	src="${path}/resources/theme/js/bootstrap.js"></script>
+<script type="text/javascript"
+	src="${path}/resources/theme/js/bootstrap.min.js"></script>
+<script type="text/javascript"
+	src="${path}/resources/theme/js/jquery.tipsy.js"></script>
+<script type="text/javascript"
+	src="${path}/resources/theme/js/jquery.tipsy.min.js"></script>
+<%-- <script type="text/javascript"
+	src="${path}/resources/theme/js/bootstrap-datetimepicker.js"></script>
+<script type="text/javascript"
+	src="${path}/resources/theme/js/bootstrap-datetimepicker.min.js"></script> --%>
+
 <script type="text/javascript">
 
 
@@ -177,7 +192,7 @@ $(function()
 
 $(function()
 		{
-	var contextPath = "<c:out value="${path}" />";
+	var contextPath = "<c:out value='${path}' />";
 	$("#datepicker2").datepicker(
 			{
 				maxDate:0,
@@ -281,6 +296,49 @@ function updateTableLength(size)
 	table.page.len(size+1).draw();
 
 };
+
+$(document).ready(function(){
+	$("[data-toggle *= popover]").on('shown.bs.popover', function() {
+	    setTimeout(function() {
+	        $("[data-toggle *= popover]").popover('hide');
+	    }, 5000);
+	});
+	
+});
+
+function showPopover(index){
+	$(function(){
+		var element = '[data-toggle="popover' + index +'"]';
+		//var element = '#datetimepickern'+index;
+		$(element).popover('show');
+	});
+	
+}
+
+function validateFrequency(index, frequency, frequencyUnit){
+	const lastCompliedDate = new Date(document.getElementById("datetimepickerl"+index).value);
+	const nextDueDate = new Date(document.getElementById("datetimepickern"+index).value);
+	var years = 0;
+	var days = 0;
+	console.log(nextDueDate);
+	if(lastCompliedDate != "Invalid Date" && nextDueDate != "Invalid Date"){
+		if(frequencyUnit == "YEARS"){
+			years = Math.trunc((nextDueDate-lastCompliedDate)/(1000*60*60*24*365));
+			console.log(years);
+			if(frequency != years){
+				showPopover(index);
+			}
+		}
+		if(frequencyUnit == "DAYS"){
+			days = Math.trunc((nextDueDate-lastCompliedDate)/(1000*60*60*24));
+			console.log(days);
+			if(frequency != days){
+				showPopover(index);
+			}
+		}
+	}
+	
+}
 
 </script>
 </head>
@@ -403,7 +461,7 @@ function updateTableLength(size)
 							path="inductionDate" class="form-control datetimepickeri"
 							value="${emmsDataForm.inductionDate}"
 							style="background-color: #eeeeee; width: 180px;" />
-							<span class="input-group-addon">
+							<span class="input-group-addon" style="width: 0%;">
                				<span class="glyphicon glyphicon-calendar" onclick="showDatePickerInductionDate()"/>
                				</span></div></td>
 
@@ -427,7 +485,7 @@ function updateTableLength(size)
 					<td class="form-group date"><div class="input-group date"><form:input path="signalOutDate"
 							value="${emmsDataForm.signalOutDate}"
 							class="form-control datetimepickers"
-							style="background-color: #eeeeee; width: 180px;" /><span class="input-group-addon">
+							style="background-color: #eeeeee; width: 180px;" /><span class="input-group-addon" style="width: 0%;">
                				<span class="glyphicon glyphicon-calendar" onclick="showDatePickerSignalOutDate()"/>
                				</span></div></td>
 
@@ -447,6 +505,10 @@ function updateTableLength(size)
 			<br />
 			<br />
 		</div>
+		
+		<!-- <input data-toggle="popover" title="Warning!" data-content="The frequency is not matching with the difference in Last Complied Date and Next Due Date" onfocusout="showPopover()" /> -->
+		
+		
 		<c:set var="size" value="0"></c:set>
 		<table id="ListOfRecords" align="center" class="tabletopmargin10"
 			width="100%" style="overflow-x: hidden;">
@@ -547,7 +609,7 @@ function updateTableLength(size)
 					</td>
 							
 					<td class="form-group date">
-						<div class="input-group date"><form:input readonly="true"
+						<div class="input-group date"><form:input readonly="true" id="datetimepickerl${status.index}"
 							path="pmDetailFormList[${status.index}].lastCompiledDate"
 							class="form-control datetimepickerl${status.index}"
 							value="${pmForm.lastCompiledDate}" style="width:180px;"
@@ -556,12 +618,13 @@ function updateTableLength(size)
                				<span class="glyphicon glyphicon-calendar" onclick="showDatePickerLastCompliedDate(${status.index})"></span>
                				</span></div></td>
 					<td class="form-group date">
-						<div class="input-group date"><form:input readonly="true"
+						<div class="input-group date"><form:input readonly="true" id="datetimepickern${status.index}" data-toggle="popover${status.index}" data-title="Warning!"  
+							data-content="The frequency is not matching with the difference in Last Complied Date and Next Due Date"
 							path="pmDetailFormList[${status.index}].nextDueDate"
 							class="form-control datetimepickern${status.index}" value="${pmForm.nextDueDate}"
-							style="width:180px;" required="required" title="${pmForm.nextDueDate }"/>
+							style="width:180px;" required="required" onfocusout="validateFrequency(${status.index}, ${pmForm.frequencyIteration }, '${pmForm.frequencyUnit}')"/>
 							<span class="input-group-addon">
-               				<span class="glyphicon glyphicon-calendar" onclick="showDatePickerNextDueDate(${status.index})"></span>
+               				<span class="glyphicon glyphicon-calendar" onclick="showDatePickerNextDueDate(${status.index})" ></span>
                				</span></div>
                				</td>
 					<td><form:input

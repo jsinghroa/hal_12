@@ -196,9 +196,8 @@ public class MeterController {
 				int warning = 0;
 				int flag = 0;
 				int count = 0;
-				int date = 0;
 				String status = Constants.NOTVALIDATED;
-				String time = new Time(System.currentTimeMillis()).toString();
+				
 				if (null==emmsDataForm.getSignalOutDate()||emmsDataForm.getSignalOutDate().length()<=0) {
 					emmsDataForm.setSignalOutDate("");
 				}
@@ -234,8 +233,7 @@ public class MeterController {
 								.getExistingInstalledSN());
 
 						System.out.println("meterRow:" + meterForm.toString());
-						System.out.println("exassercurrentcount="
-								+ meterForm.getExAstCurrentCount());
+						
 						fetchPmValues = halService.fetchPmValues(
 								meterForm.getInstalledPN(),
 								meterForm.getInstalledSN(),
@@ -246,11 +244,8 @@ public class MeterController {
 						/*
 						 * When validated without entering data in any row
 						 */
-						if (meterForm.getCurrentCount().length() <= 0
-								&& meterForm.getExistingCount().length() <= 0) {
-
-							System.out
-									.println("METER->THERE IS NO DATA IN A CURRENT ROW");
+						if (meterForm.getCurrentCountHms().length() <= 0
+								&& meterForm.getExistingCountHms().length() <= 0) {
 							meterForm.setError(Constants.WARNING);
 							emmsDataForm
 									.setAssetMeterStatus(Constants.VALIDATIONCOMPLETEDWITHERRORS);
@@ -270,14 +265,13 @@ public class MeterController {
 							/*
 							 * if there is any data in any row
 							 */
-							System.out
-									.println("METER->THERE IS DATA IN A CURRENT ROW");
+							
 							i++;
 							System.out.println("METER->VALIDATION STARTS");
 							String validate = meterValidator
 									.meterDetailsValidate(meterForm
-											.getExistingCount(), meterForm
-											.getCurrentCount(), meterForm
+											.getExistingCountHms(), meterForm
+											.getCurrentCountHms(), meterForm
 											.getExAstCurrentCount(), meterForm
 											.getExistingInstalledPn(),
 											meterForm.getExistingInstalledSN(),
@@ -330,28 +324,44 @@ public class MeterController {
 							System.out.println("UPDATE STARTS");
 							if (emmsDataForm.getSignalOutDate().length() > 0
 									&& emmsDataForm.getInductionDate().length() > 0) {
-								System.out.println("DATE HAS VALUE");
+								
 								if (!validate.contains(Constants.DECIMAL)
 										&& !validate
 												.contains(Constants.UOMERROR)) {
-									System.out
-											.println("NO DECIMAL AND UOM ERROR IS THERE SO WE CAN UPDATE");
+									
 									if (meterForm.getUom().equalsIgnoreCase(
-											"hh:mm:ss")) {
+											"hh:mm:ss")||meterForm.getUom().equalsIgnoreCase(
+													"hh:mm")){
 
-										if (!meterForm.getCurrentCount()
-												.isEmpty())
+										if (!meterForm.getCurrentCountHms()
+												.isEmpty()) {
 											meterForm
 													.setCurrentCount(meterValidator
 															.getDecimalValue(meterForm
-																	.getCurrentCount(),meterForm.getUom()));
-										if (!meterForm.getExistingCount()
+																	.getCurrentCountHms(),meterForm.getUom()));
+										}
+											if (!meterForm.getExistingCountHms()
 												.isEmpty())
-											meterForm
+											{	meterForm
 													.setExistingCount(meterValidator
 															.getDecimalValue(meterForm
-																	.getExistingCount(),meterForm.getUom()));
-									}
+																	.getExistingCountHms(),meterForm.getUom()));
+											}
+											}else
+											{
+												if (!meterForm.getCurrentCountHms()
+														.isEmpty()) {
+													meterForm
+															.setCurrentCount(meterForm
+																			.getCurrentCountHms());
+												}
+													if (!meterForm.getExistingCountHms()
+														.isEmpty())
+													{	meterForm
+															.setExistingCount(meterForm
+																			.getExistingCountHms());
+													}
+											}
 									
 									if(!validate.contains(Constants.COUNTLENGTHERROR))
 									{
@@ -360,18 +370,6 @@ public class MeterController {
 									{
 										meterForm.setErrorDescription(Constants.COUNTLENGTHERROR);
 									}
-
-									if (null != meterForm.getCurrentCount()&&meterForm.getUom().equalsIgnoreCase(
-											"hh:mm:ss"))
-										meterForm
-												.setCurrentCount(meterValidator.getUomValue(meterForm
-														.getCurrentCount(),meterForm.getUom()));
-									if (null != meterForm
-											.getExistingCount()&&meterForm.getUom().equalsIgnoreCase(
-													"hh:mm:ss"))
-										meterForm
-												.setExistingCount(meterValidator.getUomValue(meterForm
-														.getExistingCount(),meterForm.getUom()));
 
 								} else {
 
@@ -389,7 +387,7 @@ public class MeterController {
 							}
 							
 						}
-
+							System.out.println("**Meter**="+meterForm.toString());
 					}
 				
 				}

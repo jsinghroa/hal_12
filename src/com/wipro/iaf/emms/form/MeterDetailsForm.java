@@ -19,6 +19,8 @@ public class MeterDetailsForm {
 	private String installationDate;
 	private String existingCount;
 	private String currentCount;
+	private String existingCountHms;
+	private String currentCountHms;
 	private String ExAstCurrentCount;
 	private String ExAstInstallCount;
 	private String ExAstInstallCountHMS;
@@ -80,6 +82,24 @@ public class MeterDetailsForm {
 
 	public void setExAstInstallCount(String exAstInstallCount) {
 		ExAstInstallCount = exAstInstallCount;
+	}
+
+	
+	
+	public String getExistingCountHms() {
+		return existingCountHms;
+	}
+
+	public void setExistingCountHms(String existingCountHms) {
+		this.existingCountHms = existingCountHms;
+	}
+
+	public String getCurrentCountHms() {
+		return currentCountHms;
+	}
+
+	public void setCurrentCountHms(String currentCountHms) {
+		this.currentCountHms = currentCountHms;
 	}
 
 	public String getExAstInstallCountHMS() {
@@ -174,11 +194,13 @@ public class MeterDetailsForm {
 	public String toString() {
 		return "MeterDetailsForm [installedPN=" + installedPN + ", installedPartDescription=" + installedPartDescription
 				+ ", installedSN=" + installedSN + ", meterName=" + meterName + ", installationDate=" + installationDate
-				+ ", existingCount=" + existingCount + ", currentCount=" + currentCount + ", ExAstCurrentCount="
-				+ ExAstCurrentCount + ", ExAstInstallCount=" + ExAstInstallCount + ", ExAstInstallCountHMS="
-				+ ExAstInstallCountHMS + ", ExAstCurrentCount_HMS=" + ExAstCurrentCount_HMS + ", uom=" + uom
-				+ ", existingInstalledPn=" + existingInstalledPn + ", existingInstalledSN=" + existingInstalledSN
-				+ ", error=" + error + ", errorDescription=" + errorDescription + ", recordRowId=" + recordRowId + "]";
+				+ ", existingCount=" + existingCount + ", currentCount=" + currentCount + ", existingCountHms="
+				+ existingCountHms + ", currentCountHms=" + currentCountHms + ", ExAstCurrentCount=" + ExAstCurrentCount
+				+ ", ExAstInstallCount=" + ExAstInstallCount + ", ExAstInstallCountHMS=" + ExAstInstallCountHMS
+				+ ", ExAstCurrentCount_HMS=" + ExAstCurrentCount_HMS + ", uom=" + uom + ", existingInstalledPn="
+				+ existingInstalledPn + ", existingInstalledSN=" + existingInstalledSN + ", error=" + error
+				+ ", errorDescription=" + errorDescription + ", recordRowId=" + recordRowId + "]";
 	}
+
 
 }

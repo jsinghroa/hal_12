@@ -413,13 +413,13 @@ if (bulkImportStatus == "Error") {
 
 
 					<td><form:input
-							path="meterFormList[${status.index}].existingCount"
+							path="meterFormList[${status.index}].existingCountHms"
 							readonly="${!emmsDataForm.freeze}"
 							title="${meterForm.existingCount}" class="form-control"
 							style="width:202px;" /></td>
 					
 					<td><form:input
-							path="meterFormList[${status.index}].currentCount"
+							path="meterFormList[${status.index}].currentCountHms"
 							readonly="${!emmsDataForm.freeze}"
 							title="${meterForm.currentCount}" class="form-control"
 							style="width:135px;" /></td>
@@ -430,7 +430,7 @@ if (bulkImportStatus == "Error") {
 					<c:if test="${meterForm.error=='Validated'}">
 						<c:set var="class1" value="validated"></c:set>
 					</c:if>
-					<c:if test="${meterForm.error=='Not Validated'}">
+					<c:if test="${meterForm.error=='Error'}">
 						<c:set var="class1" value="notvalidated"></c:set>
 					</c:if>
 					<c:if test="${meterForm.error=='Warning'}">

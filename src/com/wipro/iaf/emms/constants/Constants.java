@@ -86,11 +86,11 @@ public abstract interface Constants {
 	public static final String SAMEPNLIEUCOMBINATIONERROR = "Please mention different Installed P/N-In Lieu P/N combination as same values are available in another line.";
 	public static final String SAMESNLIEUCOMBINATIONERROR = "Please mention different Installed S/N-In Lieu P/N combination as same values are available in another line.";
 	public static final String VALIDATED = "Validated";
-	public static final String NOTVALIDATED = "Not Validated";
+	public static final String NOTVALIDATED = "Error";
 	public static final String VALIDATEDWITHWARNING = "Validated With Warning";
 	public static final String WARNING = "Warning";
 	public static final String WARNINGMESSAGE = "In-lieu P/N is not available against the Build Item in Model. Please verify the P/N";
-	public static final String VALIDATIONCOMPLETEDWITHERRORS = "Validation Completed with Errors";
+	public static final String VALIDATIONCOMPLETEDWITHERRORS = "Error";
 	public static final String VALIDATIONCOMPLETED = "Validation Completed";
 	
 	public static final String NOTVALIDPN ="The Installed P/N is not valid Part as per the Model. Please select a Part from the Installed P/N look up. "
@@ -154,8 +154,9 @@ public abstract interface Constants {
 	public static final String LASTCOMPLIEDVALUE="Last Complied Value";
 	public static final String NEXTDUEDATE="Next Due Date";
 	public static final String NEXTDUEVALUE="Next Due Value";
-	public static final String POSTFLIGHTTIMEMANDATEERROR = "Sortie Number,Arrival and Departure time are Mandatory Fields";
+	public static final String POSTFLIGHTTIMEMANDATEERROR = "Arrival and Departure time are Mandatory Fields";
 	public static final String SORTIEGREATERETDERROR = "ETD DATE SHOULD BE GREATER THAN SORTIE DATE";
+	public static final String ARRIVALTIMELESS = "ARRIVAL TIME SHOULD BE GREATER THAN DEPARTURE";
 	
 	
 	

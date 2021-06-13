@@ -624,7 +624,7 @@
 					<c:if test="${assetConfigForm.errorStatus=='Validated'} ">
 						<c:set var="class1" value="validated"></c:set>
 					</c:if>
-					<c:if test="${assetConfigForm.errorStatus=='Not Validated'}">
+					<c:if test="${assetConfigForm.errorStatus=='Error'}">
 						<c:set var="class1" value="notvalidated"></c:set>
 					</c:if>
 					<c:if test="${assetConfigForm.errorStatus=='Warning'}">

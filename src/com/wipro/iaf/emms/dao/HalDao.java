@@ -313,7 +313,8 @@ public class HalDao {
 			meterDetailsForm.setCurrentCount(rs.getString("Current_Count"));
 			// existingCount=Install_Count
 			meterDetailsForm.setExistingCount(rs.getString("Install_Count"));
-
+			meterDetailsForm.setCurrentCountHms(rs.getString("Current_Count_HMS"));
+			meterDetailsForm.setExistingCountHms(rs.getString("Install_Count_HMS"));
 			// FUNCTIONAL NEED
 			meterDetailsForm.setUom(rs.getString("UOM"));
 			meterDetailsForm.setExAstCurrentCount(rs.getString("Ex_Ast_Current_Count"));
@@ -324,20 +325,7 @@ public class HalDao {
 			meterDetailsForm.setExAstInstallCountHMS(rs.getString("Ex_Ast_Install_Count_HMS"));
 			meterDetailsForm.setError(rs.getString("Error_Status"));
 
-			if (meterDetailsForm.getUom().equalsIgnoreCase("hh:mm:ss")) {
-
-				if (null != meterDetailsForm.getExistingCount()) {
-
-					meterDetailsForm.setExistingCount(
-							getUomValue(meterDetailsForm.getExistingCount(), meterDetailsForm.getUom()));
-
-				}
-				if (null != meterDetailsForm.getCurrentCount()) {
-					meterDetailsForm.setCurrentCount(
-							getUomValue(meterDetailsForm.getCurrentCount(), meterDetailsForm.getUom()));
-
-				}
-			}
+			
 			return meterDetailsForm;
 		}
 
@@ -596,25 +584,25 @@ public class HalDao {
 
 	public int update(EmmsDataForm emmsDataForm, MeterDetailsForm meterForm) {
 
-		if (meterForm.getCurrentCount().length() <= 0) {
-			meterForm.setCurrentCount(null);
+		String query = "UPDATE asset_details,asset_meter_actual SET " + "asset_details.induction_date = ?, "
+				+ "asset_details.signal_out_date = ?, " + "asset_details.Asset_Meter_Status = ?, "
+				+ "asset_details.Record_Status = ?, " + "asset_meter_actual.current_count = ?, "
+				+ "asset_meter_actual.current_count_hms = ?, " + "asset_meter_actual.install_count_hms = ?,"
+				+ "asset_meter_actual.Install_Count = ?, " + "asset_meter_actual.error_status = ? "
+				+ "WHERE (asset_details.record_id=asset_meter_actual.record_id AND asset_meter_actual.Record_Row_ID=?);";
+	
+		int status=0;
+		try {
+			status = jdbcTemplate.update(query, emmsDataForm.getInductionDate(), 
+					emmsDataForm.getSignalOutDate(),emmsDataForm.getAssetMeterStatus(),
+					emmsDataForm.getRecordStatus(),meterForm.getCurrentCount(),
+					meterForm.getCurrentCountHms(),meterForm.getExistingCountHms(),
+					meterForm.getExistingCount(),meterForm.getError(),
+					meterForm.getRecordRowId());
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
 		}
-		if (meterForm.getExistingCount().length() <= 0) {
-			meterForm.setExistingCount(null);
-		}
-
-		String sql = "update asset_details,asset_meter_actual set asset_details.induction_date='"
-				+ emmsDataForm.getInductionDate() + "', asset_details.signal_out_date='"
-				+ emmsDataForm.getSignalOutDate() + "'," + "asset_details.Asset_Meter_Status='"
-				+ emmsDataForm.getAssetMeterStatus() + "'," + "asset_details.Record_Status='"
-				+ emmsDataForm.getRecordStatus() + "',asset_meter_actual.current_count=" + meterForm.getCurrentCount()
-				+ ",asset_meter_actual.error_status='" + meterForm.getError() + "',"
-				+ "asset_meter_actual.Install_Count=" + meterForm.getExistingCount() + ""
-				+ " where asset_details.record_id=asset_meter_actual.record_id AND asset_meter_actual.Record_Row_ID='"
-				+ meterForm.getRecordRowId() + "'";
-
-		System.out.println("UpdateMeterQuery:" + sql);
-		return jdbcTemplate.update(sql);
+		return status;
 	}
 
 	public int update(EmmsDataForm emmsDataForm, PMDetailForm pmForm) {
@@ -860,79 +848,7 @@ public class HalDao {
 			return 0;
 	}
 
-	public static String getUomValue(String value, String uomType) {
-		// String a[]=value.split(".0");
-		if (uomType.equalsIgnoreCase("hh:mm:ss")) {
-			String decimalValue = "";
-			for (int i = 0; i < value.length(); i++) {
-				if (value.charAt(i) == '.') {
-					break;
-				}
-				decimalValue = decimalValue + value.charAt(i);
-
-			}
-
-			Long l = Long.parseLong(decimalValue);
-
-			int s = (int) (l % 60);
-			int h = (int) (l / 60);
-			int m = h % 60;
-			h = h / 60;
-
-			String hh = String.valueOf(h);
-			String mm = String.valueOf(m);
-			String ss = String.valueOf(s);
-
-			if (hh.length() < 2) {
-
-				hh = "0" + hh;
-			}
-			if (mm.length() < 2) {
-
-				mm = "0" + mm;
-			}
-			if (ss.length() < 2) {
-
-				ss = "0" + ss;
-			}
-
-			String uom = hh + ":" + mm + ":" + ss;
-
-			return uom;
-		} else {
-			String decimalValue = "";
-			for (int i = 0; i < value.length(); i++) {
-				if (value.charAt(i) == '.') {
-					break;
-				}
-				decimalValue = decimalValue + value.charAt(i);
-
-			}
-
-			Long l = Long.parseLong(decimalValue);
-
-			int h = (int) (l / 60);
-			int m = h % 60;
-			h = h / 60;
-
-			String hh = String.valueOf(h);
-			String mm = String.valueOf(m);
-
-			if (hh.length() < 2) {
-
-				hh = "0" + hh;
-			}
-			if (mm.length() < 2) {
-
-				mm = "0" + mm;
-			}
-
-			String uom = hh + ":" + mm;
-
-			return uom;
-		}
-	}
-
+	
 	@SuppressWarnings("unchecked")
 	public Map<String, String> fetchPmValues(String installedPN, String installedSN, String buildItem) {
 		System.out.println("pmValues=" + buildItem + ":" + installedPN + ":" + installedSN);

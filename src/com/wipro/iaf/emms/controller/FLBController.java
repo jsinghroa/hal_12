@@ -409,7 +409,7 @@ public class FLBController {
 						postFlightRow.setRecordRowId(this.flbPostFlightDataList.get(i).getRecordRowId());
 						postFlightRow.setFlightTypes(this.flbPostFlightDataList.get(i).getFlightTypes());
 						postFlightRow.setListSortieNumber(localSortieNumbers);
-
+						
 						postFlightRow.setFlightHours(
 								getHours(postFlightRow.getArrivalTime(), postFlightRow.getDepartureTime()));
 						postFlightRow.setFlightDate(convertor.getDateTime3(postFlightRow.getFlightDate()));
@@ -417,9 +417,11 @@ public class FLBController {
 						if (postFlightRow.getArrivalTime().isEmpty() || postFlightRow.getDepartureTime().isEmpty()) {
 							postFlightRow.setErrorDesc(Constants.POSTFLIGHTTIMEMANDATEERROR);
 							postFlightRow.setError(Constants.NOTVALIDATED);
-						} else {
+						} else
+						{
 							postFlightRow.setError(Constants.VALIDATED);
-
+							postFlightRow.setErrorDesc("");
+						
 						}
 						try {
 							halService.updatePostFlight(postFlightRow);
@@ -465,6 +467,8 @@ public class FLBController {
 		return "basic";
 	}
 
+
+
 	private String getHours(String arrivalTime, String departureTime) {
 
 		if (arrivalTime.isEmpty() || departureTime.isEmpty()) {
@@ -486,7 +490,7 @@ public class FLBController {
 
 			e.getMessage();
 		}
-		String hours = String.valueOf((float) (arrival.getTime() - departure.getTime()) / 3600000);
+		String hours = String.valueOf((float) (Math.abs(arrival.getTime() - departure.getTime())) / 3600000);
 		return hours;
 	}
 

@@ -39,7 +39,7 @@ public class MeterDetailsValidator {
 		System.out.println(existingCount + ":" + currentCount+":"+ExAssetCurrentCount + ":" + exInstalledPn + ":" + exInstalledSn + ":" + installedPn + ":"
 				+ installedSn + ":" + lastCompiledValue + ":" + lastCompiledDate + ":" + uom);
 		meterDetailsErrorMsg = Constants.NOERROR;
-		System.out.println(existingCount.length() + ":" + currentCount.length());
+		
 		if (existingCount.length() >= 15 || currentCount.length() >= 15) {
 			System.out.println("inside length Check");
 			if (meterDetailsErrorMsg.length() > 0) {
@@ -48,7 +48,7 @@ public class MeterDetailsValidator {
 				meterDetailsErrorMsg += Constants.COUNTLENGTHERROR;
 		}
 
-		if (uom.equalsIgnoreCase("hh:mm:ss")) {
+		if (uom.equalsIgnoreCase("hh:mm:ss")||uom.equalsIgnoreCase("hh:mm")) {
 
 			if (!existingCount.isEmpty() && !commonValidator.uomValidate(existingCount,uom)) {
 				if (meterDetailsErrorMsg.length() > 0) {
@@ -72,9 +72,6 @@ public class MeterDetailsValidator {
 
 				System.out.println("existing=" + existingCount + ":" + currentCount + ":" + ExAssetCurrentCount);
 
-				// time stamp format validate
-				// 2.Current Count must be equal or greater than the Existing Count.
-				// Validation logic for UOM data type pending
 				try {
 				if (!currentCount.isEmpty()
 						&& new BigInteger(currentCount).doubleValue() < new BigInteger(existingCount).doubleValue()) {
@@ -86,10 +83,6 @@ public class MeterDetailsValidator {
 				}
 				}catch(Exception e) {System.out.println(e.getMessage());}
 				
-				// 3.In case of existing assets that have been re-installed,
-				// Current Count must be greater than the existing count* of the
-				// asset.
-
 				if (installedPn.equals(exInstalledPn) && installedSn.equals(exInstalledSn)) {
 					try {
 					if (!ExAssetCurrentCount.isEmpty()) {
@@ -108,8 +101,6 @@ public class MeterDetailsValidator {
 
 				}
 			
-				// 4.Current Count should be mandatory if Initial Value and
-				// Initial Date is having value.
 				if (!existingCount.isEmpty()) {
 
 					if (currentCount.isEmpty()) {
@@ -119,11 +110,7 @@ public class MeterDetailsValidator {
 							meterDetailsErrorMsg += Constants.CURRENTCOUNTMANDATORYERROR;
 					}
 				}
-				// 5.If Last Complied Date and Last Complied Value are filled up
-				// against the MPM for a meter,
-				// then the corresponding meter should have Installed Count,
-				// Installed Date and Current Count in the Meter Details tab
-				// for the respective Installed P/N-Installed S/N combination.
+				
 
 				if (null != lastCompiledDate && null != lastCompiledValue) {
 					
@@ -139,101 +126,8 @@ public class MeterDetailsValidator {
 				}
 			
 			}
-			}else
-			if (uom.equalsIgnoreCase("hh:mm")) {
-
-				if (!existingCount.isEmpty() && !commonValidator.uomValidate(existingCount,uom)) {
-					if (meterDetailsErrorMsg.length() > 0) {
-						meterDetailsErrorMsg += "\n" + Constants.UOMERROR;
-					} else
-						meterDetailsErrorMsg += Constants.UOMERROR;
-
-				} else if (!currentCount.isEmpty() && !commonValidator.uomValidate(currentCount,uom)) {
-					if (meterDetailsErrorMsg.length() > 0) {
-						meterDetailsErrorMsg += "\n" + Constants.UOMERROR;
-					} else
-						meterDetailsErrorMsg += Constants.UOMERROR;
-
-				}
-
-				else {
-					System.out.println("UOM IS CORRECT");
-
-					existingCount = getDecimalValue(existingCount,uom);
-					currentCount = getDecimalValue(currentCount,uom);
-
-					System.out.println("existing=" + existingCount + ":" + currentCount + ":" + ExAssetCurrentCount);
-
-					// time stamp format validate
-					// 2.Current Count must be equal or greater than the Existing Count.
-					// Validation logic for UOM data type pending
-					try {
-					if (!currentCount.isEmpty()
-							&& new BigInteger(currentCount).doubleValue() < new BigInteger(existingCount).doubleValue()) {
-						System.out.println("after start");
-						if (meterDetailsErrorMsg.length() > 0) {
-							meterDetailsErrorMsg += "\n" + Constants.EXISTINGCOUNTGREATERTOCURRENTCOUNTERROR;
-						} else
-							meterDetailsErrorMsg += Constants.EXISTINGCOUNTGREATERTOCURRENTCOUNTERROR;
-					}
-					}catch(Exception e) {System.out.println(e.getMessage());}
-					
-					// 3.In case of existing assets that have been re-installed,
-					// Current Count must be greater than the existing count* of the
-					// asset.
-
-					if (installedPn.equals(exInstalledPn) && installedSn.equals(exInstalledSn)) {
-						try {
-						if (!ExAssetCurrentCount.isEmpty()) {
-
-							if (new BigInteger(currentCount).doubleValue() < new BigInteger(ExAssetCurrentCount)
-									.doubleValue()) {
-
-								if (meterDetailsErrorMsg.length() > 0) {
-									meterDetailsErrorMsg += "\n" + Constants.EXISTINGCURRENTCOUNTERROR;
-								} else
-									meterDetailsErrorMsg += Constants.EXISTINGCURRENTCOUNTERROR;
-
-							}
-						}
-						}catch(Exception e) {System.out.println(e.getMessage());}
-
-					}
-				
-					// 4.Current Count should be mandatory if Initial Value and
-					// Initial Date is having value.
-					if (!existingCount.isEmpty()) {
-
-						if (currentCount.isEmpty()) {
-							if (meterDetailsErrorMsg.length() > 0) {
-								meterDetailsErrorMsg += "\n" + Constants.CURRENTCOUNTMANDATORYERROR;
-							} else
-								meterDetailsErrorMsg += Constants.CURRENTCOUNTMANDATORYERROR;
-						}
-					}
-					// 5.If Last Complied Date and Last Complied Value are filled up
-					// against the MPM for a meter,
-					// then the corresponding meter should have Installed Count,
-					// Installed Date and Current Count in the Meter Details tab
-					// for the respective Installed P/N-Installed S/N combination.
-
-					if (null != lastCompiledDate && null != lastCompiledValue) {
-						
-						if (lastCompiledDate.length() > 0 && lastCompiledValue.length() > 0) {
-							if (existingCount.isEmpty() || currentCount.isEmpty()) {
-								if (meterDetailsErrorMsg.length() > 0) {
-									meterDetailsErrorMsg += "\n" + Constants.PMERROR;
-								} else
-									meterDetailsErrorMsg += Constants.PMERROR;
-							}
-						}
-
-					}
-			
-				}
 			}else {
-
-			if (!existingCount.isEmpty() && !commonValidator.decimalValidate(existingCount)) {
+				if (!existingCount.isEmpty() && !commonValidator.decimalValidate(existingCount)) {
 				if (meterDetailsErrorMsg.length() > 0) {
 					meterDetailsErrorMsg += "\n" + Constants.DECIMAL;
 				} else
@@ -249,9 +143,6 @@ public class MeterDetailsValidator {
 
 			{
 
-				// time stamp format validate
-				// 2.Current Count must be equal or greater than the Existing Count.
-				// Validation logic for UOM data type pending
 				try {
 				if (!currentCount.isEmpty()
 						&& new BigInteger(currentCount).doubleValue() < new BigInteger(existingCount).doubleValue()) {
@@ -263,9 +154,6 @@ public class MeterDetailsValidator {
 				}
 				}catch(Exception e) {System.out.println(e.getMessage());}
 				
-				// 3.In case of existing assets that have been re-installed,
-				// Current Count must be greater than the existing count* of the
-				// asset.
 				if (installedPn.equals(exInstalledPn) && installedSn.equals(exInstalledSn)) {
 					try {
 					if (!ExAssetCurrentCount.isEmpty()) {
@@ -282,8 +170,6 @@ public class MeterDetailsValidator {
 
 				}
 
-				// 4.Current Count should be mandatory if Initial Value and
-				// Initial Date is having value.
 				if (!existingCount.isEmpty()) {
 
 					if (currentCount.isEmpty()) {
@@ -293,12 +179,6 @@ public class MeterDetailsValidator {
 							meterDetailsErrorMsg += Constants.CURRENTCOUNTMANDATORYERROR;
 					}
 				}
-
-				// 5.If Last Complied Date and Last Complied Value are filled up
-				// against the MPM for a meter,
-				// then the corresponding meter should have Installed Count,
-				// Installed Date and Current Count in the Meter Details tab
-				// for the respective Installed P/N-Installed S/N combination.
 
 				if (null != lastCompiledDate && null != lastCompiledValue) {
 					
@@ -324,103 +204,29 @@ public class MeterDetailsValidator {
 
 	public String getDecimalValue(String value, String uom) {
 		// value->hh mm ss
+		String uomValue[]=value.split(":");
+		try {
 		if(uom.equalsIgnoreCase("hh:mm:ss")) {
-		int h = Integer.parseInt(value.substring(0, 2));
-		int m = Integer.parseInt(value.substring(3, 5));
-		int s = Integer.parseInt(value.substring(6, 8));
+			int h = Integer.parseInt(uomValue[0]);
+			int m = Integer.parseInt(uomValue[1]);
+			int s = Integer.parseInt(uomValue[2]);
 		Long cal = (long) (h * 3600 + m * 60 + s);
 		return String.valueOf(cal);
 		}else {
-			int h = Integer.parseInt(value.substring(0, 2));
-			int m = Integer.parseInt(value.substring(3, 5));
+			int h = Integer.parseInt(uomValue[0]);
+			int m = Integer.parseInt(uomValue[1]);
 			Long cal = (long) (h * 3600 + m * 60);
 			return String.valueOf(cal);
 		}
+		}catch(Exception e)
+		{
+			System.out.println(e.getMessage());
+			return "0";
+		}
 	}
 	
-	public String getUomValue(String value,String uomType) {
-		System.out.println("VALUE=" + value);
-		// String a[] = value.split(".0");
-		if(uomType.equalsIgnoreCase("hh:mm:ss")) {
-		String decimalValue = "";
-		for (int i = 0; i < value.length(); i++) {
-			if (value.charAt(i) == '.') {
-				break;
-			}
-			decimalValue = decimalValue + value.charAt(i);
-
-		}
-
-		Long l = Long.parseLong(decimalValue);
-
-		System.out.println(l);
-
-		int s = (int) (l % 60);
-		int h = (int) (l / 60);
-		int m = h % 60;
-		h = h / 60;
-		String hh = String.valueOf(h);
-		String mm = String.valueOf(m);
-		String ss = String.valueOf(s);
-
-		if (hh.length() < 2) {
-			System.out.println("inisde");
-			hh = "0" + hh;
-		}
-		if (mm.length() < 2) {
-
-			mm = "0" + mm;
-		}
-		if (ss.length() < 2) {
-
-			ss = "0" + ss;
-		}
-
-		System.out.println(hh + ":" + mm + ":" + ss);
-		String uom = hh + ":" + mm + ":" + ss;
-
-		System.out.println("AFTERVALUE=" + uom);
-		return uom;
-		}else
-		{
-			String decimalValue = "";
-			for (int i = 0; i < value.length(); i++) {
-				if (value.charAt(i) == '.') {
-					break;
-				}
-				decimalValue = decimalValue + value.charAt(i);
-
-			}
-
-			Long l = Long.parseLong(decimalValue);
-
-			System.out.println(l);
-
-			
-			int h = (int) (l / 60);
-			int m = h % 60;
-			h = h / 60;
-			String hh = String.valueOf(h);
-			String mm = String.valueOf(m);
-			
-			if (hh.length() < 2) {
-				System.out.println("inisde");
-				hh = "0" + hh;
-			}
-			if (mm.length() < 2) {
-
-				mm = "0" + mm;
-			}
-			
-
-			System.out.println(hh + ":" + mm);
-			String uom = hh + ":" + mm;
-
-			System.out.println("AFTERVALUE=" + uom);
-			return uom;
-			
-		}
-	}
+	
+	
 
 	public boolean validateHeader(XSSFRow xssfRow) {
 		System.out.println("Checking number of columns");

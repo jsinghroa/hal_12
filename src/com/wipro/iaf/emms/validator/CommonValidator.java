@@ -106,82 +106,32 @@ public class CommonValidator {
 	//controller se validate aya 
 	public boolean uomValidate(String value, String uom)
 	{
-		if(uom.equalsIgnoreCase("hh:mm:ss")) {
-			if(value.length()!=8)
-		
+		String uomValue[]=value.split(":");
+		int length=uomValue.length;
+	if(uom.equalsIgnoreCase("hh:mm:ss")) {
+		if(length!=3) {return false;}
+		try {
+		int h = Integer.parseInt(uomValue[0]);
+		int m = Integer.parseInt(uomValue[1]);
+		int s = Integer.parseInt(uomValue[2]);
+		}catch(Exception e)
 		{
-			System.out.println("inside length");
-			
 			return false;
 		}
-		
-		
-		char s1=value.charAt(2);
-		char s2=value.charAt(5);
-		
-		if(!(s1==':')||!(s2==':'))
-		{
-			System.out.println("inside colon");
-			return false;
-		}
-		else
-		{ 
-			int h,m,s;
-			
-			try{
-				System.out.println("inside try");
-				h=Integer.parseInt(value.substring(0,2));
-				m=Integer.parseInt(value.substring(3,5));
-				s=Integer.parseInt(value.substring(6,8));
+	return true;
+	}else {
+		if(length!=2) {return false;}
+		try {
+			int h = Integer.parseInt(uomValue[0]);
+			int m = Integer.parseInt(uomValue[1]);
 			}catch(Exception e)
 			{
-				System.out.println("inside catch");
 				return false;
 			}
-			
-			
-			
-			
-			
-			
-		}
-		
 		return true;
-		}else
-		{		
-			if(value.length()!=5)
-				
-			{
-				System.out.println("inside length");
-				
-				return false;
-			}
-			
-			
-			char s1=value.charAt(2);
-	
-			if(!(s1==':'))
-			{
-				System.out.println("inside colon");
-				return false;
-			}
-			else
-			{ 
-				int h,m;
-				
-				try{
-					h=Integer.parseInt(value.substring(0,2));
-					m=Integer.parseInt(value.substring(3,5));
-				}catch(Exception e)
-				{
-					System.out.println("uomValidateException="+e.getMessage());
-					return false;
-				}
-				}
-			
-			return true;
-		}	
 	}
+		
+		}
 	
 	public boolean fileNameMatch(String file){
 		
@@ -221,10 +171,7 @@ public class CommonValidator {
 		return strCellValue;
 	}
 
-	public boolean uomValidate2(String existingCount) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+	
 
 	
 }

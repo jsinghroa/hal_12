@@ -687,7 +687,7 @@ function validateFrequencyForValues(index, frequency, frequencyUnit){
 					<c:if test="${pmForm.errorStatus=='Validated'}">
 						<c:set var="class1" value="validated"></c:set>
 					</c:if>
-					<c:if test="${pmForm.errorStatus=='Not Validated'}">
+					<c:if test="${pmForm.errorStatus=='Error'}">
 						<c:set var="class1" value="notvalidated"></c:set>
 					</c:if>
 					<c:if test="${pmForm.errorStatus=='Warning'}">

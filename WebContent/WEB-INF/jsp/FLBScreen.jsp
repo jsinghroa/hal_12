@@ -557,7 +557,7 @@
 						<c:if test="${FLBForm.error=='Validated'}">
 							<c:set var="class1" value="validated"></c:set>
 						</c:if>
-						<c:if test="${FLBForm.error=='Not Validated'}">
+						<c:if test="${FLBForm.error=='Error'}">
 							<c:set var="class1" value="notvalidated"></c:set>
 						</c:if>
 
@@ -701,7 +701,7 @@
 						<c:if test="${FLBForm.error=='Validated'}">
 							<c:set var="class1" value="validated"></c:set>
 						</c:if>
-						<c:if test="${FLBForm.error=='Not Validated'}">
+						<c:if test="${FLBForm.error=='Error'}">
 							<c:set var="class1" value="notvalidated"></c:set>
 						</c:if>
 
